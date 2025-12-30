@@ -2,8 +2,6 @@ TEST=figure4
 RESULTDIR="dat/$TEST"
 MLC=/root/mlc/mlc
 
-mkdir -p $RESULTDIR
-
 for pd in 0 1 2 4 8; do
     # Set Next-n prefeching degree to 0
     cxl read-labels mem0 -s 5 -O $pd > /dev/null 2>&1
