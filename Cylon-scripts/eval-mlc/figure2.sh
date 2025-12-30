@@ -7,6 +7,6 @@ mkdir -p $RESULTDIR
 output=$RESULTDIR/result
 echo > $output
 
-./mlc --latency_matrix >> $output
-./mlc --latency_matrix >> $output
-./mlc --latency_matrix >> $output
+$MLC --latency_matrix >> $output
+$MLC --latency_matrix >> $output
+$MLC --latency_matrix >> $output

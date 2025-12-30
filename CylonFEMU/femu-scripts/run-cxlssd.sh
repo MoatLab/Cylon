@@ -30,7 +30,7 @@ bdev_offset=0
 hpa_base=0xae80000000
 
 # CXL-SSD DRAM buffer parameters
-policy=2 # Replacement policy [1:LIFO 2:FIFO]
+policy=2 # Replacement policy [1:LIFO 2:FIFO 3:S3FIFO 4:CLOCK]
 prf_dg=0 # Next-n Prefetch degree
 
 # Configurable SSD Controller layout parameters (must be power of 2)
@@ -67,9 +67,6 @@ fi
 pg_rd_lat=40000
 pg_wr_lat=200000
 blk_er_lat=2000000
-pg_rd_lat=0
-pg_wr_lat=0
-blk_er_lat=0
 ch_xfer_lat=0
 
 # GC Threshold (1-100)

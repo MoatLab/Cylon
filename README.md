@@ -7,13 +7,7 @@
 ## How to Use Cylon CXL-SSD and Reproduce Experiments
 To reduce the burden on the Artifact Evaluation (AE) committee, we provide a pre-configured Cylon environment hosted on CloudLab. The environment includes a virtual machine that emulates CXL-SSD functionality and is ready for experimentation.
 
-### SSH Access to the Cylon VM
-
-You can directly SSH into the Cylon virtual machine. please contact **Dongha Yoon** (`dongha@vt.edu`).
-
 ### Launching the Cylon VM
-* In some cases (e.g., after an unexpected VM crash), you may need to manually launch the Cylon virtual machine.
-
 1. SSH into the CloudLab host machine.
 2. Start the Cylon VM: 
    ```sh
@@ -56,12 +50,34 @@ You can directly SSH into the Cylon virtual machine. please contact **Dongha Yoo
    daxctl reconfigure-device --mode=system-ram --force dax0.0
    ```
 
+### Configuring Cylon
+* You can adjust Cylon configuration in `build-femu/run-cxlssd.sh` file.
+#### Caching policy
+```sh
+# CXL-SSD DRAM buffer parameters
+policy=2 # Replacement policy [1:LIFO 2:FIFO 3:S3FIFO 4:CLOCK]
+prf_dg=0 # Next-n Prefetch degree
+```
+
+```sh
+ssd_size=$1		# in MegaBytes
+bufsz=$((ssd_size/20))
+```
+#### NAND timing
+```sh
+# Latency in nanoseconds
+pg_rd_lat=40000      # NAND Read Latency (40us)
+pg_wr_lat=200000     # NAND Write (program) Latency (200us)
+blk_er_lat=2000000   # NAND Erase Latency (2ms)
+ch_xfer_lat=0
+```
+
 ## Reproducing Experiments
 For reproducing experiments, please refer:
-* [Intel MLC](eval-mlc/README.md) (Figure 2, 4)
-* [Mio](eval-mio/README.md) (Figure 3, 6, 9, 10)
-* [Redis](eval-redis/README.md) (Figure 7, 11, 12)
-* [GAPBS](eval-gapbs/README.md) (Figure 8)
+* [Intel MLC](Cylon-scripts/eval-mlc/README.md) (Figure 2, 4)
+* [Mio](Cylon-scripts/eval-mio/README.md) (Figure 3, 6, 9, 10)
+* [Redis](Cylon-scripts/eval-redis/README.md) (Figure 7, 11, 12)
+* [GAPBS](Cylon-scripts/eval-gapbs/README.md) (Figure 8)
 
 
 #### Which mode should I use for each benchmark?
