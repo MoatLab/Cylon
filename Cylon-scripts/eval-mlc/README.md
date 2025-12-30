@@ -18,3 +18,8 @@
     # Figure 4
     bash figure4.sh
     ```
+* You can use `run-figure.sh` to run and plot the result similar with Figure 4 in the paper.
+    ```sh
+    bash run-figure.sh cylon
+    ```
+

@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Redis + YCSB runner (hugepage-focused, minimal).
 # Usage:
 #   ./run-fix-simple.sh <experiment_name> <load_config> <run_config> <redis_numa_node> [mode]
 # mode: load | run | both (default)
@@ -15,13 +14,11 @@ MODE=${5:-"both"}
 LOG_DIR=${LOG_DIR:-"./${EXPERIMENT_NAME}"}
 REDIS_CONF=${REDIS_CONF:-"./redis2.conf"}
 
-# Paths (override via env if your paths differ)
 REDIS_SERVER=${REDIS_SERVER:-"/root/redis-8.0.0/src/redis-server"}
 REDIS_CLI=${REDIS_CLI:-"/root/redis-8.0.0/src/redis-cli"}
 YCSB_BIN=${YCSB_BIN:-"/root/YCSB/redis/target/ycsb-redis-binding-0.18.0-SNAPSHOT/bin/ycsb"}
 YCSB_WORKLOAD=${YCSB_WORKLOAD:-"/root/YCSB/redis/target/ycsb-redis-binding-0.18.0-SNAPSHOT/workloads/workloadc"}
 
-# CPU/mem binding for the YCSB client (matches your original script)
 CLIENT_CPU_NODE=${CLIENT_CPU_NODE:-0}
 CLIENT_MEM_NODE=${CLIENT_MEM_NODE:-0}
 
@@ -31,10 +28,9 @@ CLIENT_MEM_NODE=${CLIENT_MEM_NODE:-0}
 # PERF_INTERVAL_MS=${PERF_INTERVAL_MS:-2000}
 # PERF_EVENTS=${PERF_EVENTS:-"instructions,cycles,MEM_BOUND_STALLS_LOAD.ALL,TOPDOWN_BE_BOUND.REORDER_BUFFER,TOPDOWN_BE_BOUND.NON_MEM_SCHEDULER,TOPDOWN_BE_BOUND.MEM_SCHEDULER"}
 
-# Hugepage allocator (tcmalloc memfs)
-# ENABLE_TCMALLOC=${ENABLE_TCMALLOC:-1}
-# TCMALLOC_LIB=${TCMALLOC_LIB:-"/root/gperftools/build/libtcmalloc.so"}
-# TCMALLOC_MEMFS_MALLOC_PATH=${TCMALLOC_MEMFS_MALLOC_PATH:-"/mnt/hugetlbfs/"}
+ENABLE_PRELOAD=${ENABLE_PRELOAD:-1}
+PRELOAD_LIB=${PRELOAD_LIB:-"/root/pin_binary.so"}
+#PRELOAD_MEMFS_MALLOC_PATH=${PRELOAD_MEMFS_MALLOC_PATH:-"/mnt/hugetlbfs/"}
 
 mkdir -p "$LOG_DIR"
 
@@ -60,13 +56,13 @@ start_redis_server_fresh() {
   sudo rm -f "$data_dir"/dump.rdb "$data_dir"/*.rdb "$data_dir"/appendonly.aof "$data_dir"/redis-server.pid 2>/dev/null || true
   sudo rm -f dump.rdb appendonly.aof 2>/dev/null || true
 
-  # allocator
-  # if [[ "$ENABLE_TCMALLOC" == "1" ]]; then
-  #   export LD_PRELOAD="$TCMALLOC_LIB"
-  #   export TCMALLOC_MEMFS_MALLOC_PATH="$TCMALLOC_MEMFS_MALLOC_PATH"
-  # else
-  #   unset LD_PRELOAD
-  # fi
+  #allocator
+  if [[ "$ENABLE_PRELOAD" == "1" ]]; then
+    export LD_PRELOAD="$PRELOAD_LIB"
+    #export TCMALLOC_MEMFS_MALLOC_PATH="$TCMALLOC_MEMFS_MALLOC_PATH"
+  else
+    unset LD_PRELOAD
+  fi
 
   # start redis
   numactl --cpunodebind 0 --membind "$REDIS_NUMA_NODE" -- "$REDIS_SERVER" "$REDIS_CONF" &
