@@ -1,0 +1,8 @@
+#                   Native DDR              VM-Exit     Others    FTL    IOCTL
+"Host\nLocal"       95.0            0         0          0         0       0 
+"Host\nRemote"     139.3            0         0          0         0       0
+"Cylon\n(100%)"    157.6            0         0          0         0       0
+"Cylon-S\n(0%)"    148.3            0       4651.71    8528.89     2941    0
+"Cylon-I\n(0%)"    148.3            0       4651.71    8528.89     2941    6768.6
+"QEMU\nCXL"        144.5            0       4651.71    9948.53     0       0
+

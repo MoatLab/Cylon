@@ -1,0 +1,3 @@
+[2025-12-27 04:51:58] Generating configs into: config2
+[2025-12-27 04:51:58] Starting benchmarks: kv=1 dist=1 mem=1 threads=5
+[2025-12-27 04:52:00] LOAD: LOAD-cmmh-zipfian-1kb-20251227_045158 (node=1)

@@ -1,0 +1,3 @@
+=== Redis Benchmark Experiment: LOAD-cmmh-zipfian-1kb-20251227_045158 (mode=load) ===
+redis_conf=./redis2.conf redis_numa=1 client_cpu=0 client_mem=0
+Redis PID: 2412
