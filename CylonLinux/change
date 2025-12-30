@@ -1,0 +1,800 @@
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index fb9d1f2d6..58460a2a5 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -338,7 +338,9 @@ union kvm_mmu_page_role {
+ 		unsigned ad_disabled:1;
+ 		unsigned guest_mode:1;
+ 		unsigned passthrough:1;
+-		unsigned :5;
++		unsigned dual_mode:1;
++		unsigned :4;
++		// unsigned :5;
+ 
+ 		/*
+ 		 * This is left at the top of the word so that
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 92468fc59..527cad517 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -4255,7 +4255,15 @@ static int handle_mmio_page_fault(struct kvm_vcpu *vcpu, u64 addr, bool direct)
+ 	// struct kvm_mmu *mmu = vcpu->arch.mmu;
+ 
+ 	unsigned int access;
+-	gfn_t gfn;
++	gfn_t gfn = addr >> PAGE_SHIFT;
++
++	struct kvm_memory_slot *slot;
++	slot = kvm_vcpu_gfn_to_memslot(vcpu, gfn);
++	if (slot
++		&& slot->flags & KVM_MEMSLOT_DUAL_MODE)
++	{
++		return RET_PF_EMULATE;
++	}
+ 
+ 	// if (addr >= 0x2290000000 && addr <= 0x3a8fffffff) {
+ 	// 	return RET_PF_EMULATE;
+@@ -5817,6 +5825,11 @@ static void kvm_mmu_pte_write(struct kvm_vcpu *vcpu, gpa_t gpa,
+ 	write_unlock(&vcpu->kvm->mmu_lock);
+ }
+ 
++static inline bool is_cxl_memregion(u64 addr)
++{
++	return (addr >= 0x2290000000 && addr < 0x2290000000 + 1024*1024*1024UL);
++}
++
+ int noinline kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 error_code,
+ 		       void *insn, int insn_len)
+ {
+@@ -5831,7 +5844,14 @@ int noinline kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 err
+ 
+ 	r = RET_PF_INVALID;
+ 	if (unlikely(error_code & PFERR_RSVD_MASK)) {
++
++		// if (is_cxl_memregion(cr2_or_gpa))
++		// 	printk("\tbefore handle mmio fault");
+ 		r = handle_mmio_page_fault(vcpu, cr2_or_gpa, direct);
++
++		// if (is_cxl_memregion(cr2_or_gpa))
++		// 	printk("\tafter handle mmio fault. ret: %d", r);
++		
+ 		if (r == RET_PF_EMULATE)
+ 			goto emulate;
+ 	}
+@@ -7272,17 +7292,17 @@ void kvm_mmu_pre_destroy_vm(struct kvm *kvm)
+ 
+ 
+ #include <linux/kvm_ext.h>
+-static bool __hahahah = false;
+-static u64 ___hhcnt = 0;
+-#define __NPGS ((96UL*1024*1024*1024) >> 12)
+-static u64 *spte_cache[__NPGS];
++// static bool __hahahah = false;
++// static u64 ___hhcnt = 0;
++// #define __NPGS ((96UL*1024*1024*1024) >> 12)
++// static u64 *spte_cache[__NPGS];
+ int kvm_arch_vcpu_ioctl_set_spte_flag(struct kvm_vcpu *vcpu, struct kvm_set_spte_flag *data)
+ {
+ 	u64 gpa = data->gpa;
+ 	u64 gfn = gpa >> 12;
+ 	u64 flag = data->flag & 0xFFF;
+-	u64 lpn = data->lpn;
+-	int idx;
++	// u64 lpn = data->lpn;
++	// int idx;
+ 	/* output from __gfn_to_pfn_memslot() */
+ 	bool writable;
+ 	u64 pfn;
+@@ -7296,34 +7316,34 @@ int kvm_arch_vcpu_ioctl_set_spte_flag(struct kvm_vcpu *vcpu, struct kvm_set_spte
+ 
+ 	bool async;
+ 
+-	if (!__hahahah) {
+-		for (u64 i=0; i<__NPGS; i++) {
+-			spte_cache[i] = 0;
+-		}
+-		__hahahah = true;
+-	}
++	// if (!__hahahah) {
++	// 	for (u64 i=0; i<__NPGS; i++) {
++	// 		spte_cache[i] = 0;
++	// 	}
++	// 	__hahahah = true;
++	// }
+ 
+-	if (!(lpn < __NPGS))
+-		return -1000;
++	// if (!(lpn < __NPGS))
++	// 	return -1000;
+ 
+-	sptep = spte_cache[lpn];
++	// sptep = spte_cache[lpn];
+ 
+ 	if(!sptep) {
+ 		for_each_shadow_entry(vcpu, gpa, it) {
+ 			sptep = it.sptep;
+ 		}
+-		spte_cache[lpn] = sptep;
+-		___hhcnt++;
++		// spte_cache[lpn] = sptep;
++		// ___hhcnt++;
+ 	}
+ 	// printk("vcpu set_spte_flag");
+-	if (___hhcnt == __NPGS-1) {
+-		___hhcnt++;
+-		for (u64 i=0; i<__NPGS/32; i+=256) {
+-			printk("lpn: %llx, sp: 0x%llx",i, (u64)spte_cache[i]);
+-			// printk("0x%llx 0x%llx 0x%llx 0x%llx 0x%llx 0x%llx 0x%llx 0x%llx "
+-			// 	, (u64)spte_cache[i],(u64)spte_cache[i+1],(u64)spte_cache[i+2],(u64)spte_cache[i+3],(u64)spte_cache[i+4],(u64)spte_cache[i+5],(u64)spte_cache[i+6],(u64)spte_cache[i+7]);
+-		}
+-	}
++	// if (___hhcnt == __NPGS-1) {
++	// 	___hhcnt++;
++	// 	for (u64 i=0; i<__NPGS/32; i+=256) {
++	// 		printk("lpn: 0x%llx, gfn:0x%llx, sp: 0x%llx, spte:0x%llx",i, gfn, (u64)spte_cache[i], *spte_cache[i]);
++	// 		// printk("0x%llx 0x%llx 0x%llx 0x%llx 0x%llx 0x%llx 0x%llx 0x%llx "
++	// 		// 	, (u64)spte_cache[i],(u64)spte_cache[i+1],(u64)spte_cache[i+2],(u64)spte_cache[i+3],(u64)spte_cache[i+4],(u64)spte_cache[i+5],(u64)spte_cache[i+6],(u64)spte_cache[i+7]);
++	// 	}
++	// }
+ 
+ 	if (!sptep)
+ 		return -999;
+@@ -7355,7 +7375,7 @@ int kvm_arch_vcpu_ioctl_set_spte_flag(struct kvm_vcpu *vcpu, struct kvm_set_spte
+ 					 true, &new_spte);
+ 		*sptep = new_spte;
+ 
+-		idx = (new_spte >> 12) & ((1<<9)-1);
++		// idx = (new_spte >> 12) & ((1<<9)-1);
+ 		// if (kvm_sync_spte(vcpu, sp, idx) < 0) {
+ 		// 	printk("kvm_sync_page failed: gpa: %llx, spte:%llx -> %llx, flag: %llx", gpa, spte, new_spte, flag);
+ 		// 	return -995;
+@@ -7371,62 +7391,58 @@ int kvm_arch_vcpu_ioctl_set_spte_flag(struct kvm_vcpu *vcpu, struct kvm_set_spte
+ }
+ 
+ 
+-// int kvm_arch_vcpu_ioctl_get_root_sptep(struct kvm_vcpu *vcpu, struct kvm_get_root_sptep *data)
+-// {
+-// 	u64 gpa = data->base_gpa;
+-// 	u64 *sptep = NULL;
+-	
+-// 	struct kvm_shadow_walk_iterator it;
+-// 	struct kvm_mmu_page *sp = NULL;
+-// 	struct kvm_memory_slot *slot = kvm_vcpu_gfn_to_memslot(vcpu, gfn);	
++#include <linux/mm.h>
++#include <linux/fs.h>
++#include <linux/uaccess.h>
++#include <linux/sched.h>
+ 
+-// 	bool async;
++#define MAX_CONT_ALLOC_SZ (1<< (MAX_ORDER + PAGE_SHIFT))
+ 
+-// 	for_each_shadow_entry(vcpu, gpa, it) {
+-// 		sptep = it.sptep;
+-// 	}
++int kvm_arch_vm_ioctl_get_linear_spt(struct kvm *kvm, struct kvm_memslot_get_linear_spt *data)
++{
++	u64 gfn = data->gfn;
++	struct kvm_memory_slot *slot = NULL;
++	struct mm_struct *mm = current->mm;
++	u64 size;
++	int idx;
++	struct kvm_memslot_get_linear_spt *info = NULL;
++	
++	printk("\tgfn to memslot gfn: 0x%llx\n", gfn);
++	slot = gfn_to_memslot(kvm, gfn);
++	info = (struct kvm_memslot_get_linear_spt*)slot->aux;
++	if (!slot) {
++		printk("NULL slot\n");
++		return -EINVAL;
++	}
+ 
+-// 	if (!sptep)
+-// 		return -999;
++	size = ((slot->npages * sizeof(u64*)));
++    
++	printk("\tsize: 0x%llx \n",size);
++    idx = 0;
++    while (size > 0) {
++        u64 sz = (size > MAX_CONT_ALLOC_SZ)? MAX_CONT_ALLOC_SZ:size;
++		unsigned long uaddr = (u64)data->spt_list[idx].spt;
++		struct vm_area_struct *vma = find_vma(mm, uaddr);
++		unsigned long pfn = virt_to_phys(info->spt_list[idx].spt) >> PAGE_SHIFT;
+ 
+-// 	spte = *sptep;
+-// 	if (flag == 0x576) {
+-// 		if (is_mmio_spte(spte))
+-// 			return -998;
++		data->spt_list[idx].npages = info->spt_list[idx].npages;
++		data->spt_list[idx].offset = info->spt_list[idx].offset;
++		
++		printk("idx: %d, uaddr: 0x%lx, vma->vm_start: 0x%lx, pfn: 0x%lx\n",idx, uaddr, vma?vma->vm_start:0, pfn);
++		// printk("\t0x%llx 0x%llx 0x%llx 0x%llx\n", (u64)info->spt_list[idx].spt[0], (u64)info->spt_list[idx].spt[1], (u64)info->spt_list[idx].spt[2], (u64)info->spt_list[idx].spt[3]);
++        if (!vma) {
++            printk("find vma failed %d!\n", idx);
++            return -EINVAL;
++        }
+ 
+-// 		new_spte = make_mmio_spte(vcpu, gfn, ACC_ALL);
+-// 		*sptep = new_spte;
+-// 		// if(!sync_mmio_spte(vcpu, sptep, gfn, ACC_ALL)) {
+-// 		// 	printk("sync_mmio_spte failed: gpa: %llx, spte:%llx -> %llx, flag: %llx", gpa, spte, new_spte, flag);
+-// 		// 	return -994;
+-// 		// }
+-// 	}
+-// 	else {
+-// 		if (!is_mmio_spte(spte)) 
+-// 			return -997;
+-
+-// 		pfn = __gfn_to_pfn_memslot(slot, gfn, false, false, &async,
+-// 					  false, &writable, &hva);
+-// 		sp = sptep_to_sp(rcu_dereference(sptep));
+-// 		if (!sp)
+-// 			return -996;
+-
+-// 		make_spte(vcpu, sp, slot, ACC_ALL, gfn,
+-// 					 pfn, spte, false, true,
+-// 					 true, &new_spte);
+-// 		*sptep = new_spte;
+-
+-// 		idx = (new_spte >> 12) & ((1<<9)-1);
+-// 		// if (kvm_sync_spte(vcpu, sp, idx) < 0) {
+-// 		// 	printk("kvm_sync_page failed: gpa: %llx, spte:%llx -> %llx, flag: %llx", gpa, spte, new_spte, flag);
+-// 		// 	return -995;
+-// 		// }
+-// 	}
++		if (uaddr)
++			remap_pfn_range(vma, vma->vm_start, pfn, sz, vma->vm_page_prot);
+ 
+-// 	// printk("\tCLEAR mmio bit. gpa: %llx, spte:%llx -> %llx, flag: %llx", gpa, spte, new_spte, flag);	
+-	
++        size -= sz;
++        idx++;
++    }
+ 
+-// 	// printk("\t%s: done", __func__);	
+-// 	// kvm_flush_remote_tlbs_sptep(vcpu->kvm, sptep);
+-// 	return 0;
+-// }
+\ No newline at end of file
++	data->n = idx;
++
++	return 0;
++}
+\ No newline at end of file
+diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+index 89d82f334..216f312b1 100644
+--- a/arch/x86/kvm/mmu/tdp_mmu.c
++++ b/arch/x86/kvm/mmu/tdp_mmu.c
+@@ -1,6 +1,10 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
++
++#include <linux/kvm_ext.h>
++#include <linux/kvm_host.h>
++
+ #include "mmu.h"
+ #include "mmu_internal.h"
+ #include "mmutrace.h"
+@@ -11,6 +15,7 @@
+ #include <asm/cmpxchg.h>
+ #include <trace/events/kvm.h>
+ 
++
+ /* Initializes the TDP MMU for the VM, if enabled. */
+ int kvm_mmu_init_tdp_mmu(struct kvm *kvm)
+ {
+@@ -66,7 +71,8 @@ void kvm_mmu_uninit_tdp_mmu(struct kvm *kvm)
+ 
+ static void tdp_mmu_free_sp(struct kvm_mmu_page *sp)
+ {
+-	free_page((unsigned long)sp->spt);
++	if (!sp->role.dual_mode)
++		free_page((unsigned long)sp->spt);
+ 	kmem_cache_free(mmu_page_header_cache, sp);
+ }
+ 
+@@ -1033,54 +1039,6 @@ static int tdp_mmu_map_handle_target_level(struct kvm_vcpu *vcpu,
+ 	return ret;
+ }
+ 
+-// static int tdp_mmu_map_handle_target_level_dual(struct kvm_vcpu *vcpu,
+-// 					  struct kvm_page_fault *fault,
+-// 					  struct tdp_iter *iter)
+-// {
+-// 	// struct kvm_mmu_page *sp = sptep_to_sp(rcu_dereference(iter->sptep));
+-// 	u64 new_spte;
+-// 	int ret = RET_PF_FIXED;
+-// 	bool wrprot = false;
+-
+-// 	if (unlikely(!fault->slot) || (fault->slot->flags & KVM_MEMSLOT_DUAL_MODE)){
+-// 		// if (fault->slot->flags & KVM_MEMSLOT_DUAL_MODE) {
+-// 		// 	sp->role.direct = true;
+-// 		// }
+-// 		new_spte = make_mmio_spte(vcpu, iter->gfn, ACC_ALL);
+-// 	}
+-	
+-		
+-// 	if (new_spte == iter->old_spte)
+-// 		ret = RET_PF_SPURIOUS;
+-// 	else if (tdp_mmu_set_spte_atomic(vcpu->kvm, iter, new_spte))
+-// 		return RET_PF_RETRY;
+-// 	else if (is_shadow_present_pte(iter->old_spte) &&
+-// 		 !is_last_spte(iter->old_spte, iter->level))
+-// 		kvm_flush_remote_tlbs_gfn(vcpu->kvm, iter->gfn, iter->level);
+-
+-// 	/*
+-// 	 * If the page fault was caused by a write but the page is write
+-// 	 * protected, emulation is needed. If the emulation was skipped,
+-// 	 * the vCPU would have the same fault again.
+-// 	 */
+-// 	if (wrprot) {
+-// 		if (fault->write)
+-// 			ret = RET_PF_EMULATE;
+-// 	}
+-
+-// 	/* If a MMIO SPTE is installed, the MMIO will need to be emulated. */
+-// 	if (unlikely(is_mmio_spte(new_spte))) {
+-// 		vcpu->stat.pf_mmio_spte_created++;
+-// 		trace_mark_mmio_spte(rcu_dereference(iter->sptep), iter->gfn,
+-// 				     new_spte);
+-// 		ret = RET_PF_EMULATE;
+-// 	} else {
+-// 		trace_kvm_mmu_set_spte(iter->level, iter->gfn,
+-// 				       rcu_dereference(iter->sptep));
+-// 	}
+-
+-// 	return ret;
+-// }
+ 
+ /*
+  * tdp_mmu_link_sp - Replace the given spte with an spte pointing to the
+@@ -1126,6 +1084,8 @@ int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+ 	struct kvm *kvm = vcpu->kvm;
+ 	struct tdp_iter iter;
+ 	struct kvm_mmu_page *sp;
++	struct kvm_mmu_page *parent_sp;
++	union kvm_mmu_page_role role;
+ 	int ret = RET_PF_RETRY;
+ 	
+ 	kvm_mmu_hugepage_adjust(vcpu, fault);
+@@ -1160,12 +1120,25 @@ int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+ 		 * needs to be split.
+ 		 */
+ 
+-		if ((fault->slot->flags & KVM_MEMSLOT_DUAL_MODE) && iter.level == fault->goal_level+1) {
+-			sp = dualslot_get_leaf_sp(fault->slot, fault->gfn);
++		if (fault->slot != NULL
++				&& fault->slot->flags & KVM_MEMSLOT_DUAL_MODE
++				&& iter.level == fault->goal_level+1) {
++			sp = kvm_mmu_memory_cache_alloc(&vcpu->arch.mmu_page_header_cache);
++			sp->spt = (u64*)dualslot_get_leaf_spt(fault->slot, iter.gfn);
++
++			// printk("gfn: 0x%llx, iter.gfn: 0x%llx, iter level: %d, sp->spt: 0x%llx", fault->gfn, iter.gfn, iter.level, (u64)sp->spt);
++
++			if (!sp || !sp->spt) {
++				printk("dual mode invalid sp");
++				ret = -EINVAL;
++				goto retry;
++			}
++
+ 			parent_sp = sptep_to_sp(rcu_dereference(iter.sptep));
+ 			role = parent_sp->role;
+ 			role.level--;
+ 			role.direct = true;
++			role.dual_mode = true;
+ 
+ 			tdp_mmu_init_sp(sp, iter.sptep, iter.gfn, role);
+ 		}
+@@ -1220,99 +1193,6 @@ int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+ 	return ret;
+ }
+ 
+-// int kvm_tdp_mmu_map_dual(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+-// {
+-// 	struct kvm_mmu *mmu = vcpu->arch.mmu;
+-// 	struct kvm *kvm = vcpu->kvm;
+-// 	struct tdp_iter iter;
+-// 	struct kvm_mmu_page *sp;
+-// 	struct kvm_mmu_page *parent_sp;
+-// 	union kvm_mmu_page_role role;
+-
+-// 	unsigned int pgs_per_1g = 1*1024*1024*1024UL >> PAGE_SHIFT;
+-// 	unsigned int linear_pte_sz_per_1g = pgs_per_1g * sizeof(u64);
+-// 	unsigned int spte_pgs_per_1g = get_order(linear_pte_sz_per_1g);
+-
+-// 	// u8 goal_level = PG_LEVEL_1G;
+-// 	int ret = RET_PF_RETRY;
+-		
+-// 	kvm_mmu_hugepage_adjust(vcpu, fault);
+-
+-// 	trace_kvm_mmu_spte_requested(fault);
+-	
+-// 	rcu_read_lock();
+-	
+-// 	// for_each_tdp_pte_min_level(iter, to_shadow_page(mmu->root.hpa), PG_LEVEL_1G, fault->gfn, fault->gfn + 1) {
+-// 	tdp_mmu_for_each_pte(iter, mmu, fault->gfn, fault->gfn + 1) {
+-// 		int r;
+-
+-// 		/*
+-// 		 * If SPTE has been frozen by another thread, just give up and
+-// 		 * retry, avoiding unnecessary page table allocation and free.
+-// 		 */
+-// 		if (is_removed_spte(iter.old_spte))
+-// 			goto retry;
+-
+-// 		if (iter.level == fault->goal_level) {
+-// 			goto map_target_level;
+-// 		}
+-			
+-// 		/* Step down into the lower level page table if it exists. */
+-// 		if (is_shadow_present_pte(iter.old_spte))
+-// 			continue;
+-
+-
+-// 		if (iter.level = PG_LEVEL_1G) {
+-// 			sp = __get_free_pages(GFP_ATOMIC|GFP_USER, spte_pgs_per_1g)
+-// 			if (!sp) {
+-// 				printk("alloc memory for spte failed");
+-// 				ret = -ENOMEM;
+-// 				goto retry;
+-// 			}
+-
+-// 			parent_sp = sptep_to_sp(rcu_dereference(iter.sptep));
+-// 			role = parent_sp->role;
+-// 			role.level--;
+-// 			role.direct = true;
+-
+-// 			for (unsigned int i = 0; i < spte_pgs_per_1g; i++) {
+-// 				tdp_mmu_init_sp(sp[i], iter.sptep, iter.gfn+i, role);
+-// 			}
+-// 		}
+-
+-		
+-// 		// printk("sp: %llx, psp: %llx, iter.level: %d, iter.gfn: %llx\n", (u64)sp, (u64)parent_sp, iter.level, iter.gfn);
+-		
+-// 		// tdp_mmu_init_child_sp(sp, &iter);
+-
+-// 		r = tdp_mmu_link_sp(kvm, &iter, sp, true);
+-
+-// 		/*
+-// 		 * Force the guest to retry if installing an upper level SPTE
+-// 		 * failed, e.g. because a different task modified the SPTE.
+-// 		 */
+-// 		if (r) {
+-// 			tdp_mmu_free_sp(sp);
+-// 			goto retry;
+-// 		}
+-
+-// 	}
+-
+-// 	/*
+-// 	 * The walk aborted before reaching the target level, e.g. because the
+-// 	 * iterator detected an upper level SPTE was frozen during traversal.
+-// 	 */
+-// 	WARN_ON_ONCE(iter.level == fault->goal_level);
+-// 	goto retry;
+-
+-// map_target_level:
+-// 	ret = tdp_mmu_map_handle_target_level_dual(vcpu, fault, &iter);
+-
+-// retry:
+-// 	rcu_read_unlock();
+-// 	return ret;
+-// }
+-
+ bool kvm_tdp_mmu_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range,
+ 				 bool flush)
+ {
+@@ -2004,8 +1884,6 @@ u64 *kvm_tdp_mmu_fast_pf_get_last_sptep(struct kvm_vcpu *vcpu, u64 addr,
+ }
+ 
+ 
+-#include <linux/kvm_ext.h>
+-#include <linux/kvm_host.h>
+ 
+ int kvm_arch_vm_ioctl_set_spte_flag(struct kvm *kvm, struct kvm_set_spte_flag *data)
+ {
+@@ -2048,41 +1926,80 @@ int kvm_arch_vm_ioctl_set_spte_flag(struct kvm *kvm, struct kvm_set_spte_flag *d
+ 	return 0;
+ }
+ 
+-int dualslot_create_leaf_sp_cont(struct kvm_memory_slot *slot)
++#define MAX_CONT_ALLOC_SZ (1<< (MAX_ORDER + PAGE_SHIFT))
++
++int dualslot_create_leaf_spt_cont(struct kvm_memory_slot *slot)
+ {
+-	unsigned int n_sp = (slot->npages * sizeof(u64)) >> PAGE_SHIFT;
++	struct kvm_memslot_get_linear_spt *info;
++	u64 size;
++	int idx, npg_offset = 0;
++	printk("%s\n",__func__);
++	slot->aux = (void*)__get_free_pages(GFP_KERNEL|__GFP_ZERO, 0);
++	if (!slot->aux) {
++		pr_err("alloc memory for dualslot_info failed\n");
++		// printk("alloc memory for dualslot_info failed\n");
++		return -ENOMEM;
++	}
+ 
+-	slot->d_info.n_sp = n_sp;
+-	slot->d_info.base_leaf_sp = (struct kvm_mmu_page *)__get_free_pages(GFP_ATOMIC|GFP_USER, get_order(n_sp * sizeof(struct kvm_mmu_page));
++	info = (struct kvm_memslot_get_linear_spt*)slot->aux;
+ 
+-	if (!slot->d_info.base_leaf_sp) {
+-		printk("alloc memory for spte failed");
+-		return -ENOMEM;
++	size = ((slot->npages * sizeof(u64*)));
++	
++	// printk("alloc size: 0x%llx, order: %d", leaf_spt_alloc_size, order);
++	
++	idx = 0;
++	while (size > 0 && idx < BASE_LEAF_SPT_SZ) {
++		u64 sz = (size > MAX_CONT_ALLOC_SZ)? MAX_CONT_ALLOC_SZ:size;
++		int npages = sz >> PAGE_SHIFT;
++		int o = get_order(sz);
++		
++		info->spt_list[idx].spt = (u64*)__get_free_pages(GFP_KERNEL|GFP_ATOMIC|__GFP_ZERO, o);
++		if (!info->spt_list[idx].spt) {
++			printk("alloc memory for spte failed\n");
++			// pr_err("alloc memory for spte failed\n");
++			return -ENOMEM;
++		}
++		
++		info->spt_list[idx].npages = npages;
++		info->spt_list[idx].offset = npg_offset;
++		printk("i: %d, npgs: 0x%x, off: 0x%x\n", idx, npages, npg_offset);
++
++		size -= sz;
++		npg_offset += npages;
++		idx++;
+ 	}
++	
++	info->n = idx;
+ 
+ 	return 0;
+ }
+ 
+ 
+-int dualslot_destroy_leaf_sp_cont(struct kvm_memory_slot *slot)
++int dualslot_destroy_leaf_spt_cont(struct kvm_memory_slot *slot)
+ {
+-	if (slot->d_info.base_leaf_sp) {
+-		free_pages(slot->d_info.base_leaf_sp, get_order(slot->d_info.n_sp * sizeof(struct kvm_mmu_page));
+-	}
+-	else {
+-		printk("No allocated pages for this slot");
+-		return -EINVAL;
++	struct kvm_memslot_get_linear_spt *info = (struct kvm_memslot_get_linear_spt*)slot->aux;
++	printk("dualslot_destroy_leaf_spt_cont\n");
++
++	for (int i = 0; i < info->n; i++) {
++		free_pages((unsigned long)info->spt_list[i].spt, get_order(info->spt_list[i].npages << PAGE_SHIFT));
+ 	}
+ 
++	free_pages((unsigned long)slot->aux, 0);
+ 	return 0;
+ }
+ 
+-struct kvm_mmu_page *dualslot_get_leaf_sp(struct kvm_memory_slot *slot, gfn_t gfn)
++static inline int dualslot_get_leaf_spt_idx(gfn_t lpn)
+ {
+-	gfn_t gfn_off = gfn - slot->base_gfn
+-	if (gfn_off < slot->npages) {
+-		return slot->d_info.base_leaf_sp[gfn_off >> PAGE_SHIFT];
+-	}
+-	
+-	return NULL;
++	return (lpn * sizeof(u64*)) >> (MAX_ORDER + PAGE_SHIFT);
++}
++
++u64 *dualslot_get_leaf_spt(struct kvm_memory_slot *slot, gfn_t gfn)
++{
++	struct kvm_memslot_get_linear_spt *info = (struct kvm_memslot_get_linear_spt*)slot->aux;
++
++	gfn_t lpn = gfn - slot->base_gfn;
++	int i = dualslot_get_leaf_spt_idx(lpn);
++	gfn_t off = lpn - info->spt_list[i].offset*512;
++	printk("gfn: 0x%llx, lpn: 0x%llx, i: %d, off: 0x%llx spt.off: 0x%x\n", gfn, lpn, i, off, info->spt_list[i].offset);
++	return info->spt_list[i].spt + off;
+ }
+\ No newline at end of file
+diff --git a/include/linux/kvm_ext.h b/include/linux/kvm_ext.h
+index a60e0ad71..4a692ebe5 100644
+--- a/include/linux/kvm_ext.h
++++ b/include/linux/kvm_ext.h
+@@ -1,7 +1,10 @@
+ #ifndef __KVM_EXT_FEMU__
+ #define __KVM_EXT_FEMU__
+ 
+-#include <linux/kvm_host.h>
++// #include <linux/kvm_host.h>
++#include <linux/kvm_types.h>
++
++struct kvm_memory_slot;
+ 
+ struct kvm_vcpu;
+ struct kvm_set_spte_flag {
+@@ -10,24 +13,29 @@ struct kvm_set_spte_flag {
+     u64 lpn;
+ };
+ 
+-struct kvm_memslot_dual_info {
+-    struct kvm_mmu_page* base_leaf_sp;
+-    unsigned int n_sp;
++struct kvm_memslot_linear_spt {
++    u64* spt;
++    int npages;
++    int offset;
+ };
+ 
+-// struct kvm_get_root_sptep {
+-//     u64 base_gpa;
+-//     u64 addr;
+-// };
++struct kvm_memslot_get_linear_spt {
++    struct kvm_memslot_linear_spt spt_list[60];
++    u64 gfn;
++    int n;
++};
+ 
+ #define KVM_SET_SPTE_FLAG		  _IOW(KVMIO, 0xdd, struct kvm_set_spte_flag)
+-#define KVM_GET_ROOT_SPTEP		  _IOR(KVMIO, 0xde, struct kvm_get_root_sptep)
++#define KVM_GET_LINEAR_SPT		  _IOWR(KVMIO, 0xde, struct kvm_memslot_get_linear_spt)
+ 
+ int kvm_arch_vm_ioctl_set_spte_flag(struct kvm *kvm, struct kvm_set_spte_flag *data);
+ int kvm_arch_vcpu_ioctl_set_spte_flag(struct kvm_vcpu *kvm_vcpu, struct kvm_set_spte_flag *data);
+ 
+-int dualslot_create_leaf_sp_cont(struct kvm_memory_slot *slot);
+-int dualslot_destroy_leaf_sp_cont(struct kvm_memory_slot *slot);
++int kvm_arch_vm_ioctl_get_linear_spt(struct kvm *kvm, struct kvm_memslot_get_linear_spt *data);
++
++int dualslot_create_leaf_spt_cont(struct kvm_memory_slot *slot);
++int dualslot_destroy_leaf_spt_cont(struct kvm_memory_slot *slot);
++u64 *dualslot_get_leaf_spt(struct kvm_memory_slot *slot, gfn_t gfn);
+ // int kvm_arch_vcpu_ioctl_get_root_sptep(struct kvm_vcpu *vcpu, struct kvm_get_root_sptep *data)
+ 
+ 
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 774516b74..29b2b4cb3 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -2,6 +2,7 @@
+ #ifndef __KVM_HOST_H
+ #define __KVM_HOST_H
+ 
++#include <linux/kvm_ext.h>
+ 
+ #include <linux/types.h>
+ #include <linux/hardirq.h>
+@@ -576,6 +577,7 @@ static inline int kvm_vcpu_exiting_guest_mode(struct kvm_vcpu *vcpu)
+  * The memslots themselves are independent of each other so they can be
+  * individually added or deleted.
+  */
++#define BASE_LEAF_SPT_SZ 64
+ struct kvm_memory_slot {
+ 	struct hlist_node id_node[2];
+ 	struct interval_tree_node hva_node[2];
+@@ -588,6 +590,8 @@ struct kvm_memory_slot {
+ 	u32 flags;
+ 	short id;
+ 	u16 as_id;
++
++	void *aux;
+ };
+ 
+ static inline bool kvm_slot_dirty_track_enabled(const struct kvm_memory_slot *slot)
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 74def2ea7..cb1f2f29a 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1792,7 +1792,7 @@ static void kvm_create_memslot(struct kvm *kvm,
+ 	kvm_activate_memslot(kvm, NULL, new);
+ 
+ 	if (new->flags & KVM_MEMSLOT_DUAL_MODE) {
+-		dualslot_create_leaf_sp_cont(new);
++		dualslot_create_leaf_spt_cont(new);
+ 	}
+ }
+ 
+@@ -1808,7 +1808,7 @@ static void kvm_delete_memslot(struct kvm *kvm,
+ 	kvm_activate_memslot(kvm, invalid_slot, NULL);
+ 
+ 	if (old->flags & KVM_MEMSLOT_DUAL_MODE) {
+-		dualslot_destroy_leaf_sp_cont(old);
++		dualslot_destroy_leaf_spt_cont(old);
+ 	}
+ }
+ 
+@@ -4812,6 +4812,63 @@ static int kvm_vm_ioctl_get_stats_fd(struct kvm *kvm)
+ 	return fd;
+ }
+ 
++
++static int handle_kvm_set_spte_flag(struct kvm* kvm, void __user *argp)
++{
++	struct kvm_set_spte_flag data;
++	
++	printk("%s\n", __func__);
++	if (copy_from_user(&data, argp, sizeof(struct kvm_set_spte_flag))){
++		printk("KVM_SET_SPTE_FLAG arg copy_from_user err");
++		return -EINVAL;
++	}
++	
++	return kvm_arch_vm_ioctl_set_spte_flag(kvm, &data);
++}
++
++
++static int handle_kvm_get_linear_spt(struct kvm* kvm, void __user *argp)
++{
++	struct kvm_memslot_get_linear_spt data;
++	int ret = -EINVAL;
++	
++	printk("%s\n", __func__);
++	if (copy_from_user(&data, argp, sizeof(struct kvm_memslot_get_linear_spt))){
++		printk("KVM_GET_LINEAR_SPT arg copy_from_user err\n");
++		return -EINVAL;		
++	}
++	printk("KVM_GET_LINEAR_SPT arg copy_from_user done\n");
++	ret = kvm_arch_vm_ioctl_get_linear_spt(kvm, &data);
++
++	if (copy_to_user(argp, &data, sizeof(struct kvm_memslot_get_linear_spt))){
++		printk("KVM_GET_LINEAR_SPT ret copy_to_user err\n");
++		return -EINVAL;
++	}
++
++	return ret;
++}
++
++// static int handle_customized_ioctl(struct kvm* kvm, unsigned int ioctl, unsigned long arg)
++// {
++// 	void __user *argp = (void __user *)arg;
++// 	int r;
++
++// 	switch (ioctl) {
++// 	case KVM_SET_SPTE_FLAG: {
++// 		r = handle_kvm_set_spte_flag(kvm, argp);
++// 		break;
++// 	}
++// 	case KVM_GET_LINEAR_SPT: {
++// 		r = handle_kvm_get_linear_spt(kvm, argp);
++// 		break;
++// 	}
++// 	default:
++// 		r = -EINVAL;
++// 	}
++
++// 	return r;
++// }
++
+ static long kvm_vm_ioctl(struct file *filp,
+ 			   unsigned int ioctl, unsigned long arg)
+ {
+@@ -4821,21 +4878,15 @@ static long kvm_vm_ioctl(struct file *filp,
+ 
+ 	if (kvm->mm != current->mm || kvm->vm_dead)
+ 		return -EIO;
++
++	
+ 	switch (ioctl) {
+ 	case KVM_SET_SPTE_FLAG: {
+-		struct kvm_set_spte_flag kvm_set_spte_flag;
+-		r = -EINVAL;
+-		if (copy_from_user(&kvm_set_spte_flag, argp, sizeof(struct kvm_set_spte_flag))){
+-			printk("KVM_SET_SPTE_FLAG arg copy_from_user err");
+-			goto out;		
+-		}
+-		// printk("KVM_SET_SPTE_FLAG: .gpa 0x%llx, .uaddr 0x%llx, .flag 0x%llx", kvm_set_spte_flag.gpa, kvm_set_spte_flag.userspace_addr, kvm_set_spte_flag.flag);
+-		r = kvm_arch_vm_ioctl_set_spte_flag(kvm, &kvm_set_spte_flag);
+-		// if (copy_to_user(argp, &kvm_set_spte_flag, sizeof(struct kvm_set_spte_flag))) {
+-		// 	printk("KVM_SET_SPTE_FLAG arg copy_to_user err");
+-		// 	goto out;		
+-		// }
+-
++		r = handle_kvm_set_spte_flag(kvm, argp);
++		break;
++	}
++	case KVM_GET_LINEAR_SPT: {
++		r = handle_kvm_get_linear_spt(kvm, argp);
+ 		break;
+ 	}
+ 	case KVM_CREATE_VCPU:

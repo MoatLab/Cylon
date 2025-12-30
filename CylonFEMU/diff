@@ -1,0 +1,1716 @@
+diff --git a/accel/kvm/kvm-all.c b/accel/kvm/kvm-all.c
+index 06eec58196..c3b75c21be 100644
+--- a/accel/kvm/kvm-all.c
++++ b/accel/kvm/kvm-all.c
+@@ -3042,6 +3042,9 @@ int kvm_cpu_exec(CPUState *cpu)
+             break;
+         case KVM_EXIT_MMIO:
+             DPRINTF("handle_mmio\n");
++            // printf("KVM: MMIO access at 0x%llx size %d is_write %d\n",
++                //    run->mmio.phys_addr, run->mmio.len,
++                //    run->mmio.is_write);
+             /* Called outside BQL */
+             address_space_rw(&address_space_memory,
+                              run->mmio.phys_addr, attrs,
+diff --git a/femu-scripts/run-cxlssd.sh b/femu-scripts/run-cxlssd.sh
+index 9072e000a6..a43e95fa77 100755
+--- a/femu-scripts/run-cxlssd.sh
++++ b/femu-scripts/run-cxlssd.sh
+@@ -22,9 +22,12 @@ fi
+ 
+ 
+ # CXL-SSD backend memory parameters
+-backend_dev="/dev/mem"
+-bdev_offset=0xae80000000
+-hpa_base=$bdev_offset
++# backend_dev="/dev/mem"
++# bdev_offset=0xae80000000
++
++backend_dev="/dev/cmahog"
++bdev_offset=0
++hpa_base=0xae80000000
+ 
+ # CXL-SSD DRAM buffer parameters
+ policy=2 # Replacement policy [1:LIFO 2:FIFO]
+diff --git a/hw/femu/backend/dram.c b/hw/femu/backend/dram.c
+index 18be25e3d7..90d021112b 100644
+--- a/hw/femu/backend/dram.c
++++ b/hw/femu/backend/dram.c
+@@ -25,6 +25,9 @@ void femu_set_base_gpa(hwaddr base)
+ }
+ 
+ void *femu_get_backend_ptr(off_t offset) {
++    // if (femu_backend.ptr == NULL) {
++    //     femu_backend.ptr = mmap(NULL, 96UL*1024*1024*1024, PROT_READ | PROT_WRITE, MAP_ANONYMOUS, -1, 0);
++    // }
+     return femu_backend.ptr + offset;
+ }
+  
+@@ -36,7 +39,11 @@ void *femu_get_backend_ptr_from_gpa(hwaddr addr) {
+ }
+ 
+ 
+-static void *alloc_backend_memory(char *devname, uint64_t offset, uint64_t size) {
++void *alloc_backend_memory(const char *devname, uint64_t offset, uint64_t size) {
++    // if (femu_backend.ptr != NULL) {
++    //     return femu_backend.ptr;
++    // }
++
+     void *ptr = NULL;
+     int devfd = open(devname, O_RDWR);
+     if (devfd < 0) {
+@@ -52,6 +59,11 @@ static void *alloc_backend_memory(char *devname, uint64_t offset, uint64_t size)
+         abort();
+     }
+ 
++    if (mlock(ptr, size) != 0) {
++        perror("mlock");
++        abort();
++    }
++
+     printf("[%s] backend address: 0x%lx\n",devname, (uint64_t)ptr);
+     memset(ptr, 0, 4096);
+ 
+diff --git a/hw/femu/bbssd/buffer.c b/hw/femu/bbssd/buffer.c
+index 9fda9f4485..25918b7149 100644
+--- a/hw/femu/bbssd/buffer.c
++++ b/hw/femu/bbssd/buffer.c
+@@ -141,7 +141,7 @@ bool buffer_insert_entry(struct buffer *b, struct buffer_entry *bentry, int pref
+ 	}
+ 
+ 	// return false;
+-	
++	printf("[FEMU CXL] Insert entry: lpn: %lx\n", bentry->lpn);
+ 	res = b->ops.insert_entry(b, bentry);
+ 	
+ 	/* prefetch */
+diff --git a/hw/femu/bbssd/fifo.c b/hw/femu/bbssd/fifo.c
+index e4704fb56e..e9b81be7d1 100644
+--- a/hw/femu/bbssd/fifo.c
++++ b/hw/femu/bbssd/fifo.c
+@@ -20,7 +20,7 @@ int fifo_evict_victim(struct buffer *b, struct set *set)
+ 	if (victim == NULL)
+ 		return -1;
+ 
+-	// printf("evict 0x%lx, set idx: 0x%lx\n", victim->lpn, victim->lpn & (b->set_mask));
++	printf("evict 0x%lx, set idx: 0x%lx\n", victim->lpn, victim->lpn & (b->set_mask));
+ 	// fflush(stdout);
+ 
+ 	/* Flush page to NAND */
+diff --git a/hw/femu/bbssd/ftl.c b/hw/femu/bbssd/ftl.c
+index f868cc51ed..22f4597be9 100644
+--- a/hw/femu/bbssd/ftl.c
++++ b/hw/femu/bbssd/ftl.c
+@@ -1134,6 +1134,7 @@ static void *ftl_thread(void *arg)
+                 lpn = creq->lpn;
+                 lat = 0;
+                 read = (creq->ncmd->cmd == CXL_READ);
++                printf("[CXL]: lpn(0x%lx) %s\n", lpn, read?"READ":"WRITE");
+ 
+                 bentry = buffer_lookup_entry(buffer, lpn);
+                 if (bentry) {//buffer hit
+diff --git a/hw/femu/bbssd/ftl.h b/hw/femu/bbssd/ftl.h
+index 3a2707e5b9..4363bc2768 100644
+--- a/hw/femu/bbssd/ftl.h
++++ b/hw/femu/bbssd/ftl.h
+@@ -257,7 +257,7 @@ struct ssd {
+ void ssd_init(FemuCtrl *n);
+ void ssd_reset(FemuCtrl *n);
+ 
+-inline bool valid_lpn(struct ssd *ssd, lpn_t lpn)
++static inline bool valid_lpn(struct ssd *ssd, lpn_t lpn)
+ {
+     return (lpn < ssd->sp.tt_pgs);
+ }
+diff --git a/hw/femu/bbssd/lifo.c b/hw/femu/bbssd/lifo.c
+index 9b07c980b9..9a5c91c0ff 100644
+--- a/hw/femu/bbssd/lifo.c
++++ b/hw/femu/bbssd/lifo.c
+@@ -20,7 +20,7 @@ int lifo_evict_victim(struct buffer *b, struct set *set)
+ 	if (victim == NULL)
+ 		return -1;
+ 
+-	// printf("evict 0x%lx, set idx: 0x%lx\n", victim->lpn, victim->lpn & (b->set_mask));
++	printf("evict 0x%lx, set idx: 0x%lx\n", victim->lpn, victim->lpn & (b->set_mask));
+ 	// fflush(stdout);
+ 
+ 	/* Flush page to NAND */
+diff --git a/hw/femu/cxlssd/cxlssd.c b/hw/femu/cxlssd/cxlssd.c
+index f9f699f983..6daf81c94a 100644
+--- a/hw/femu/cxlssd/cxlssd.c
++++ b/hw/femu/cxlssd/cxlssd.c
+@@ -1,635 +1,602 @@
+-#include "../nvme.h"
+-#include "../bbssd/ftl.h"
+-#include "../kvm_ext.h"
+-FILE *mem_acc_log_file;
+-
+-static void cxlssd_init_ctrl_str(FemuCtrl *n)
+-{
+-    static int fsid_vcxlssd = 0;
+-    const char *vcxlssdssd_mn = "FEMU CXL-SSD Controller";
+-    const char *vcxlssdssd_sn = "vSSD";
+-
+-    nvme_set_ctrl_name(n, vcxlssdssd_mn, vcxlssdssd_sn, &fsid_vcxlssd);
+-}
+-
+-
+-static int cmp_pri(pqueue_pri_t next, pqueue_pri_t curr)
+-{
+-    return (next > curr);
+-}
+-
+-static pqueue_pri_t get_pri(void *a)
+-{
+-    return ((struct cxl_req *)a)->expire_time;
+-}
+-
+-static void set_pri(void *a, pqueue_pri_t pri)
+-{
+-    ((struct cxl_req *)a)->expire_time = pri;
+-}
+-
+-static size_t get_pos(void *a)
+-{
+-    return ((struct cxl_req *)a)->pos;
+-}
+-
+-static void set_pos(void *a, size_t pos)
+-{
+-    ((struct cxl_req *)a)->pos = pos;
+-}
+-
+-
+-/* cxlssd <= [bb <=> black-box] */
+-static void cxlssd_init(FemuCtrl *n, Error **errp)
+-{
+-    femu_kvm_log_init();
+-
+-    struct ssd *ssd = n->ssd = g_malloc0(sizeof(struct ssd));
+-    cxlssd_init_ctrl_str(n);
+-
+-    ssd->dataplane_started_ptr = &n->dataplane_started;
+-    ssd->ssdname = (char *)n->devname;
+-    
+-
+-    femu_debug("Starting FEMU in CXL-SSD mode ...\n");
+-    
+-    /* init queue */
+-    n->cxl_req = femu_ring_create(FEMU_RING_TYPE_MP_SC, FEMU_MAX_INF_REQS);
+-    if (!n->cxl_req) {
+-        femu_err("Failed to create ring (n->cxl_req) ...\n");
+-        abort();
++    #include "../nvme.h"
++    #include "../bbssd/ftl.h"
++    #include "../kvm_ext.h"
++    FILE *mem_acc_log_file;
++
++    static void cxlssd_init_ctrl_str(FemuCtrl *n)
++    {
++        static int fsid_vcxlssd = 0;
++        const char *vcxlssdssd_mn = "FEMU CXL-SSD Controller";
++        const char *vcxlssdssd_sn = "vSSD";
++
++        nvme_set_ctrl_name(n, vcxlssdssd_mn, vcxlssdssd_sn, &fsid_vcxlssd);
+     }
+-    n->cxl_resp = femu_ring_create(FEMU_RING_TYPE_MP_SC, FEMU_MAX_INF_REQS);
+-    if (!n->cxl_resp) {
+-        femu_err("Failed to create ring (n->cxl_resp) ...\n");
+-        abort();
+-    }
+-    n->cxl_pq = pqueue_init(FEMU_MAX_INF_REQS, cmp_pri, get_pri, set_pri, get_pos, set_pos);
+-    if (!n->cxl_pq) {
+-        femu_err("Failed to create pqueue (n->cxl_pq) ...\n");
+-        abort();
++
++
++    static int cmp_pri(pqueue_pri_t next, pqueue_pri_t curr)
++    {
++        return (next > curr);
+     }
+-    
+-    femu_kvm_set_user_memory_region(n);
+-    ssd_init(n);
+-
+-    mem_acc_log_file = fopen("/home/necsst/cxlssd_log.txt", "w+");
+-
+-    n->io_logfile = NULL;//fopen("/home/necsst/cxlssd_io.log", "w+");
+-    n->lognum = 0;
+-}
+-
+-static void cxlssd_exit(FemuCtrl *n)
+-{
+-
+-    femu_ring_free(n->cxl_req);
+-    femu_ring_free(n->cxl_resp);
+-
+-    pqueue_free(n->cxl_pq);
+-
+-    femu_kvm_del_user_memory_region(n);
+-    ssd_reset(n);
+-}
+-
+-static void cxlssd_flip(FemuCtrl *n, NvmeCmd *cmd)
+-{
+-    struct ssd *ssd = n->ssd;
+-    int64_t cdw10 = le64_to_cpu(cmd->cdw10);
+-
+-    switch (cdw10) {
+-    case FEMU_ENABLE_GC_DELAY:
+-        ssd->sp.enable_gc_delay = true;
+-        femu_log("%s,FEMU GC Delay Emulation [Enabled]!\n", n->devname);
+-        break;
+-    case FEMU_DISABLE_GC_DELAY:
+-        ssd->sp.enable_gc_delay = false;
+-        femu_log("%s,FEMU GC Delay Emulation [Disabled]!\n", n->devname);
+-        break;
+-    case FEMU_ENABLE_DELAY_EMU:
+-        ssd->sp.pg_rd_lat = NAND_READ_LATENCY;
+-        ssd->sp.pg_wr_lat = NAND_PROG_LATENCY;
+-        ssd->sp.blk_er_lat = NAND_ERASE_LATENCY;
+-        ssd->sp.ch_xfer_lat = 0;
+-        femu_log("%s,FEMU Delay Emulation [Enabled]!\n", n->devname);
+-        break;
+-    case FEMU_DISABLE_DELAY_EMU:
+-        ssd->sp.pg_rd_lat = 0;
+-        ssd->sp.pg_wr_lat = 0;
+-        ssd->sp.blk_er_lat = 0;
+-        ssd->sp.ch_xfer_lat = 0;
+-        femu_log("%s,FEMU Delay Emulation [Disabled]!\n", n->devname);
+-        break;
+-    case FEMU_RESET_ACCT:
+-        n->nr_tt_ios = 0;
+-        n->nr_tt_late_ios = 0;
+-        femu_log("%s,Reset tt_late_ios/tt_ios,%lu/%lu\n", n->devname,
+-                n->nr_tt_late_ios, n->nr_tt_ios);
+-        break;
+-    case FEMU_ENABLE_LOG:
+-        n->print_log = true;
+-        femu_log("%s,Log print [Enabled]!\n", n->devname);
+-        break;
+-    case FEMU_DISABLE_LOG:
+-        n->print_log = false;
+-        femu_log("%s,Log print [Disabled]!\n", n->devname);
+-        break;
+-    default:
+-        printf("FEMU:%s,Not implemented flip cmd (%lu)\n", n->devname, cdw10);
++
++    static pqueue_pri_t get_pri(void *a)
++    {
++        return ((struct cxl_req *)a)->expire_time;
+     }
+-}
+-
+-static uint16_t cxlssd_nvme_rw(FemuCtrl *n, NvmeNamespace *ns, NvmeCmd *cmd,
+-                           NvmeRequest *req)
+-{
+-    return nvme_rw(n, ns, cmd, req);
+-}
+-
+-static uint16_t cxlssd_io_cmd(FemuCtrl *n, NvmeNamespace *ns, NvmeCmd *cmd,
+-                          NvmeRequest *req)
+-{
+-    switch (cmd->opcode) {
+-    case NVME_CMD_READ:
+-    case NVME_CMD_WRITE:
+-        return cxlssd_nvme_rw(n, ns, cmd, req);
+-    default:
+-        return NVME_INVALID_OPCODE | NVME_DNR;
++
++    static void set_pri(void *a, pqueue_pri_t pri)
++    {
++        ((struct cxl_req *)a)->expire_time = pri;
+     }
+-}
+-
+-static uint16_t cxlssd_admin_cmd(FemuCtrl *n, NvmeCmd *cmd)
+-{
+-    switch (cmd->opcode) {
+-    case NVME_ADM_CMD_FEMU_FLIP:
+-        cxlssd_flip(n, cmd);
+-        return NVME_SUCCESS;
+-    default:
+-        return NVME_INVALID_OPCODE | NVME_DNR;
++
++    static size_t get_pos(void *a)
++    {
++        return ((struct cxl_req *)a)->pos;
+     }
+-}
+-
+-
+-static void wait_for_buf_update(FemuCtrl *n, uint64_t addr, int c)
+-{   
+-    int rc;
+-    uint64_t now = qemu_clock_get_ns(QEMU_CLOCK_REALTIME);
+-    lpn_t lpn = addr >> 12;
+-    
+-    struct nand_cmd cmd = (struct nand_cmd) {
+-        .type = USER_IO,
+-        .cmd = c,
+-        .stime = now,
+-    };
+-
+-    struct cxl_req creq = (struct cxl_req) {
+-        .ncmd = &cmd,
+-        .lpn = lpn,
+-        .expire_time = now,
+-    };
+-
+-    struct cxl_req *myreq = malloc(sizeof(struct cxl_req));
+-    memcpy(myreq, &creq, sizeof(struct cxl_req));
+-    // &creq;
+-    struct cxl_req *req = NULL;
+-
+-    /* send requesst*/
+-    rc = femu_ring_enqueue(n->cxl_req, (void *)&myreq, 1);
+-    if (rc != 1) {
+-        femu_err("enqueue failed, ret=%d\n", rc);
++
++    static void set_pos(void *a, size_t pos)
++    {
++        ((struct cxl_req *)a)->pos = pos;
+     }
+-    
+-    pqueue_t *pq = n->cxl_pq;
+-    struct rte_ring *rp = n->cxl_resp;
+-    bool recvd = false;
+-
+-    while (!recvd) {
+-        /* flush response Q */
+-        while (femu_ring_count(rp)) {
+-            req = NULL;
+-            rc = femu_ring_dequeue(rp, (void *)&req, 1);
+-            if (rc != 1) {
+-                femu_err("dequeue from to_poller request failed\n");
+-            }
+-            assert(req);
+-            
+-            pqueue_insert(pq, req);
++
++
++    /* cxlssd <= [bb <=> black-box] */
++    static void cxlssd_init(FemuCtrl *n, Error **errp)
++    {
++        femu_kvm_log_init();
++
++        struct ssd *ssd = n->ssd = g_malloc0(sizeof(struct ssd));
++        cxlssd_init_ctrl_str(n);
++
++        ssd->dataplane_started_ptr = &n->dataplane_started;
++        ssd->ssdname = (char *)n->devname;
++        
++
++        femu_debug("Starting FEMU in CXL-SSD mode ...\n");
++        
++        /* init queue */
++        n->cxl_req = femu_ring_create(FEMU_RING_TYPE_MP_SC, FEMU_MAX_INF_REQS);
++        if (!n->cxl_req) {
++            femu_err("Failed to create ring (n->cxl_req) ...\n");
++            abort();
++        }
++        n->cxl_resp = femu_ring_create(FEMU_RING_TYPE_MP_SC, FEMU_MAX_INF_REQS);
++        if (!n->cxl_resp) {
++            femu_err("Failed to create ring (n->cxl_resp) ...\n");
++            abort();
+         }
++        n->cxl_pq = pqueue_init(FEMU_MAX_INF_REQS, cmp_pri, get_pri, set_pri, get_pos, set_pos);
++        if (!n->cxl_pq) {
++            femu_err("Failed to create pqueue (n->cxl_pq) ...\n");
++            abort();
++        }
++        
++        femu_kvm_set_user_memory_region(n);
++        ssd_init(n);
+ 
+-        /* Wait for my response */
+-        while ((req = pqueue_peek(pq))) {
+-            if (myreq != req)
+-                continue;
++        mem_acc_log_file = fopen("/home/necsst/cxlssd_log.txt", "w+");
+ 
+-            recvd = true;
+-            pqueue_pop(pq);
+-            
+-            do {
+-                now = qemu_clock_get_ns(QEMU_CLOCK_REALTIME);  
+-            } while(now < req->expire_time);
++        n->io_logfile = NULL;//fopen("/home/necsst/cxlssd_io.log", "w+");
++        n->lognum = 0;
++    }
++
++    static void cxlssd_exit(FemuCtrl *n)
++    {
++
++        femu_ring_free(n->cxl_req);
++        femu_ring_free(n->cxl_resp);
++
++        pqueue_free(n->cxl_pq);
++
++        femu_kvm_del_user_memory_region(n);
++        ssd_reset(n);
++    }
+ 
++    static void cxlssd_flip(FemuCtrl *n, NvmeCmd *cmd)
++    {
++        struct ssd *ssd = n->ssd;
++        int64_t cdw10 = le64_to_cpu(cmd->cdw10);
++
++        switch (cdw10) {
++        case FEMU_ENABLE_GC_DELAY:
++            ssd->sp.enable_gc_delay = true;
++            femu_log("%s,FEMU GC Delay Emulation [Enabled]!\n", n->devname);
++            break;
++        case FEMU_DISABLE_GC_DELAY:
++            ssd->sp.enable_gc_delay = false;
++            femu_log("%s,FEMU GC Delay Emulation [Disabled]!\n", n->devname);
++            break;
++        case FEMU_ENABLE_DELAY_EMU:
++            ssd->sp.pg_rd_lat = NAND_READ_LATENCY;
++            ssd->sp.pg_wr_lat = NAND_PROG_LATENCY;
++            ssd->sp.blk_er_lat = NAND_ERASE_LATENCY;
++            ssd->sp.ch_xfer_lat = 0;
++            femu_log("%s,FEMU Delay Emulation [Enabled]!\n", n->devname);
++            break;
++        case FEMU_DISABLE_DELAY_EMU:
++            ssd->sp.pg_rd_lat = 0;
++            ssd->sp.pg_wr_lat = 0;
++            ssd->sp.blk_er_lat = 0;
++            ssd->sp.ch_xfer_lat = 0;
++            femu_log("%s,FEMU Delay Emulation [Disabled]!\n", n->devname);
++            break;
++        case FEMU_RESET_ACCT:
++            n->nr_tt_ios = 0;
++            n->nr_tt_late_ios = 0;
++            femu_log("%s,Reset tt_late_ios/tt_ios,%lu/%lu\n", n->devname,
++                    n->nr_tt_late_ios, n->nr_tt_ios);
++            break;
++        case FEMU_ENABLE_LOG:
++            n->print_log = true;
++            femu_log("%s,Log print [Enabled]!\n", n->devname);
++            break;
++        case FEMU_DISABLE_LOG:
++            n->print_log = false;
++            femu_log("%s,Log print [Disabled]!\n", n->devname);
+             break;
++        default:
++            printf("FEMU:%s,Not implemented flip cmd (%lu)\n", n->devname, cdw10);
++        }
++    }
++
++    static uint16_t cxlssd_nvme_rw(FemuCtrl *n, NvmeNamespace *ns, NvmeCmd *cmd,
++                            NvmeRequest *req)
++    {
++        return nvme_rw(n, ns, cmd, req);
++    }
++
++    static uint16_t cxlssd_io_cmd(FemuCtrl *n, NvmeNamespace *ns, NvmeCmd *cmd,
++                            NvmeRequest *req)
++    {
++        switch (cmd->opcode) {
++        case NVME_CMD_READ:
++        case NVME_CMD_WRITE:
++            return cxlssd_nvme_rw(n, ns, cmd, req);
++        default:
++            return NVME_INVALID_OPCODE | NVME_DNR;
+         }
+     }
+-    
+-    free(myreq);
+-}
+-
+-int cnt = 0;
+-char str[128];
+-uint64_t prev = 0;
+-static MemTxResult cxlssd_mem_read(void *opaque, uint64_t addr, uint64_t *data, unsigned size, MemTxAttrs attrs)
+-{
+-    // fflush(stdout);
+-    // fflush(stdin);
+-    // // prev = scanf("%d",&cnt);
+-    // char* ss = fgets(str, sizeof(str), stdin);
+-    // if (ss) {
+-    //     ;
+-    // }
+-
+-    FemuCtrl *n = (FemuCtrl*)opaque;
+-    assert(addr < n->mbe->size);
+-    // if (cnt < 10) {
+-    //     printf("read 0x%lx\n", addr);
+-    //     cnt++;
+-    // }
+-    
+-    // void *backend_addr = get_backend_nand_ptr(n->mbe, addr>>12, 1<<12);
+-    // void *backend_addr = n->mbe->logical_space + addr;
+-    void *backend_addr = n->mbe->buf_space + addr;
+-    // lpn_t lpn = addr >> 12;
+-
+-    memcpy(data, backend_addr, size);
+-    // printf("Read addr: 0x%lx, size: 0x%x, val: 0x%lx\n",addr, size, *data);
+-    // printf("Read addr: %lx, lpn: %lx, size: %u, src:%lx, dest:%lx\n", addr, addr>>12,size, *(uint64_t *)backend_addr, *data);
+-    // fprintf(mem_acc_log_file, "0x%lx %d\n", addr, size);
+-    // if (!femu_kvm_spte_clear_mmio_flag((uint64_t)(n->mbe->base_gpa >> 12) + lpn, lpn)) {
+-    //     // printf("Fail addr: %lx, size: %u\n", addr, size);
+-    // }
+-    // if (attrs.dual_mode_dma) {
+-    //     return MEMTX_OK;
+-    // }
+-
+-    if(!n->cxl_skip_ftl)
+-        wait_for_buf_update(n, addr, CXL_READ);
+-
+-    return MEMTX_OK;
+-}
+-
+-static MemTxResult cxlssd_mem_write(void *opaque, uint64_t addr, uint64_t data, unsigned size, MemTxAttrs attrs)
+-{
+-    
+-    // printf("Write addr: 0x%lx, size: 0x%x, val: 0x%lx\n",addr, size, data);
+-    // fflush(stdout);
+-    // fflush(stdin);
+-    // // prev = scanf("%d",&cnt);
+-    // char* ss = fgets(str, sizeof(str), stdin);
+-    // if (ss) {
+-    //     ;
+-    // }
+-    
+-    FemuCtrl *n = (FemuCtrl*)opaque;
+-    assert(addr < n->mbe->size);
+-    // printf("write 0x%lx\n", addr);
+-    // void *backend_addr = get_backend_nand_ptr(n->mbe, addr>>12, 1<<12);
+-    // void *backend_addr = n->mbe->logical_space + addr;
+-    void *backend_addr = n->mbe->buf_space + addr;
+-    // lpn_t lpn = addr >> 12;
+-
+-    // if (cnt < 10) {
+-    //     printf("write 0x%lx\n", addr);
+-    //     cnt++;
+-    // }
+-    
+-    // if (attrs.unspecified) {
+-    //     memcpy(backend_addr, (uint8_t *)data, size);
+-    // }
+-    // else {
+-    memcpy(backend_addr, &data, size);    
+-    // }
+-    
+-    // if (attrs.dual_mode_dma) {
+-    //     printf("DMA Write addr: 0x%lx, size: 0x%x\n",addr, size);
+-    //     return MEMTX_OK;
+-    // }
+-
+-    // printf("Write addr: %lx, lpn: %lx, size: %u, src:%lx, dest:%lx\n", addr, addr>>12,size, data, *(uint64_t *)backend_addr);
+-    
+-    // if (!femu_kvm_spte_clear_mmio_flag((uint64_t)(n->mbe->base_gpa >> 12) + lpn, lpn)) {
+-    //     // printf("Fail addr: %lx, size: %u\n", addr, size);
+-    // }
+-    
+-    if(!n->cxl_skip_ftl)
+-        wait_for_buf_update(n, addr, CXL_WRITE);
+-
+-    return MEMTX_OK;
+-}
+-
+-#ifdef LSA_TROLL
+-static void req_ftl(FemuCtrl *n, int c)
+-{   
+-    int rc;
+-    struct nand_cmd cmd = (struct nand_cmd) {
+-        .type = USER_IO,
+-        .cmd = c,
+-        .stime = 0,
+-    };
+-    
+-    struct cxl_req creq = (struct cxl_req) {
+-        .ncmd = &cmd,
+-        .lpn = 0,
+-        .expire_time = 0,
+-    };
+-    
+-    struct cxl_req *myreq = &creq;
+-    struct cxl_req *req = NULL;
+-
+-    /* send requesst*/
+-    rc = femu_ring_enqueue(n->cxl_req, (void *)&myreq, 1);
+-    if (rc != 1) {
+-        femu_err("enqueue failed, ret=%d\n", rc);
++
++    static uint16_t cxlssd_admin_cmd(FemuCtrl *n, NvmeCmd *cmd)
++    {
++        switch (cmd->opcode) {
++        case NVME_ADM_CMD_FEMU_FLIP:
++            cxlssd_flip(n, cmd);
++            return NVME_SUCCESS;
++        default:
++            return NVME_INVALID_OPCODE | NVME_DNR;
++        }
+     }
+ 
+-    pqueue_t *pq = n->cxl_pq;
+-    struct rte_ring *rp = n->cxl_resp;
+-    bool recvd = false;
+-
+-    while (!recvd) {
+-        /* flush response Q */
+-        while (femu_ring_count(rp)) {
+-            req = NULL;
+-            rc = femu_ring_dequeue(rp, (void *)&req, 1);
+-            if (rc != 1) {
+-                femu_err("dequeue from to_poller request failed\n");
++
++    static void wait_for_buf_update(FemuCtrl *n, uint64_t addr, int c)
++    {   
++        int rc;
++        uint64_t now = qemu_clock_get_ns(QEMU_CLOCK_REALTIME);
++        lpn_t lpn = addr >> 12;
++        
++        struct nand_cmd cmd = (struct nand_cmd) {
++            .type = USER_IO,
++            .cmd = c,
++            .stime = now,
++        };
++
++        struct cxl_req creq = (struct cxl_req) {
++            .ncmd = &cmd,
++            .lpn = lpn,
++            .expire_time = now,
++        };
++
++        struct cxl_req *myreq = malloc(sizeof(struct cxl_req));
++        memcpy(myreq, &creq, sizeof(struct cxl_req));
++        // &creq;
++        struct cxl_req *req = NULL;
++
++        /* send requesst*/
++        rc = femu_ring_enqueue(n->cxl_req, (void *)&myreq, 1);
++        if (rc != 1) {
++            femu_err("enqueue failed, ret=%d\n", rc);
++        }
++        
++        pqueue_t *pq = n->cxl_pq;
++        struct rte_ring *rp = n->cxl_resp;
++        bool recvd = false;
++
++        while (!recvd) {
++            /* flush response Q */
++            while (femu_ring_count(rp)) {
++                req = NULL;
++                rc = femu_ring_dequeue(rp, (void *)&req, 1);
++                if (rc != 1) {
++                    femu_err("dequeue from to_poller request failed\n");
++                }
++                assert(req);
++                
++                pqueue_insert(pq, req);
++            }
++
++            /* Wait for my response */
++            while ((req = pqueue_peek(pq))) {
++                if (myreq != req)
++                    continue;
++
++                recvd = true;
++                pqueue_pop(pq);
++                
++                do {
++                    now = qemu_clock_get_ns(QEMU_CLOCK_REALTIME);  
++                } while(now < req->expire_time);
++
++                break;
+             }
+-            assert(req);
+-            
+-            pqueue_insert(pq, req);
+         }
++        
++        free(myreq);
++    }
+ 
+-        /* Wait for my response */
+-        while ((req = pqueue_peek(pq))) {
+-            if (myreq != req)
+-                continue;
++    int cnt = 0;
++    char str[128];
++    uint64_t prev = 0;
++    static MemTxResult cxlssd_mem_read(void *opaque, uint64_t addr, uint64_t *data, unsigned size, MemTxAttrs attrs)
++    {
++        // fflush(stdout);
++        // fflush(stdin);
++        // // prev = scanf("%d",&cnt);
++        // char* ss = fgets(str, sizeof(str), stdin);
++        // if (ss) {
++        //     ;
++        // }
++
++        FemuCtrl *n = (FemuCtrl*)opaque;
++        assert(addr < n->mbe->size);
++        // if (cnt < 10) {
++        //     printf("read 0x%lx\n", addr);
++        //     cnt++;
++        // }
++        
++        // void *backend_addr = get_backend_nand_ptr(n->mbe, addr>>12, 1<<12);
++        // void *backend_addr = n->mbe->logical_space + addr;
++        // void *backend_addr = n->mbe->buf_space + addr;
++        // lpn_t lpn = addr >> 12;
++
++        // memcpy(data, backend_addr, size);
++        // uint64_t result = 0;
++        // for (unsigned i = 0; i < size; ++i) {
++        //     result |= ((uint64_t)((uint8_t *)backend_addr)[i]) << (i * 8);
++        // }
++        // *data = result;
++        address_space_read(&n->cxl_as, addr, attrs, data, size);
++        printf("Read addr: 0x%lx, size: 0x%x, val: 0x%lx\n",addr, size, *data);
++        // printf("Read addr: %lx, lpn: %lx, size: %u, src:%lx, dest:%lx\n", addr, addr>>12,size, *(uint64_t *)backend_addr, *data);
++        // fprintf(mem_acc_log_file, "0x%lx %d\n", addr, size);
++        // if (!femu_kvm_spte_clear_mmio_flag((uint64_t)(n->mbe->base_gpa >> 12) + lpn, lpn)) {
++        //     // printf("Fail addr: %lx, size: %u\n", addr, size);
++        // }
++        // if (attrs.dual_mode_dma) {
++        //     return MEMTX_OK;
++        // }
++
++        if(!n->cxl_skip_ftl)
++            wait_for_buf_update(n, addr, CXL_READ);
++
++        return MEMTX_OK;
++    }
++    #include <execinfo.h>
++    static void print_backtrace(void) {
++        void *bt[32];
++        int size = backtrace(bt, 32);
++        backtrace_symbols_fd(bt, size, STDERR_FILENO);
++    }
+ 
+-            recvd = true;
+-            pqueue_pop(pq);
+-            break;
++    static MemTxResult cxlssd_mem_write(void *opaque, uint64_t addr, uint64_t data, unsigned size, MemTxAttrs attrs)
++    {
++        
++        // printf("Write addr: 0x%lx, size: 0x%x, val: 0x%lx\n",addr, size, data);
++        // fflush(stdout);
++        // fflush(stdin);
++        // // prev = scanf("%d",&cnt);
++        // char* ss = fgets(str, sizeof(str), stdin);
++        // if (ss) {
++        //     ;
++        // }
++        
++        FemuCtrl *n = (FemuCtrl*)opaque;
++        assert(addr < n->mbe->size);
++        // printf("write 0x%lx\n", addr);
++        // void *backend_addr = get_backend_nand_ptr(n->mbe, addr>>12, 1<<12);
++        // void *backend_addr = n->mbe->logical_space + addr;
++        void *backend_addr = n->mbe->buf_space + addr;
++        // lpn_t lpn = addr >> 12;
++
++        // if (cnt < 10) {
++        //     printf("write 0x%lx\n", addr);
++        //     cnt++;
++        // }
++        
++        // if (attrs.unspecified) {
++        //     memcpy(backend_addr, (uint8_t *)data, size);
++        // }
++        // else {
++        // memcpy(backend_addr, &data, size);
++        // for (unsigned i = 0; i < size; ++i)
++        //     ((uint8_t *)backend_addr)[i] = (data >> (i * 8)) & 0xff;
++        // }
++        address_space_write(&n->cxl_as, addr, attrs, &data, size);
++        
++        // if (attrs.dual_mode_dma) {
++        //     printf("DMA Write addr: 0x%lx, size: 0x%x\n",addr, size);
++        //     return MEMTX_OK;
++        // }
++
++        printf("Write addr: %lx, lpn: %lx, size: %u, src:%lx, dest:%lx\n", addr, addr>>12,size, data, *(uint64_t *)backend_addr);
++        print_backtrace();  
++        
++        // if (!femu_kvm_spte_clear_mmio_flag((uint64_t)(n->mbe->base_gpa >> 12) + lpn, lpn)) {
++        //     // printf("Fail addr: %lx, size: %u\n", addr, size);
++        // }
++        
++        if(!n->cxl_skip_ftl)
++            wait_for_buf_update(n, addr, CXL_WRITE);
++
++        return MEMTX_OK;
++    }
++
++    #ifdef LSA_TROLL
++    static void req_ftl(FemuCtrl *n, int c)
++    {   
++        int rc;
++        struct nand_cmd cmd = (struct nand_cmd) {
++            .type = USER_IO,
++            .cmd = c,
++            .stime = 0,
++        };
++        
++        struct cxl_req creq = (struct cxl_req) {
++            .ncmd = &cmd,
++            .lpn = 0,
++            .expire_time = 0,
++        };
++        
++        struct cxl_req *myreq = &creq;
++        struct cxl_req *req = NULL;
++
++        /* send requesst*/
++        rc = femu_ring_enqueue(n->cxl_req, (void *)&myreq, 1);
++        if (rc != 1) {
++            femu_err("enqueue failed, ret=%d\n", rc);
++        }
++
++        pqueue_t *pq = n->cxl_pq;
++        struct rte_ring *rp = n->cxl_resp;
++        bool recvd = false;
++
++        while (!recvd) {
++            /* flush response Q */
++            while (femu_ring_count(rp)) {
++                req = NULL;
++                rc = femu_ring_dequeue(rp, (void *)&req, 1);
++                if (rc != 1) {
++                    femu_err("dequeue from to_poller request failed\n");
++                }
++                assert(req);
++                
++                pqueue_insert(pq, req);
++            }
++
++            /* Wait for my response */
++            while ((req = pqueue_peek(pq))) {
++                if (myreq != req)
++                    continue;
++
++                recvd = true;
++                pqueue_pop(pq);
++                break;
++            }
+         }
+     }
+-}
+-#endif
+-static FILE *f = NULL;
+-static uint16_t get_lsa(struct FemuCtrl *n, void *buf, uint64_t size, uint64_t offset)
+-{
+-    
+-    // printf("get lsa\n");
+-#ifdef LSA_TROLL    
+-    int rc = 0;
+-    
+-    
+-    char new_logfilename[100];
+-    uint64_t time;
+-    f = fopen("/home/necsst/cxlssd_buffer.txt", "a+");
+-    assert(f != NULL);
+-    struct buffer *buffer = &n->ssd->dram_buffer;
+-    switch(size) {
+-    case 1://print hit/miss count
+-        // req_ftl(n, BUF_PRINT_STAT);
+-        fprintf(f,"NAND size: %d MB, Buffer size: %d MB, eviction: %s, prefetch: %d, way: %d, == %ld ==\n", n->memsz, n->bufsz, buffer->policy==LIFO? "LIFO":"FIFO", buffer->degree, 1 << buffer->way, offset);
+-        fprintf(f,"Entry cnt: %ld/%ld\n", buffer->entry_cnt, buffer->size);
+-        fprintf(f,"Buffer read: %lu hit/ %lu miss\n", buffer->read_hit, buffer->read_miss);
+-        fprintf(f,"Buffer write: %lu hit/ %lu miss\n", buffer->write_hit, buffer->write_miss);
+-        buffer->ins_cnt = buffer->evict_cnt = buffer->read_hit = buffer->read_miss = buffer->write_hit = buffer->write_miss = 0;
+-
+-        break;
+-    case 2://flush buffer
+-        printf("flush buffer ");
+-        req_ftl(n, BUF_CLEAR);
+-        // printf("done\n");
+-        break;
+-    case 3: //set way
+-        // fprintf(f,"====================\n\n");
+-        buffer_clear(buffer);
+-        buffer_destroy_set(buffer);
+-
+-        buffer->way = offset;
+-        buffer_init_set(buffer);
+-        fprintf(f,"[Set way] eviction: %s, prefetch: %d, way: %d\n", buffer->policy==LIFO? "LIFO":"FIFO", buffer->degree, 1 << buffer->way);
+-
+-        break;
+-    case 5: //set prefetch degree
+-        // req_ftl(n, INC_PREFETCH_DEGREE);
+-        // buffer_clear(buffer);
+-        buffer->degree = offset;
+-        fprintf(f,"[Set degree] eviction: %s, prefetch: %d, way: %d\n", buffer->policy==LIFO? "LIFO":"FIFO", buffer->degree, 1 << buffer->way);
+-        break;
+-    case 7: //set policy
+-        buffer->policy = offset;
+-        switch (buffer->policy)
+-        {
+-        case LIFO:
+-            buffer->ops.evict_victim = lifo_evict_victim;
+-            buffer->ops.insert_entry = lifo_insert_entry;
+-            break;
+-        case FIFO:
+-            buffer->ops.evict_victim = fifo_evict_victim;
+-            buffer->ops.insert_entry = fifo_insert_entry;
++    #endif
++    static FILE *f = NULL;
++    static uint16_t get_lsa(struct FemuCtrl *n, void *buf, uint64_t size, uint64_t offset)
++    {
++        // printf("get lsa\n");
++    #ifdef LSA_TROLL    
++        int rc = 0;
++        
++        char new_logfilename[100];
++        uint64_t time;
++        f = fopen("/home/necsst/cxlssd_buffer.txt", "a+");
++        assert(f != NULL);
++        struct buffer *buffer = &n->ssd->dram_buffer;
++        switch(size) {
++        case 1://print hit/miss count
++            // req_ftl(n, BUF_PRINT_STAT);
++            fprintf(f,"NAND size: %d MB, Buffer size: %d MB, eviction: %s, prefetch: %d, way: %d, == %ld ==\n", n->memsz, n->bufsz, buffer->policy==LIFO? "LIFO":"FIFO", buffer->degree, 1 << buffer->way, offset);
++            fprintf(f,"Entry cnt: %ld/%ld\n", buffer->entry_cnt, buffer->size);
++            fprintf(f,"Buffer read: %lu hit/ %lu miss\n", buffer->read_hit, buffer->read_miss);
++            fprintf(f,"Buffer write: %lu hit/ %lu miss\n", buffer->write_hit, buffer->write_miss);
++            buffer->ins_cnt = buffer->evict_cnt = buffer->read_hit = buffer->read_miss = buffer->write_hit = buffer->write_miss = 0;
++
+             break;
+-        default:
+-            femu_err("unknown replacement policy\n");
+-            assert(0);
++        case 2://flush buffer
++            printf("flush buffer ");
++            req_ftl(n, BUF_CLEAR);
++            // printf("done\n");
+             break;
+-        } 
++        case 3: //set way
++            // fprintf(f,"====================\n\n");
++            buffer_clear(buffer);
++            buffer_destroy_set(buffer);
++
++            buffer->way = offset;
++            buffer_init_set(buffer);
++            fprintf(f,"[Set way] eviction: %s, prefetch: %d, way: %d\n", buffer->policy==LIFO? "LIFO":"FIFO", buffer->degree, 1 << buffer->way);
+ 
+-        fprintf(f,"[Set policy] eviction: %s, prefetch: %d, way: %d\n", buffer->policy==LIFO? "LIFO":"FIFO", buffer->degree, 1 << buffer->way);
++            break;
++        case 5: //set prefetch degree
++            // req_ftl(n, INC_PREFETCH_DEGREE);
++            // buffer_clear(buffer);
++            buffer->degree = offset;
++            fprintf(f,"[Set degree] eviction: %s, prefetch: %d, way: %d\n", buffer->policy==LIFO? "LIFO":"FIFO", buffer->degree, 1 << buffer->way);
++            break;
++        case 7: //set policy
++            buffer->policy = offset;
++            switch (buffer->policy)
++            {
++            case LIFO:
++                buffer->ops.evict_victim = lifo_evict_victim;
++                buffer->ops.insert_entry = lifo_insert_entry;
++                break;
++            case FIFO:
++                buffer->ops.evict_victim = fifo_evict_victim;
++                buffer->ops.insert_entry = fifo_insert_entry;
++                break;
++            default:
++                femu_err("unknown replacement policy\n");
++                assert(0);
++                break;
++            } 
++
++            fprintf(f,"[Set policy] eviction: %s, prefetch: %d, way: %d\n", buffer->policy==LIFO? "LIFO":"FIFO", buffer->degree, 1 << buffer->way);
++            
++            // printf("sys_mr_addr: %lx, raddr: %lx\n", (uint64_t)memory_region_get_ram_ptr(get_system_memory()), (uint64_t)memory_region_get_ram_addr(get_system_memory()));
++            break;
++        case 9:
++            // femu_kvm_spte_clear_mmio_flag(0x1200, (uint64_t)(n->mbe->logical_space) + (0x1200<<12));
++            printf("turn on ioctl flag set\n");
++            req_ftl(n, BUF_CLEAR);
++            ioctl_flag = true;
++            break;
++        case 11:
++            // femu_kvm_spte_set_mmio_flag(0x1200, (uint64_t)(n->mbe->logical_space) + (0x1200<<12));
++            printf("turn off ioctl flag set\n");
++            req_ftl(n, BUF_CLEAR);
++            ioctl_flag = false;
++            break;
+         
+-        // printf("sys_mr_addr: %lx, raddr: %lx\n", (uint64_t)memory_region_get_ram_ptr(get_system_memory()), (uint64_t)memory_region_get_ram_addr(get_system_memory()));
+-        break;
+-    case 9:
+-        // femu_kvm_spte_clear_mmio_flag(0x1200, (uint64_t)(n->mbe->logical_space) + (0x1200<<12));
+-        printf("turn on ioctl flag set\n");
+-        req_ftl(n, BUF_CLEAR);
+-        ioctl_flag = true;
+-        break;
+-    case 11:
+-        // femu_kvm_spte_set_mmio_flag(0x1200, (uint64_t)(n->mbe->logical_space) + (0x1200<<12));
+-        printf("turn off ioctl flag set\n");
+-        req_ftl(n, BUF_CLEAR);
+-        ioctl_flag = false;
+-        break;
+-    
+-    case 13:
+-        n->lognum++;
+-        sprintf(new_logfilename, "/home/necsst/log/cxlssd_log%d", n->lognum);
+-        n->io_logfile = fopen(new_logfilename, "w+");
+-        break;
+-    case 15:
+-        if (n->io_logfile) {
+-            fclose(n->io_logfile);
+-            n->io_logfile = NULL;
++        case 13:
++            n->lognum++;
++            sprintf(new_logfilename, "/home/necsst/log/cxlssd_log%d", n->lognum);
++            n->io_logfile = fopen(new_logfilename, "w+");
++            break;
++        case 15:
++            if (n->io_logfile) {
++                fclose(n->io_logfile);
++                n->io_logfile = NULL;
++            }
++            break;
++        case 17:
++            test_spte_modify();
++            break;
++
++
++        // case 99:
++        // case 97:
++        // case 95:
++        // case 93:
++        case 91:
++            rc = system("echo > /sys/kernel/tracing/trace");
++            rc = system("echo 1 > /sys/kernel/tracing/tracing_on");
++            printf("Turn on ftrace\n");
++            break;
++        case 90:
++            printf("\nSET direct flags. ratio: %ld\n", offset);
++            // req_ftl(n, BUF_CLEAR);
++            // buffer->r_cxl = size%10;
++            time = qemu_clock_get_ns(QEMU_CLOCK_REALTIME);
++            femu_kvm_set_spte_by_cxl_mmio_rate(n, offset);
++            time = qemu_clock_get_ns(QEMU_CLOCK_REALTIME) - time;
++            printf("SET direct flags. ratio: %ld, time: %ld\n", offset, time);
++            break;
++        // case 89:
++        // case 87:
++        // case 85:
++        // case 83:
++        case 81:
++            // system("echo > /sys/kernel/tracing/trace");
++            rc = system("echo 0 > /sys/kernel/tracing/tracing_on");
++            char cmd[128];
++            uint64_t nt = offset >> 16;
++            int hr = (offset <<16) >> 16;
++            printf("Turn off ftrace %ld %d %d offset: 0x%lx\n", nt, hr, rc, offset);
++            sprintf(cmd, "cat /sys/kernel/tracing/trace >> ~/ftrace_result_%ld_%d", nt, hr);
++            rc = system(cmd);
++            break;
++        case 80:
++            printf("\nRESET mmio flags. ratio: %ld:%ld\n", size%10, 10-size%10);
++            // req_ftl(n, BUF_CLEAR);
++            time = qemu_clock_get_ns(QEMU_CLOCK_REALTIME);
++            femu_kvm_reset_spte_by_cxl_mmio_rate(n, size%10);
++            time = qemu_clock_get_ns(QEMU_CLOCK_REALTIME) - time;
++            printf("RESET mmio flags. ratio: %ld:%ld, time: %ld\n", size%10, 10-size%10, time);
++            break;
+         }
+-        break;
+-    case 17:
+-        test_spte_modify();
+-        break;
+-
+-
+-    // case 99:
+-    // case 97:
+-    // case 95:
+-    // case 93:
+-    case 91:
+-        rc = system("echo > /sys/kernel/tracing/trace");
+-        rc = system("echo 1 > /sys/kernel/tracing/tracing_on");
+-        printf("Turn on ftrace\n");
+-        break;
+-    case 90:
+-        printf("\nSET direct flags. ratio: %ld\n", offset);
+-        // req_ftl(n, BUF_CLEAR);
+-        // buffer->r_cxl = size%10;
+-        time = qemu_clock_get_ns(QEMU_CLOCK_REALTIME);
+-        femu_kvm_set_spte_by_cxl_mmio_rate(n, offset);
+-        time = qemu_clock_get_ns(QEMU_CLOCK_REALTIME) - time;
+-        printf("SET direct flags. ratio: %ld, time: %ld\n", offset, time);
+-        break;
+-    // case 89:
+-    // case 87:
+-    // case 85:
+-    // case 83:
+-    case 81:
+-        // system("echo > /sys/kernel/tracing/trace");
+-        rc = system("echo 0 > /sys/kernel/tracing/tracing_on");
+-        char cmd[128];
+-        uint64_t nt = offset >> 16;
+-        int hr = (offset <<16) >> 16;
+-        printf("Turn off ftrace %ld %d %d offset: 0x%lx\n", nt, hr, rc, offset);
+-        sprintf(cmd, "cat /sys/kernel/tracing/trace >> ~/ftrace_result_%ld_%d", nt, hr);
+-        rc = system(cmd);
+-        break;
+-    case 80:
+-        printf("\nRESET mmio flags. ratio: %ld:%ld\n", size%10, 10-size%10);
+-        // req_ftl(n, BUF_CLEAR);
+-        time = qemu_clock_get_ns(QEMU_CLOCK_REALTIME);
+-        femu_kvm_reset_spte_by_cxl_mmio_rate(n, size%10);
+-        time = qemu_clock_get_ns(QEMU_CLOCK_REALTIME) - time;
+-        printf("RESET mmio flags. ratio: %ld:%ld, time: %ld\n", size%10, 10-size%10, time);
+-        break;
++        fclose(f);
++    #endif
++        // printf("get lsa done\n");
++
++        void *backend_buf = n->mbe->buf_space + offset;
++        memcpy(buf, backend_buf, size);
++        return size;
++    }
++    static uint16_t set_lsa(struct FemuCtrl *n, const void *buf, uint64_t size, uint64_t offset) {
++        // printf("set_lsa: offset:%lx, buf:%lx, size:%lx\n", offset, (uint64_t)buf, size);
++
++        // if (size == 13) {
++        //     char *data = (char *)buf;
++        //     int hitrate = atoi(data);
++        //     printf("\nSET direct flags. ratio: %d\n", hitrate);
++        //     femu_kvm_set_spte_by_cxl_mmio_rate(n, hitrate);
++        // }
++
++        void *backend_buf = n->mbe->buf_space + offset;
++        memcpy(backend_buf, buf, size);
++        return size;
+     }
+-    fclose(f);
+-#endif
+-    // printf("get lsa done\n");
+-
+-    void *backend_buf = n->mbe->buf_space + offset;
+-    memcpy(buf, backend_buf, size);
+-    return size;
+-}
+-static uint16_t set_lsa(struct FemuCtrl *n, const void *buf, uint64_t size, uint64_t offset) {
+-    // printf("set_lsa: offset:%lx, buf:%lx, size:%lx\n", offset, (uint64_t)buf, size);
+-
+-    // if (size == 13) {
+-    //     char *data = (char *)buf;
+-    //     int hitrate = atoi(data);
+-    //     printf("\nSET direct flags. ratio: %d\n", hitrate);
+-    //     femu_kvm_set_spte_by_cxl_mmio_rate(n, hitrate);
+-    // }
+-
+-    void *backend_buf = n->mbe->buf_space + offset;
+-    memcpy(backend_buf, buf, size);
+-    return size;
+-}
+-
+-int nvme_register_cxlssd(FemuCtrl *n)
+-{
+-    // int devmemfd;
+-    // void *ptr;
+-    /* NVME ops */
+-    // Error *errp;
+-    n->ext_ops = (FemuExtCtrlOps) {
+-        .state            = NULL,
+-        .init             = cxlssd_init,
+-        .exit             = cxlssd_exit,
+-        .rw_check_req     = NULL,
+-        .admin_cmd        = cxlssd_admin_cmd,
+-        .io_cmd           = cxlssd_io_cmd,
+-        .get_log          = NULL,
+-    };
+-
+-    /* CXL support */
+-    SsdDramBackend *mbe = n->mbe;
+-    // devmemfd = open("/dev/mem", O_RDWR);
+-    // if (devmemfd < 0) {
+-    //     femu_err("%s,Open [%s] failed, not able to allocate FEMU Backend DRAM using huagepages", __func__, "/dev/mem");
+-    //     abort();
+-    // }
+-
+-    // ptr = mmap(NULL, mbe->size, PROTECTION, FLAGS, devmemfd, DEVMEM_OFFSET);
+-    // if (ptr == MAP_FAILED || ptr == NULL) {
+-    //     femu_err("DRAM backend [%s],mmap [%s] failed", __func__, "/dev/mem");
+-    //     abort();
+-    // }
+-    // printf("[%s] backend address: 0x%lx\n",__func__, (uint64_t)ptr);
+-
+-    memory_region_init_ram_ptr_dual_mode(&n->cxl_mr, OBJECT(n), "femu-cxlssd", mbe->size, mbe->logical_space);
+-    // memory_region_init_ram_ptr_nomigrate(&n->cxl_mr, OBJECT(n), "femu-cxlssd", mbe->size, mbe->logical_space);
+-    // memory_region_init_ram_from_file(&n->cxl_mr, OBJECT(n), "femu-cxlssd", mbe->size, 0, RAM_SHARED, "/dev/mem/", DEVMEM_OFFSET, false, &errp);
+-    // memory_region_add_subregion_overlap(get_system_memory(), n->base_gpa, &n->cxl_mr, 99);
+-    address_space_init(&n->cxl_as, &n->cxl_mr, "cxlssd address space");
+-    // memory_region_init_ram_ptr(&n->cxl_mr, OBJECT(n), "femu-cxlssd", mbe->buf_size, mbe->buf_space);
+-
+-    n->cxl_mem_ops = (FemuCXLOps) {
+-        .get_lsa          = get_lsa,
+-        .set_lsa          = set_lsa,
+-        .read             = cxlssd_mem_read,
+-        .write            = cxlssd_mem_write
+-    };
+-    return 0;
+-}
+-
+-// SET direct flags. ratio: 0, time: 23317375016                                                                                                  │[  +0.000723] i: 33, npgs: 0x400, off: 0x8400
+-// RESET mmio flags. ratio: 0:10, time: 7239852229                                                                                                │[  +0.000778] i: 38, npgs: 0x400, off: 0x9800
+-// SET direct flags. ratio: 0, time: 23381981787                                                                                                  │[  +0.000714] i: 44, npgs: 0x400, off: 0xb000
+-// RESET mmio flags. ratio: 0:10, time: 7353439177 
+-
+-
+-// SET direct flags. ratio: 0, time: 107828996                                                                                                    │[  +0.000682] i: 33, npgs: 0x400, off: 0x8400
+-// RESET mmio flags. ratio: 0:10, time: 101100509                                                                                                 │[  +0.000691] i: 38, npgs: 0x400, off: 0x9800
+-// SET direct flags. ratio: 0, time: 100036399                                                                                                    │[  +0.000719] i: 44, npgs: 0x400, off: 0xb000
+-// RESET mmio flags. ratio: 0:10, time: 101017624 
+-
+-// SET direct flags. ratio: 0, time: 9336281708  
+-/*
+-
+-0x0 |  ffff77e9fa1e0ff3.894855fa1e0ff3ff.758948f87d8948e5.458b48e8558948f0.
+-0x20 |  e8458b48108b48f0.8b48c22948008b48.458b48108948f845.458b4808508b48f0.
+-0x40 |  c2294808408b48e8.08508948f8458b48.08408b48f8458b48.458b482979c08548.
+-0x60 |  ff508d48008b48f8.48108948f8458b48.4808408b48f8458b.8b48000f4240908d.
+-0x80 |  5d9008508948f845.894855fa1e0ff3c3.7d894830ec8348e5.8b4864d0758948d8.
+-0xa0 |  8948000000282504.d8558b48c031f845.e0458d48d04d8b48.46e8c78948ce8948.
+-0xc0 |  66e0458b48ffffff.c82a0f48f2c9ef0f.c0ef0f66e8458b48.100ff2c02a0f48f2.
+-0xe0 |  5e0ff200002ebb15.0f4866c1580ff2c2.4864f8558b48c07e.740000002825142b.
+-
+-root@ubuntu:~/femu-cxl-test# numactl -m 1 ./physdump ~/hemem/microbenchmarks/gups-pebs 0x1400
+-off: 0x1400dump addr: [0x1400 - 0x1500]
+-0x0 |  ffff77e9fa1e0ff3.894855fa1e0ff3ff.758948f87d8948e5.458b48e8558948f0.
+-0x20 |  e8458b48108b48f0.8b48c22948008b48.458b48108948f845.458b4808508b48f0.
+-0x40 |  c2294808408b48e8.08508948f8458b48.08408b48f8458b48.458b482979c08548.
+-0x60 |  ff508d48008b48f8.48108948f8458b48.4808408b48f8458b.8b48000f4240908d.
+-0x80 |  5d9008508948f845.894855fa1e0ff3c3.7d894830ec8348e5.8b4864d0758948d8.
+-0xa0 |  8948000000282504.d8558b48c031f845.e0458d48d04d8b48.46e8c78948ce8948.
+-0xc0 |  66e0458b48ffffff.c82a0f48f2c9ef0f.c0ef0f66e8458b48.100ff2c02a0f48f2.
+-0xe0 |  5e0ff200002ebb15.0f4866c1580ff2c2.4864f8558b48c07e.740000002825142b.
+-root@ubuntu:~/femu-cxl-test#
+-
+-
+-0x0 |  ffff77e9fa1e0ff3.894855fa1e0ff3ff.758948f87d8948e5.458b48e8558948f0.
+-0x20 |  e8458b48108b48f0.8b48c22948008b48.458b48108948f845.458b4808508b48f0.
+-0x40 |  c2294808408b48e8.08508948f8458b48.08408b48f8458b48.458b482979c08548.
+-0x60 |  ff508d48008b48f8.48108948f8458b48.4808408b48f8458b.8b48000f4240908d.
+-0x80 |  5d9008508948f845.894855fa1e0ff3c3.7d894830ec8348e5.8b4864d0758948d8.
+-0xa0 |  8948000000282504.d8558b48c031f845.e0458d48d04d8b48.46e8c78948ce8948.
+-0xc0 |  66e0458b48ffffff.c82a0f48f2c9ef0f.c0ef0f66e8458b48.100ff2c02a0f48f2.
+-0xe0 |  5e0ff200002ebb15.0f4866c1580ff2c2.4864f8558b48c07e.740000002825142b.
+-
+-5d9008508948f845
+-5d9008508948f845
+-*/
+\ No newline at end of file
++
++    int nvme_register_cxlssd(FemuCtrl *n)
++    {
++        // int devmemfd;
++        // void *ptr;
++        /* NVME ops */
++        // Error *errp;
++        n->ext_ops = (FemuExtCtrlOps) {
++            .state            = NULL,
++            .init             = cxlssd_init,
++            .exit             = cxlssd_exit,
++            .rw_check_req     = NULL,
++            .admin_cmd        = cxlssd_admin_cmd,
++            .io_cmd           = cxlssd_io_cmd,
++            .get_log          = NULL,
++        };
++
++        /* CXL support */
++        SsdDramBackend *mbe = n->mbe;
++        // devmemfd = open("/dev/mem", O_RDWR);
++        // if (devmemfd < 0) {
++        //     femu_err("%s,Open [%s] failed, not able to allocate FEMU Backend DRAM using huagepages", __func__, "/dev/mem");
++        //     abort();
++        // }
++
++        // ptr = mmap(NULL, mbe->size, PROTECTION, FLAGS, devmemfd, DEVMEM_OFFSET);
++        // if (ptr == MAP_FAILED || ptr == NULL) {
++        //     femu_err("DRAM backend [%s],mmap [%s] failed", __func__, "/dev/mem");
++        //     abort();
++        // }
++        // printf("[%s] backend address: 0x%lx\n",__func__, (uint64_t)ptr);
++
++        // memory_region_init_ram_ptr_dual_mode(&n->cxl_mr, OBJECT(n), "femu-cxlssd", mbe->size, mbe->logical_space);
++        memory_region_init_ram_ptr(&n->cxl_mr, OBJECT(n), "femu-cxlssd", mbe->size, mbe->logical_space);
++        // memory_region_init_ram_ptr_nomigrate(&n->cxl_mr, OBJECT(n), "femu-cxlssd", mbe->size, mbe->logical_space);
++        // memory_region_init_ram_from_file(&n->cxl_mr, OBJECT(n), "femu-cxlssd", mbe->size, 0, RAM_SHARED, "/dev/mem/", DEVMEM_OFFSET, false, &errp);
++        // memory_region_add_subregion_overlap(get_system_memory(), n->base_gpa, &n->cxl_mr, 99);
++        address_space_init(&n->cxl_as, &n->cxl_mr, "cxlssd address space");
++        // memory_region_init_ram_ptr(&n->cxl_mr, OBJECT(n), "femu-cxlssd", mbe->buf_size, mbe->buf_space);
++
++        n->cxl_mem_ops = (FemuCXLOps) {
++            .get_lsa          = get_lsa,
++            .set_lsa          = set_lsa,
++            .read             = cxlssd_mem_read,
++            .write            = cxlssd_mem_write
++        };
++        return 0;
++    }
++
+diff --git a/hw/femu/kvm_ext.c b/hw/femu/kvm_ext.c
+index 0e54b36815..e3d8d013db 100644
+--- a/hw/femu/kvm_ext.c
++++ b/hw/femu/kvm_ext.c
+@@ -91,7 +91,7 @@ static int kvm_set_spte_flag(uint64_t gfn, lpn_t lpn, uint64_t flag)
+     now__ = qemu_clock_get_ns(QEMU_CLOCK_REALTIME);
+     r = kvm_vcpu_ioctl(cpu, KVM_SET_SPTE_FLAG, &data);
+     now__ = qemu_clock_get_ns(QEMU_CLOCK_REALTIME) - now__;
+-    fprintf(kvm_ioctl_log_file, "%ld ",now__);
++    // fprintf(kvm_ioctl_log_file, "%ld ",now__);
+     
+     // if (r != 0) printf("[%lx,%d] ", gfn, r);
+     // if (r != 0)
+@@ -163,10 +163,10 @@ static inline u64 make_direct_spte(u64 lpn)
+ int femu_kvm_spte_set_mmio_flag(uint64_t gfn, lpn_t lpn)
+ {
+     u64 *sptep = dualslot_get_sptep(lpn);
+-    // u64 prev = *sptep;
++    u64 prev = *sptep;
+     *sptep = make_mmio_spte(gfn);
+-    // printf("%s, [gfn:0x%lx, lpn:0x%lx] change from 0x%llx to 0x%llx\n", __func__,gfn,lpn, prev, *sptep);
+-    return 0;
++    printf("%s, [gfn:0x%lx, lpn:0x%lx] change from 0x%llx to 0x%llx\n", __func__, gfn, lpn, prev, *sptep);
++    // return 0;
+     /* Not reached */
+     return kvm_set_spte_flag(gfn, lpn, 0x576);
+ }
+@@ -174,10 +174,10 @@ int femu_kvm_spte_set_mmio_flag(uint64_t gfn, lpn_t lpn)
+ int femu_kvm_spte_clear_mmio_flag(uint64_t gfn, lpn_t lpn)
+ {
+     u64 *sptep = dualslot_get_sptep(lpn);
+-    // u64 prev = *sptep;
++    u64 prev = *sptep;
+     *sptep = make_direct_spte(lpn);
+-    // printf("%s, [gfn:0x%lx, lpn:0x%lx] change from 0x%llx to 0x%llx\n", __func__,gfn,lpn, prev, *sptep);
+-    return 0;
++    printf("%s, [gfn:0x%lx, lpn:0x%lx] change from 0x%llx to 0x%llx\n", __func__, gfn, lpn, prev, *sptep);
++    // return 0;
+     /* Not reached */
+     return kvm_set_spte_flag(gfn, lpn, 0x1);
+ }
+diff --git a/hw/i386/pc.c b/hw/i386/pc.c
+index 26172faac0..d86495d9fa 100644
+--- a/hw/i386/pc.c
++++ b/hw/i386/pc.c
+@@ -1086,10 +1086,10 @@ void pc_memory_init(PCMachineState *pcms,
+                 printf("CFMWS GPA:%lx size:0x%lx\n",(uint64_t)fw->base, fw->size);
+                 femu_set_base_gpa(fw->base);
+ 
+-                // memory_region_init_io_dual_mode(&fw->mr, OBJECT(machine), &cfmws_ops, fw, "cxl-fixed-memory-region", fw->size);
+-                memory_region_init_io(&fw->mr, OBJECT(machine), &cfmws_ops, fw, "cxl-fixed-memory-region", fw->size);
++                memory_region_init_io_dual_mode(&fw->mr, OBJECT(machine), &cfmws_ops, fw, "cxl-fixed-memory-region", fw->size);
++                // memory_region_init_io(&fw->mr, OBJECT(machine), &cfmws_ops, fw, "cxl-fixed-memory-region", fw->size);
+                 // mr->dual_mode = true;
+-                // memory_region_init_ram_ptr(&fw->mr, OBJECT(machine), "cxl-fixed-memory-region", fw->size, get_cxl_ptr());
++                // memory_region_init_ram_ptr_dual_mode(&fw->mr, OBJECT(machine), "cxl-fixed-memory-region", fw->size, alloc_backend_memory("/dev/mem", 0xae80000000, fw->size));
+                 memory_region_add_subregion(system_memory, fw->base, &fw->mr);
+                 cxl_fmw_base += fw->size;
+                 cxl_resv_end = cxl_fmw_base;
+diff --git a/hw/virtio/virtio.c b/hw/virtio/virtio.c
+index 2ea13273ef..758c9268fc 100644
+--- a/hw/virtio/virtio.c
++++ b/hw/virtio/virtio.c
+@@ -1397,7 +1397,7 @@ static bool virtqueue_map_desc(VirtIODevice *vdev, unsigned int *p_num_sg,
+                                               MEMTXATTRS_UNSPECIFIED);
+ 
+         if (pa >= 0x2290000000 && pa < 0x3a8fffffff+1) {
+-            // printf("[%d] virtio_map_desc: pa:0x%lx, size:0x%lx len:0x%lx, is_write:%d, iov_base: 0x%lx\n",cnt, (uint64_t)pa, (uint64_t)sz, (uint64_t)len, is_write, (uint64_t)iov[num_sg].iov_base);
++            printf("[%d] virtio_map_desc: pa:0x%lx, size:0x%lx len:0x%lx, is_write:%d, iov_base: 0x%lx\n",cnt, (uint64_t)pa, (uint64_t)sz, (uint64_t)len, is_write, (uint64_t)iov[num_sg].iov_base);
+             // iov[num_sg].iov_len = sz;
+             // addr[num_sg] = pa;
+     
+diff --git a/include/hw/femu/femu.h b/include/hw/femu/femu.h
+index 52bc693402..0c2b789473 100644
+--- a/include/hw/femu/femu.h
++++ b/include/hw/femu/femu.h
+@@ -1560,6 +1560,7 @@ static inline uint16_t nvme_check_mdts(FemuCtrl *n, size_t len)
+ void femu_set_base_gpa(hwaddr base_gpa);
+ void *femu_get_backend_ptr(off_t offset);
+ void *femu_get_backend_ptr_from_gpa(hwaddr addr);
++void *alloc_backend_memory(const char *devname, uint64_t offset, uint64_t size);
+ 
+ #define MN_MAX_LEN (64)
+ #define ID_MAX_LEN (4)
+diff --git a/softmmu/physmem.c b/softmmu/physmem.c
+index 31a95cf015..da9d6e864c 100644
+--- a/softmmu/physmem.c
++++ b/softmmu/physmem.c
+@@ -2657,7 +2657,7 @@ static MemTxResult flatview_write_continue(FlatView *fv, hwaddr addr,
+         if (!flatview_access_allowed(mr, attrs, addr1, l)) {
+             result |= MEMTX_ACCESS_ERROR;
+             /* Keep going. */
+-        } else if (!memory_access_is_direct(mr, true)) {
++        } else if (!memory_access_is_direct(mr, true) || mr->dual_mode) {
+             release_lock |= prepare_mmio_access(mr);
+             l = memory_access_size(mr, l, addr1);
+             /* XXX: could force current_cpu to NULL to avoid
+@@ -2728,7 +2728,7 @@ MemTxResult flatview_read_continue(FlatView *fv, hwaddr addr,
+         if (!flatview_access_allowed(mr, attrs, addr1, l)) {
+             result |= MEMTX_ACCESS_ERROR;
+             /* Keep going. */
+-        } else if (!memory_access_is_direct(mr, false)) {
++        } else if (!memory_access_is_direct(mr, false) || mr->dual_mode) {
+             
+             // if (mr->dual_mode) {
+             //     l = MIN(len, TARGET_PAGE_SIZE);
+@@ -3136,6 +3136,43 @@ flatview_extend_translation(FlatView *fv, hwaddr addr,
+ //     return ptr+offset;
+ // }
+ 
++
++static uint64_t get_phys_addr(void *vaddr) {
++    uint64_t virt_pfn = (uint64_t)vaddr >> 12; // Virtual page number
++    uint64_t offset = virt_pfn * sizeof(uint64_t);
++    uint64_t entry;
++
++    int fd = open("/proc/self/pagemap", O_RDONLY);
++    if (fd < 0) {
++        perror("open pagemap");
++        return 0;
++    }
++
++    if (lseek(fd, offset, SEEK_SET) == (off_t)-1) {
++        perror("lseek");
++        close(fd);
++        return 0;
++    }
++
++    if (read(fd, &entry, sizeof(entry)) != sizeof(entry)) {
++        perror("read");
++        close(fd);
++        return 0;
++    }
++
++    close(fd);
++
++    if (!(entry & (1ULL << 63))) {
++        // Page not present
++        fprintf(stderr, "Page not present\n");
++        return 0;
++    }
++
++    uint64_t pfn = entry & ((1ULL << 55) - 1); // Bits 0-54
++    uint64_t phys_addr = (pfn << 12) | ((uintptr_t)vaddr & 0xFFF);
++    return phys_addr;
++}
++
+ void *address_space_map(AddressSpace *as,
+                         hwaddr addr,
+                         hwaddr *plen,
+@@ -3156,7 +3193,7 @@ void *address_space_map(AddressSpace *as,
+     RCU_READ_LOCK_GUARD();
+     fv = address_space_to_flatview(as);
+     mr = flatview_translate(fv, addr, &xlat, &l, is_write, attrs);
+-// DEBUG(len, "%s %s iommu:%s addr:0x%lx, len:0x%lx l:0x%lx\n", __func__, memory_region_name(mr), !memory_region_get_iommu(mr)?"NULL":memory_region_get_iommu(mr)->parent_obj.name, addr, len, l);
++    // printf("%s mr: %s addr:0x%lx, len:0x%lx l:0x%lx\n", __func__, memory_region_name(mr), addr, len, l);
+     // if (mr->dual_mode) {
+     // // // if (!memory_access_is_direct(mr, is_write)) {
+     //     BounceBuffer *bb = NULL;
+@@ -3226,38 +3263,38 @@ void *address_space_map(AddressSpace *as,
+ #include "hw/femu/femu.h"
+     if (mr->dual_mode) {
+         ram_addr_t offset;
+-        uint64_t dummy;
+-        FemuCtrl * femu;
++        // uint64_t dummy;
++        // FemuCtrl * femu;
+         void *ptr = femu_get_backend_ptr_from_gpa(addr);
++        // void *ptr2;
+         mr = memory_region_from_host(ptr, &offset);
+-
+-        femu = (FemuCtrl *)mr->owner;
++        // ptr2 = qemu_ram_ptr_length(mr->ram_block, xlat, plen, true);
++        // femu = (FemuCtrl *)mr->owner;
+         
+-        printf("%s addr: 0x%lx, ,offset: 0x%lx, mr:%s\n",__func__, addr, offset, mr->name);
+-        memory_region_ref(mr);
+-        while (l > 0) {
+-            uint64_t size = MIN(l, TARGET_PAGE_SIZE);
+-
+-            femu->cxl_mem_ops.read((void *)femu, offset, &dummy, sizeof(dummy), MEMTXATTRS_UNSPECIFIED);
+-            offset += size;
+-            l -= size;
+-        }
+-        // femu->cxl_mem_ops.read((void *)femu, offset, &dummy, sizeof(dummy), MEMTXATTRS_UNSPECIFIED);
+-        return ptr;
+-    }
+-
+-    if (!memory_access_is_direct(mr, is_write)) {
++        printf("%s addr: 0x%lx, offset: 0x%lx, mr:%s, ptr: %p, pa: 0x%lx, plen: 0x%lx\n",__func__, addr, offset, mr->name, ptr, get_phys_addr(ptr), *plen);
++        // memory_region_ref(mr);   
++        // while (l > 0) {
++        //     uint64_t size = MIN(l, TARGET_PAGE_SIZE);
++
++        //     femu->cxl_mem_ops.read((void *)femu, offset, &dummy, sizeof(dummy), MEMTXATTRS_UNSPECIFIED);
++        //     offset += size;
++        //     l -= size;
++        // }
++        // // femu->cxl_mem_ops.read((void *)femu, offset, &dummy, sizeof(dummy), MEMTXATTRS_UNSPECIFIED);
++        // return ptr;
++    } else if (!memory_access_is_direct(mr, is_write)) {
+         if (qatomic_xchg(&bounce.in_use, true)) {
+             *plen = 0;
+             return NULL;
+         }
+ 
+         /* Avoid unbounded allocations */
+-        l = MIN(l, TARGET_PAGE_SIZE);
++        // l = MIN(l, TARGET_PAGE_SIZE);
++        l = MIN(l, 0x10000);
+         bounce.buffer = qemu_memalign(TARGET_PAGE_SIZE, l);
+         bounce.addr = addr;
+         bounce.len = l;
+-
++        // printf("%s addr: 0x%lx, buffer: 0x%lx, len: 0x%lx\n", __func__, addr, (uint64_t)bounce.buffer, l);
+         memory_region_ref(mr);
+         bounce.mr = mr;
+ 
+@@ -3271,12 +3308,12 @@ void *address_space_map(AddressSpace *as,
+     }
+ 
+     
+-
++    // printf("%s addr: 0x%lx, mr:%s\n",__func__, addr, mr->name);
+     memory_region_ref(mr);
+     *plen = flatview_extend_translation(fv, addr, len, mr, xlat,
+                                         l, is_write, attrs);
+     fuzz_dma_read_cb(addr, *plen, mr);
+-    return qemu_ram_ptr_length(mr->ram_block, xlat, plen, true);;
++    return qemu_ram_ptr_length(mr->ram_block, xlat, plen, true);
+ }
+ 
+ /* Unmaps a memory region previously mapped by address_space_map().
+@@ -3297,7 +3334,12 @@ void address_space_unmap(AddressSpace *as, void *buffer, hwaddr len,
+         // hwaddr offset = 0;
+ 
+         mr = memory_region_from_host(buffer, &addr1);
+-        DEBUG(addr1, "%s addr: 0x%lx, mr:%s\n",__func__, addr1, mr->name);
++        if (mr->dual_mode) {
++            FemuCtrl *femu;
++            femu = (FemuCtrl *)mr->owner;
++            printf("%s buf: %p (0x%lx) addr: 0x%lx, mr:%s\n",__func__, buffer, get_phys_addr(buffer), addr1 + femu->base_gpa, mr->name);
++        }
++        
+         assert(mr != NULL);
+         
+         // if (mr->dual_mode) {
+@@ -3316,7 +3358,7 @@ void address_space_unmap(AddressSpace *as, void *buffer, hwaddr len,
+                 xen_invalidate_map_cache_entry(buffer);
+             }
+             memory_region_unref(mr);
+-
++            // printf("\t RETURN %s addr: 0x%lx, mr:%s\n",__func__, addr1, mr->name);
+             return;
+         }
+ 
+@@ -3382,7 +3424,7 @@ void address_space_unmap(AddressSpace *as, void *buffer, hwaddr len,
+         // cpu_notify_map_clients();
+         // return;
+     }
+-    DEBUG(bounce.addr, "%s addr: 0x%lx, mr:%s\n",__func__, bounce.addr, bounce.mr->name);
++    // printf(">>>>>>>>>>>> %s addr: 0x%lx, mr:%s\n",__func__, bounce.addr, bounce.mr->name);
+ 
+     if (is_write) {
+         address_space_write(as, bptr->addr, MEMTXATTRS_UNSPECIFIED,
+@@ -3972,96 +4014,3 @@ bool ram_block_discard_is_required(void)
+     return qatomic_read(&ram_block_discard_required_cnt) ||
+         qatomic_read(&ram_block_coordinated_discard_required_cnt);
+ }
+-
+-/* 
+-#0  breakpoint_empty () at ../softmmu/physmem.c:3093
+-#1  address_space_map (as=<optimized out>, addr=addr@entry=231928238080, plen=plen@entry=0x7fffffff7580, is_write=is_write@entry=true, attrs=.6
+-#2  0x0000555555bcca07 in dma_memory_map (attrs=..., dir=DMA_DIRECTION_FROM_DEVICE, len=<synthetic pointer>, addr=231928238080, as=<optimized 2
+-#3  virtqueue_map_desc (vdev=vdev@entry=0x5555577cab60, p_num_sg=p_num_sg@entry=0x7fffffff760c, addr=0x7fffffff76a8, iov=<optimized out>, max_3
+-#4  0x0000555555bcd560 in virtqueue_split_pop (vq=0x5555577d4588, sz=272) at ../hw/virtio/virtio.c:1596
+-#5  0x0000555555bcd945 in virtqueue_pop (vq=vq@entry=0x5555577d4588, sz=<optimized out>) at ../hw/virtio/virtio.c:1796
+-#6  0x0000555555bacb40 in virtio_scsi_pop_req (s=s@entry=0x5555577cab60, vq=vq@entry=0x5555577d4588) at ../hw/scsi/virtio-scsi.c:218
+-#7  0x0000555555bae12b in virtio_scsi_handle_cmd_vq (vq=0x5555577d4588, s=0x5555577cab60) at ../hw/scsi/virtio-scsi.c:830
+-#8  virtio_scsi_handle_cmd (vdev=0x5555577cab60, vq=0x5555577d4588) at ../hw/scsi/virtio-scsi.c:867
+-#9  0x0000555555bc77af in virtio_queue_notify_vq (vq=0x5555577d4588) at ../hw/virtio/virtio.c:2277
+-#10 0x0000555555dbe455 in aio_dispatch_handler (ctx=ctx@entry=0x5555567743c0, node=0x7fffe8007880) at ../util/aio-posix.c:372
+-#11 0x0000555555dbed92 in aio_dispatch_handlers (ctx=0x5555567743c0) at ../util/aio-posix.c:414
+-#12 aio_dispatch (ctx=0x5555567743c0) at ../util/aio-posix.c:424
+-#13 0x0000555555dd3562 in aio_ctx_dispatch (source=<optimized out>, callback=<optimized out>, user_data=<optimized out>) at ../util/async.c:358
+-#14 0x00007ffff7ad717d in g_main_context_dispatch () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+-#15 0x0000555555dd4bd0 in glib_pollfds_poll () at ../util/main-loop.c:290
+-#16 os_host_main_loop_wait (timeout=<optimized out>) at ../util/main-loop.c:313
+-#17 main_loop_wait (nonblocking=nonblocking@entry=0) at ../util/main-loop.c:592
+-#18 0x0000555555a7ada9 in qemu_main_loop () at ../softmmu/runstate.c:732
+-#19 0x0000555555c50f0b in qemu_default_main () at ../softmmu/main.c:37
+-#20 0x00007ffff74e0083 in __libc_start_main (main=0x555555867800 <main>, argc=41, argv=0x7fffffffdaa8, init=<optimized out>, fini=<optimized o8
+-#21 0x00005555558692ee in _start ()
+-*/
+-
+-/*
+-#0  breakpoint_empty () at ../softmmu/physmem.c:3093
+-#1  address_space_map (as=<optimized out>, addr=addr@entry=231928242176, plen=plen@entry=0x7fffffffd530, is_write=<optimized out>, attrs=..., 6
+-#2  0x0000555555a73b51 in dma_memory_map (attrs=..., dir=<optimized out>, len=<synthetic pointer>, addr=231928242176, as=<optimized out>) at /2
+-#3  dma_blk_cb (opaque=opaque@entry=0x555556e61200, ret=ret@entry=0) at ../softmmu/dma-helpers.c:169
+-#4  0x0000555555a7436c in dma_blk_io
+-    (ctx=0x5555567743c0, sg=sg@entry=0x5555569f6498, offset=offset@entry=13195354112, align=align@entry=512, io_func=io_func@entry=0x5555559c62
+-#5  0x00005555559c5518 in scsi_do_read (r=0x555556711e20, ret=<optimized out>) at ../hw/scsi/scsi-disk.c:429
+-#6  0x00005555559c72b6 in scsi_read_data (req=0x555556711e20) at ../hw/scsi/scsi-disk.c:502
+-#7  0x00005555559c2fdf in scsi_req_continue (req=req@entry=0x555556711e20) at ../hw/scsi/scsi-bus.c:1412
+-#8  0x0000555555bae4b7 in virtio_scsi_handle_cmd_req_submit (s=0x5555577cab60, req=<optimized out>) at ../hw/scsi/virtio-scsi.c:811
+-#9  virtio_scsi_handle_cmd_vq (vq=<optimized out>, s=0x5555577cab60) at ../hw/scsi/virtio-scsi.c:853
+-#10 virtio_scsi_handle_cmd (vdev=0x5555577cab60, vq=<optimized out>) at ../hw/scsi/virtio-scsi.c:867
+-#11 0x0000555555bc77af in virtio_queue_notify_vq (vq=0x5555577d4588) at ../hw/virtio/virtio.c:2277
+-#12 0x0000555555dbe455 in aio_dispatch_handler (ctx=ctx@entry=0x5555567743c0, node=0x7fffe8007880) at ../util/aio-posix.c:372
+-#13 0x0000555555dbed92 in aio_dispatch_handlers (ctx=0x5555567743c0) at ../util/aio-posix.c:414
+-#14 aio_dispatch (ctx=0x5555567743c0) at ../util/aio-posix.c:424
+-#15 0x0000555555dd3562 in aio_ctx_dispatch (source=<optimized out>, callback=<optimized out>, user_data=<optimized out>) at ../util/async.c:358
+-#16 0x00007ffff7ad717d in g_main_context_dispatch () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+-#17 0x0000555555dd4bd0 in glib_pollfds_poll () at ../util/main-loop.c:290
+-#18 os_host_main_loop_wait (timeout=<optimized out>) at ../util/main-loop.c:313
+-#19 main_loop_wait (nonblocking=nonblocking@entry=0) at ../util/main-loop.c:592
+-#20 0x0000555555a7ada9 in qemu_main_loop () at ../softmmu/runstate.c:732
+-#21 0x0000555555c50f0b in qemu_default_main () at ../softmmu/main.c:37
+-#22 0x00007ffff74e0083 in __libc_start_main (main=0x555555867800 <main>, argc=41, argv=0x7fffffffdaa8, init=<optimized out>, fini=<optimized o8
+-#23 0x00005555558692ee in _start ()
+-*/
+-
+-
+-/*
+-
+-#0  breakpoint_empty () at ../softmmu/physmem.c:3093
+-#1  address_space_unmap (as=as@entry=0x5555566d1820 <address_space_memory>, buffer=0x555556a1e000, len=<optimized out>, is_write=is_write@entry=true, access_len=access_len@entry=4096) at ../softmmu/physmem.c:3252
+-#2  0x0000555555bc73c6 in dma_memory_unmap (access_len=4096, dir=DMA_DIRECTION_FROM_DEVICE, len=<optimized out>, buffer=<optimized out>, as=0x5555566d1820 <address_space_memory>) at /home/necsst/FEMU-cxl/include/sysemu/dma.h:236
+-#3  virtqueue_unmap_sg (elem=elem@entry=0x5555569f6450, len=len@entry=16492, vq=<optimized out>) at ../hw/virtio/virtio.c:759
+-#4  0x0000555555bc903b in virtqueue_fill (vq=0x5555577d4588, elem=0x5555569f6450, len=16492, idx=0) at ../hw/virtio/virtio.c:920
+-#5  0x0000555555bc94d3 in virtqueue_push (vq=vq@entry=0x5555577d4588, elem=elem@entry=0x5555569f6450, len=16492) at ../hw/virtio/virtio.c:995
+-#6  0x0000555555bacbc8 in virtio_scsi_complete_req (req=0x5555569f6450) at ../hw/scsi/virtio-scsi.c:111
+-#7  0x0000555555bacc6e in virtio_scsi_complete_cmd_req (req=req@entry=0x5555569f6450) at ../hw/scsi/virtio-scsi.c:641
+-#8  0x0000555555bad354 in virtio_scsi_command_complete (r=0x555556711e20, resid=<optimized out>) at ../hw/scsi/virtio-scsi.c:712
+-#9  0x00005555559c35f2 in scsi_req_complete (req=0x555556711e20, status=<optimized out>) at ../hw/scsi/scsi-bus.c:1528
+-#10 0x00005555559c6d50 in scsi_dma_complete_noio (r=0x555556711e20, ret=<optimized out>) at ../hw/scsi/scsi-disk.c:350
+-#11 0x0000555555a73bb6 in dma_complete (ret=0, dbs=0x555556e61200) at ../softmmu/dma-helpers.c:107
+-#12 dma_blk_cb (opaque=0x555556e61200, ret=0) at ../softmmu/dma-helpers.c:156
+-#13 0x0000555555cb2b3e in blk_aio_complete (acb=0x555556fe57a0) at ../block/block-backend.c:1564
+-#14 0x0000555555dd648b in coroutine_trampoline (i0=<optimized out>, i1=<optimized out>) at ../util/coroutine-ucontext.c:177
+-#15 0x00007ffff75174e0 in __start_context () at ../sysdeps/unix/sysv/linux/x86_64/__start_context.S:91
+-#16 0x00007fffffffce50 in  ()
+-#17 0x0000000000000000 in  ()
+-*/
+-
+-
+-/*
+-
+-#0  breakpoint_empty () at ../softmmu/physmem.c:3093
+-#1  address_space_unmap (as=0x5555566d1820 <address_space_memory>, buffer=0x555556a11000, len=<optimized out>, is_write=<optimized out>, access_len=4096) at ../softmmu/physmem.c:3252
+-#2  0x0000555555a73986 in dma_memory_unmap (access_len=<optimized out>, dir=<optimized out>, len=<optimized out>, buffer=<optimized out>, as=<optimized out>) at /home/necsst/FEMU-cxl/include/sysemu/dma.h:236
+-#3  dma_blk_unmap (dbs=dbs@entry=0x555556e61200) at ../softmmu/dma-helpers.c:93
+-#4  0x0000555555a73ba4 in dma_complete (ret=0, dbs=0x555556e61200) at ../softmmu/dma-helpers.c:105
+-#5  dma_blk_cb (opaque=0x555556e61200, ret=0) at ../softmmu/dma-helpers.c:156
+-#6  0x0000555555cb2b3e in blk_aio_complete (acb=0x555556fe57a0) at ../block/block-backend.c:1564
+-#7  0x0000555555dd648b in coroutine_trampoline (i0=<optimized out>, i1=<optimized out>) at ../util/coroutine-ucontext.c:177
+-#8  0x00007ffff75174e0 in __start_context () at ../sysdeps/unix/sysv/linux/x86_64/__start_context.S:91
+-#9  0x00007fffffffce50 in  ()
+-#10 0x0000000000000000 in  ()
+-
+-*/
+\ No newline at end of file

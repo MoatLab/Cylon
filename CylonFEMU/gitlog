@@ -1,0 +1,4827 @@
+commit 50008d3e8788c750df40ca46fb88607304aee790
+Author: dongha yoon <cs.donghayoon>
+Date:   Thu May 8 06:07:20 2025 +0900
+
+    fix
+
+commit 03a76eb0eb3e6d3ec7a307b790e9b98379b14969
+Author: dongha yoon <cs.donghayoon>
+Date:   Wed May 7 05:21:08 2025 +0900
+
+    fix
+
+commit 2db3c2887891ff8756762ea25965ae142e1d09d6
+Author: dongha yoon <cs.donghayoon>
+Date:   Wed May 7 04:56:22 2025 +0900
+
+    automate configs
+
+commit 9cff6c17d0ab539d5b83c0c92c082d729fe9fcc4
+Author: dongha yoon <cs.donghayoon>
+Date:   Tue May 6 11:47:51 2025 +0900
+
+     rollback
+
+commit 0cb713b0b32e83fe95b0d287753e2af45a57c275
+Author: dongha yoon <cs.donghayoon>
+Date:   Tue May 6 11:16:35 2025 +0900
+
+    rollback
+
+commit e213cc897c1551fb2e235a492cecd884d279e64c
+Author: dongha yoon <cs.donghayoon>
+Date:   Tue May 6 11:13:45 2025 +0900
+
+    rollback
+
+commit da8ceccb980f6eb73039cb119b3b5baacdb48815
+Author: dongha yoon <cs.donghayoon>
+Date:   Wed Apr 9 10:35:53 2025 +0900
+
+    lkp mid
+
+commit 72714ef5036259b178abdfd548750331482fa3d5
+Author: dongha yoon <cs.donghayoon>
+Date:   Sat Jan 18 00:20:06 2025 +0900
+
+    0117
+
+commit 64349ccec28c3dd3aade57a90005068766a1275a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Mar 28 17:06:47 2024 -0400
+
+    sdsa
+
+commit b837728f93eb6a55a04ad9b4f2a4a8bfcae1f39c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Mar 28 16:53:54 2024 -0400
+
+    sdsa
+
+commit b3ca72ef06de8f3096a77b65af7e84594d6207c4
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Mar 28 16:23:44 2024 -0400
+
+    sdsa
+
+commit 51d52df0c815664e56ec5d0e95dacf4b3926d32f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Mar 28 16:21:42 2024 -0400
+
+    sdsa
+
+commit 4c29891a7965c07f25cb48d3d97ad9b485b160a6
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Mar 22 14:18:20 2024 -0400
+
+    sep
+
+commit 651559930396ee3497b737c5b0fa6551919d799d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Mar 22 14:09:50 2024 -0400
+
+    sep
+
+commit db0e3359698af5e64f2e8b34e7cd89f0c61c6831
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Mar 22 14:01:59 2024 -0400
+
+    sep
+
+commit d26b043954c89ae98f2d927603533fd7b92b3d39
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Feb 16 00:04:10 2024 -0500
+
+    log tracer
+
+commit ee81f52f777d412a56d0a17f8178afc272170065
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Feb 16 00:00:55 2024 -0500
+
+    log tracer
+
+commit a271dd20e87beec9ec31fcea06c02b3223b14e1a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Feb 13 16:25:36 2024 -0500
+
+    log tracer
+
+commit d31c62f241876cf18cdf349a13e32dbbb75876f7
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Feb 13 16:24:54 2024 -0500
+
+    log tracer
+
+commit e121fce3ea8692e1d1eb268865266c1b052b8509
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Feb 13 16:22:39 2024 -0500
+
+    log tracer
+
+commit 0990da9a00fc26f9302d8a58d01de70cd9aa7fa7
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Feb 13 16:21:00 2024 -0500
+
+    log tracer
+
+commit bc3e4d4899f49d988b2159bb2be87ca1b2fbb58c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Feb 13 16:19:51 2024 -0500
+
+    log tracer
+
+commit be2f3c2e859c8b78cd76bd5f087e4bbaf27d3d76
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Feb 13 16:19:02 2024 -0500
+
+    log tracer
+
+commit 92e4a13216c939885c32d9900db5486eddc44f9a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Feb 13 15:32:07 2024 -0500
+
+    log tracer
+
+commit 379d4f676f2a44933d65bf514866d762ac025de7
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Feb 13 09:03:11 2024 -0500
+
+    log tracer
+
+commit 22dca345568f7e9113f10d0e29baa2d5638bff77
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Feb 12 19:05:55 2024 -0500
+
+    log tracer
+
+commit 73b0be32aa176581b02e4a9f34cdceaf578a28f1
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Feb 12 18:59:24 2024 -0500
+
+    log tracer
+
+commit c10768d7daf2af2b747aeefe177b183ae661fb6b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Feb 12 18:55:58 2024 -0500
+
+    log tracer
+
+commit e8c852fcce1fb9c41d142d692ff3fb3d6849e3f9
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Feb 12 18:27:12 2024 -0500
+
+    log tracer
+
+commit 06e450e66076c9af069a474d898730d099be6fd3
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Dec 13 18:25:06 2023 -0500
+
+    run
+
+commit 155d4cd9b58e1dd66de8b62822aa62e96d96daba
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Oct 19 16:58:11 2023 -0400
+
+    kvm_ioctl_log
+
+commit ca7ca3a03c709e209aff465ebd3f1a6c6e163593
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Oct 19 16:57:19 2023 -0400
+
+    kvm_ioctl_log
+
+commit 533cb57c9b53bf3abeea2095251ee1a43fa0409f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Oct 5 18:31:43 2023 -0400
+
+    no memcpy
+
+commit 29a608067c72c12c2cf263981e097cd10263c274
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Oct 5 18:29:57 2023 -0400
+
+    no memcpy
+
+commit e0910fbbb3690a04706187d2b07ac028559047d8
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Oct 5 18:15:00 2023 -0400
+
+    no memcpy
+
+commit e6571725b1e173d0577ae28529630f4a3323dadf
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Oct 5 16:25:56 2023 -0400
+
+    no memcpy
+
+commit 063f6349e42220ec5fc74a2eb6125e88222377a2
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Oct 5 16:25:36 2023 -0400
+
+    no memcpy
+
+commit 94f968b850de9a8f1addf5aa5aa1ad4b76f9cc8f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Oct 5 15:07:22 2023 -0400
+
+    no memcpy
+
+commit 21a49fef248e1111b6a325fd156ba1b9d070053a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Oct 5 15:03:37 2023 -0400
+
+    no memcpy
+
+commit 2a113abcf3cdef8486ac2a1d7fc911924c262276
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Oct 5 14:42:28 2023 -0400
+
+    no memcpy
+
+commit 5b1d82423f5c1bdf403470f5c15c35182ee6c3f0
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Oct 4 14:27:34 2023 -0400
+
+    no memcpy
+
+commit b6e80152738ad0733e55f124e540e1b10ca76067
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Oct 4 14:16:50 2023 -0400
+
+    no memcpy
+
+commit 91f82dd2817b5b04f6640f9ca7dc273006ad8ece
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Oct 3 14:40:26 2023 -0400
+
+    read_log
+
+commit f2d33ee5b9d7ff238861a5ce17a7d360aa048edc
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 28 12:49:16 2023 -0400
+
+    kvm_ioctl_log
+
+commit d09ab4f7fb70a0f9045df0d7a2c7c4c472e209a1
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 27 14:15:12 2023 -0400
+
+    kvm_ioctl_log
+
+commit 1fef9c4a90089bee17238e7254a6b6382f03904f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 27 14:14:52 2023 -0400
+
+    kvm_ioctl_log
+
+commit 93b3a9f720e253efad1aa68eb801962ead4b6cb9
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 27 10:58:07 2023 -0400
+
+    kvm_ioctl_log
+
+commit 8427bbbf3d5acb3b00aa784224a68ae9c0413185
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 27 10:54:18 2023 -0400
+
+    kvm_ioctl_log
+
+commit be1d19ec2de961c6c683c9d3bdbeff4b35ad7bfb
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 27 10:52:32 2023 -0400
+
+    kvm_ioctl_log
+
+commit 7245c1c1272f3b68e6d630c2c3456ffb882a0132
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 27 10:51:05 2023 -0400
+
+    kvm_ioctl_log
+
+commit 69a197ce56b63aad9c66549f4933cb31bb91df67
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 27 10:49:41 2023 -0400
+
+    kvm_ioctl_log
+
+commit f2246ef91c1f6436d0876e809cf5ecfa31bce6d8
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 27 10:46:49 2023 -0400
+
+    kvm_ioctl_log
+
+commit 1cbf7f294f08f6df80c826cfb7ff9003455bfb81
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 21 11:36:55 2023 -0400
+
+    cxlssd
+
+commit ffe2f64141ca836415a8ca13b33862d1c6e61786
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 18 15:38:36 2023 -0400
+
+    cxlssd
+
+commit 031deacdea6dd7dc7aa45284c2310e197c5cee9d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 18 15:37:40 2023 -0400
+
+    merge
+
+commit 2de6d7b62e3f59a845f039c4e62e3625386595ba
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 18 14:55:21 2023 -0400
+
+    merge
+
+commit f5fde935576d02d95ff5978b1284af74d9307cd4
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 18 14:50:13 2023 -0400
+
+    merge
+
+commit 2589cf1c49559670e5856a7b3d2952a3556cff3a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 18 14:46:23 2023 -0400
+
+    merge
+
+commit 4c4b31b9ace4490091f228438f9466adff5037f5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 18 09:18:22 2023 -0400
+
+    merge
+
+commit a0e6c1deadd0e0ba3b8f223f823fbed6cef8f8ad
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 17 21:15:24 2023 -0400
+
+    merge
+
+commit 21c704269003957791b12c051776b4ca42d9180b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 17 19:08:21 2023 -0400
+
+    merge
+
+commit b89695832e32023045a7caa1fdff802aaf214953
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 17 19:00:08 2023 -0400
+
+    merge
+
+commit dabdbf0ce565c08de67bfc2366a432041e950850
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 17 18:57:15 2023 -0400
+
+    merge
+
+commit 68feb3527ff82adbc070a50a84c190dd901f9bba
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 17 18:53:38 2023 -0400
+
+    merge
+
+commit abf68ba5a78c1ff26b5c7cceb2845241ac2f4c39
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 17 18:52:34 2023 -0400
+
+    merge
+
+commit 2d59877af67253ffae404df1c8b711d63e451ab4
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 17 18:48:21 2023 -0400
+
+    merge
+
+commit 674a5910456a4d155abcf45bfa33f4cecfac2c52
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 17 18:47:13 2023 -0400
+
+    merge
+
+commit 7e472da978a53dedf82f0e59273114f45c367c4e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 17 17:58:59 2023 -0400
+
+    merge
+
+commit f96d4e4e99c106a71872511bd15aacacba60f296
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 17 17:57:52 2023 -0400
+
+    merge
+
+commit 9b1b0f9d32c928f49984dd477db6c6ac1bdd7e04
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 17 16:51:15 2023 -0400
+
+    merge
+
+commit b14c2efa6ba4f09a9f46ed9d74cd731626874df5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 17 16:47:55 2023 -0400
+
+    merge
+
+commit 88a873e088aecdf90d6eb60f31f472a5fdbb09a4
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 17 16:44:56 2023 -0400
+
+    merge
+
+commit 1838696f0d8ec40f9b6bbd78ec115862aae1c5ea
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 17 16:24:52 2023 -0400
+
+    merge
+
+commit 6dd806b5be551995e8475fc88c053e427f26ea9e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 17 16:20:48 2023 -0400
+
+    simple
+
+commit 0d188db01b85fbd790191c1ebd85564852970342
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Sep 16 23:32:59 2023 -0400
+
+    merge
+
+commit d8a6b0121c68ad53ad457c629c2349c5be059354
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Sep 16 23:24:16 2023 -0400
+
+    merge
+
+commit 2747b3078e459300b4fb7ea666230874da796f35
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Sep 16 18:58:39 2023 -0400
+
+    merge
+
+commit 3caadc951b1e6b5e970c27e401f9d6bc82e89dff
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Sep 16 18:58:06 2023 -0400
+
+    merge
+
+commit 15d1468264d22b8f7fe5dbd4fc56f36e39bd6cbe
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Sep 16 18:57:27 2023 -0400
+
+    merge
+
+commit f03cacc23da22aded96ee7337aeddcd13489de48
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Sep 16 18:53:41 2023 -0400
+
+    merge
+
+commit c02749ac6fdea1905fce3047ea3615ea0ef7cffd
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Sep 16 18:34:11 2023 -0400
+
+    merge
+
+commit 84341b002fd3369aaa920fb1ff09b66025f99151
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Sep 16 17:07:45 2023 -0400
+
+    merge
+
+commit 8a02bef55c817da82052241a2c70c9ce37f85f2c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Sep 16 16:49:15 2023 -0400
+
+    merge
+
+commit 2b2ce62e6bd528f6a4fc510cccc4e384a68899e6
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Sep 16 16:16:32 2023 -0400
+
+    merge
+
+commit a857d9de74b28bbff2f1f4e81380694c79f719ba
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Sep 16 16:15:08 2023 -0400
+
+    merge
+
+commit 17db30766995f92b69a7e8c034e8a9190cbc6ce9
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 18:10:42 2023 -0400
+
+    merge
+
+commit 500ab7601e89d0880127984e814beebc7168e907
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 18:05:24 2023 -0400
+
+    merge
+
+commit 7df81f18a870829f8b2e1b698f9c5983042e3d9c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 17:47:53 2023 -0400
+
+    merge
+
+commit 5cd523f2c78e9fb4b07ac525f324d25fe2e8e263
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 17:37:15 2023 -0400
+
+    merge
+
+commit 48765941af33b2230f802866cdee7e4e07e0a8fc
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 17:32:58 2023 -0400
+
+    merge
+
+commit 735a21aa63dda1c706317f7bfd6cf7967a6fffc3
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 17:27:19 2023 -0400
+
+    merge
+
+commit ccc7c837fd712f7de7e42c13950ade69db430829
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 17:18:52 2023 -0400
+
+    merge
+
+commit 5df711bf3205c20ff1bb99b3695cccf6f99b0d93
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 17:17:07 2023 -0400
+
+    merge
+
+commit e672e8f929ff96e8153c74c14a6f492aad0cb375
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 17:13:38 2023 -0400
+
+    merge
+
+commit 45b893ceb5e5a5ff2f63413a75a55163d6fe127e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 17:04:30 2023 -0400
+
+    merge
+
+commit 404f65aec552ec617274e552fac855b1eed463ad
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 17:02:49 2023 -0400
+
+    merge
+
+commit 1a77a97b150f5cff046bb2f2f636483e171e4dcc
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 16:57:10 2023 -0400
+
+    merge
+
+commit 83ff8d525f6f99b59f434e053a8364901d734584
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 16:40:36 2023 -0400
+
+    merge
+
+commit 4612a69fde8a7600e56e6ed52551eca5054fbf08
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 16:25:59 2023 -0400
+
+    merge
+
+commit e2a5e37c579184cb9786e1e562d09ebd80e17941
+Merge: ea7fce89f5 58cb3cc122
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 15:58:16 2023 -0400
+
+    Merge branch 'dev_femuonly' into cxlssd
+
+commit ea7fce89f51362b16f954206e60a8ecbb7cac9e1
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 15:44:41 2023 -0400
+
+    cp
+
+commit 58cb3cc122cde70decaef130f306f015b4e88232
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 15:41:52 2023 -0400
+
+    del
+
+commit be6c57f84a1e534f3a97f48b24a98a21b02fed2b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 15 09:43:30 2023 -0400
+
+    gpa_base
+
+commit 0a52ecf12ebae0955e721bd8e22adbd32744a1d0
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 17:53:33 2023 -0400
+
+    gpa_base
+
+commit 28b04abf1fe2bdb7cf56f6c6a9fcffdc8b657a0b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 17:21:55 2023 -0400
+
+    gpa_base
+
+commit 486a719d22a03415a03597e4a1b3095eef05905f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 17:09:06 2023 -0400
+
+    gpa_base
+
+commit 982dcb75efb3c4e44ca1840ca3969d9431bdf284
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 17:08:26 2023 -0400
+
+    gpa_base
+
+commit 47c7d8121f43511172e76dcec068c770188b4bb6
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 17:07:09 2023 -0400
+
+    gpa_base
+
+commit 58682fb09dcdd5a63bee3752b22d1543f8f7895d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 16:34:30 2023 -0400
+
+    gpa_base
+
+commit d82b5311eb1114d63cd6a359ffdf3d4ce9c41384
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 16:27:06 2023 -0400
+
+    gpa_base
+
+commit db6aadc78603098d753c7dbe149e8246768de381
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 15:40:19 2023 -0400
+
+    gpa_base
+
+commit 41abc72ab5c76ace661a85097cd119a6a410aa08
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 15:23:02 2023 -0400
+
+    gpa_base
+
+commit 1170e0885cb80a37a2ff5fd865094bae91e4e57f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 13:30:54 2023 -0400
+
+    gpa_base
+
+commit 0f63d4a1f1d8c79ef42c1a4b200f34ec28a34f4b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 13:27:02 2023 -0400
+
+    gpa_base
+
+commit 4da4000299763870db7b05ab3298524a4cece5f8
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 13:23:56 2023 -0400
+
+    gpa_base
+
+commit 85b62ca53d6cdfaa1490ced20b57550b9d3356e6
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 13:23:09 2023 -0400
+
+    gpa_base
+
+commit ff3ce19c5bc8bf967f935d59fbd230b9d123d551
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 13:09:38 2023 -0400
+
+    gpa_base
+
+commit d5f387bb1c02c89387826677d6a8ed9cf8479876
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 13:06:27 2023 -0400
+
+    gpa_base
+
+commit 5784991e61d3ff17be3e1c79923dcba153af0120
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 13:05:12 2023 -0400
+
+    gpa_base
+
+commit 26ee6457069542ba393dc953ad8fa164f580e7c7
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 12:23:58 2023 -0400
+
+    gpa_base
+
+commit eea55b6b0987238768b559c959c6dedd81c14554
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 12:21:38 2023 -0400
+
+    gpa_base
+
+commit e8b9e807beefa29c39ec561c9196715cb1b940de
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 12:20:38 2023 -0400
+
+    gpa_base
+
+commit 5c8485431f0e2fd0fa756a080eb6cd5c03f6c45e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 12:18:37 2023 -0400
+
+    gpa_base
+
+commit 269ddc88db44b3228b287cf5e189e46d5dccccb0
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 12:17:19 2023 -0400
+
+    gpa_base
+
+commit 2bdb7c99e58dce1e99e29b819cb00b246d584780
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 12:16:14 2023 -0400
+
+    gpa_base
+
+commit 4469ffc21fd628287c9d030afea13b56ce14cc47
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 12:14:24 2023 -0400
+
+    gpa_base
+
+commit d6dfe4c2fc6fe953eea8b167bdaacbbe14154a70
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 12:13:14 2023 -0400
+
+    gpa_base
+
+commit 80219b5a5d263a0989da7a2419e06c3032455099
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 12:05:39 2023 -0400
+
+    gpa_base
+
+commit c6bbf5fda5594eb96128ca4c80f40d60801ef99e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 14 12:02:02 2023 -0400
+
+    simple
+
+commit 00a8a3ffa89552e4471e3e2c65ef80498aed5f06
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Wed Sep 13 21:02:47 2023 -0500
+
+    Update run-nossd.sh to correctly allocate VM DRAM and FEMU NAND buffer
+    
+    - VM DRAM from Node 0 via "-object xxx,policy=bind,host-nodes=0,xxx"
+    - FEMU DRAM backend from Node 1 using hugepages (via hugetlbfs)
+
+commit b14d4a1e8ea48a7d6ce5ca22a0c70e6ea13f81c1
+Author: Hansen Idden <62301187+hansenidden18@users.noreply.github.com>
+Date:   Mon Sep 11 11:05:54 2023 +0700
+
+    Add Configuration on the FEMU NOSSD VM script
+    
+    What I do is:
+    - Disable numa balancing
+    - allocate around 32GB of hugepage, 16GB for the dram and 8GB for the NAND buffer.
+    - Change vCPUs to 8 and memory to 16GB
+    - Add `-object memory-backend-file....` and `-numa node ...` flag so the guest VM will use hugepages
+    - Add `--overcommit cpu-pm=on` to boost CPU, so it won't cause any HLT exit.
+
+commit ed0f6cd575d1b3eee51a39dafdc72bd1ecb30ef8
+Author: hansenidden18 <hansenidden@gmail.com>
+Date:   Thu Sep 7 22:57:42 2023 -0600
+
+    ADD NAND buffer, backed by hugepage
+
+commit 33a5529dd4136e4c01b80bdd5debdb8e4a2a519e
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Wed Sep 13 17:19:37 2023 -0500
+
+    Update femu-compile.sh to support AVX512
+
+commit 84d6d58d442cbbf4cba8ddda304ff33fa46f04b1
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Wed Sep 13 17:18:05 2023 -0500
+
+    Wrap avx function to copy NVMe commands
+
+commit 6fdb72231fd00d1269b2a7bdc0fc2697b2c0a353
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Wed Sep 13 16:17:48 2023 -0500
+
+    Add dma_memory_rw() debugging, check the changes
+
+commit 146e624cac97ab80ae1485333674738b82c0d282
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Wed Sep 13 16:17:05 2023 -0500
+
+    Enable AVX for nvme_cmd_copy()
+
+commit e525a06b86a93880ae932535202ef7fd9e9cb57f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 13 16:38:53 2023 -0400
+
+    ioctl
+
+commit d8d42e96db8cda91b2b9751499f029786c860cde
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 13 16:35:04 2023 -0400
+
+    ioctl
+
+commit e31fdd7f9cd120e56656e6dd0cc8443e7daa2d48
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 13 10:37:58 2023 -0400
+
+    ioctl
+
+commit b24cd0363337f9c1c25ca3a7380edc947a11affd
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 13 09:27:19 2023 -0400
+
+    ioctl
+
+commit b4f94fc7fa9a35f7c4d99ba9d58e696725e895af
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 13 09:19:02 2023 -0400
+
+    ioctl
+
+commit fb7a3c90776d8c29b345c19ec3b2d48245b8c9ce
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 13 09:16:35 2023 -0400
+
+    ioctl
+
+commit 0d51b6f24a996f5bfb8e3ea12fe4900a625af3ca
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 13 09:11:25 2023 -0400
+
+    ioctl
+
+commit 402299b327a877e15658e1ae1a65a178dd827ec0
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Tue Sep 12 22:39:02 2023 -0500
+
+    Add run-nossd.sh variant
+
+commit ab7a279322234510b020a81e6549ff56cc9e9428
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Tue Sep 12 22:36:28 2023 -0500
+
+    Update pin.sh
+
+commit 8d721dfda7552e61ebaee07f2dc703eb5313d195
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Tue Sep 12 22:35:31 2023 -0500
+
+    Debugging mode
+
+commit b4e06e369c9f3bcfb6826e6297e90308bbadbdec
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 12 20:30:08 2023 -0400
+
+    ioctl
+
+commit 60c2bd54dd8be6b2b1a1a2beee2a7c6f75ca5f94
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 12 17:27:16 2023 -0400
+
+    ioctl
+
+commit aea6a0947fa1b1b5396a44107d495ce668562830
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 12 17:15:26 2023 -0400
+
+    ioctl
+
+commit 32790dd5380ef54f2bed7792259f3ef63d33c1e3
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 12 17:07:33 2023 -0400
+
+    ioctl
+
+commit 5f83cc222eb30cd59c94f820dc17b9a061672717
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 12 16:52:38 2023 -0400
+
+    ioctl
+
+commit 24c3e2c53f2c0e54591513c01717cc6615521ecf
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 12 15:58:45 2023 -0400
+
+    ioctl
+
+commit c80963dbff8454ef140ee785feff9d00f03d01cd
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 12 15:56:59 2023 -0400
+
+    ioctl
+
+commit d781413b72ceecbabdbadbe3aa814713fd69792d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 12 15:32:36 2023 -0400
+
+    ioctl
+
+commit 24deb51976c3bc60cb06da8fc5999f8e21917e23
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 12 15:03:03 2023 -0400
+
+    ioctl
+
+commit dfdaaf6f90d1bb29a596f71c84853a40d0282d4b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 12 13:37:14 2023 -0400
+
+    ioctl
+
+commit 81cc6304af535486b870e85ffa91c8cd3a64b0c3
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 12 13:08:19 2023 -0400
+
+    ioctl
+
+commit 691c46ae9a0e35116493db5b1d8b36395e2f8a11
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 12 12:55:37 2023 -0400
+
+    ioctl
+
+commit 8c6c0e7019af86b585992c164ece33ac3e9cdb6c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 12 12:51:01 2023 -0400
+
+    ioctl
+
+commit 8333f2aa28411d64100d7a09f60424125d023600
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 11 20:47:28 2023 -0400
+
+    ioctl
+
+commit 6ed4ccf5fae882cbffae1c89d7f246d0b0a19e9d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 11 20:31:37 2023 -0400
+
+    ioctl
+
+commit 3cc8bf52af6076dbd10cd08a63976f184cd82625
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 11 20:24:42 2023 -0400
+
+    ioctl
+
+commit bdf3db25d364d862b797d74d0f2b384a91491b60
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 11 20:23:54 2023 -0400
+
+    ioctl
+
+commit 4137d2cf6d90acb0c37a1c496147dd30c2a6e5e3
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 11 20:23:44 2023 -0400
+
+    ioctl
+
+commit 1398ec958ea0c50648abf238f6c4ca1de2164456
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 11 20:13:35 2023 -0400
+
+    ioctl
+
+commit 5a1d3c7d2ab61cc74bad0920fa7078513789a76e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 11 20:07:49 2023 -0400
+
+    ioctl
+
+commit 6f7e48aea72d7bf4a0a91b219e8c6c952bcc2936
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 11 20:04:29 2023 -0400
+
+    ioctl
+
+commit b227e5306df7e8ed31e33be44638db0db9b6b30b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 11 20:03:48 2023 -0400
+
+    ioctl
+
+commit 7ce308fd1af91f5b91455276fc906a8b5ce9643e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 11 20:02:09 2023 -0400
+
+    ioctl
+
+commit 03ec18763ffad47047ed7e8915d1898fb64a9633
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 11 20:01:26 2023 -0400
+
+    ioctl
+
+commit fb28330759b26b1c2ba206d37b32303127c928b7
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 11 19:26:13 2023 -0400
+
+    ioctl
+
+commit 2cb3ee21970b4291aa5954a79f80b7a569dd9dae
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 11 19:25:44 2023 -0400
+
+    ioctl
+
+commit 3e2bfeb75c857ce7208f29998eea7d122f5af155
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 11 19:25:05 2023 -0400
+
+    ioctl
+
+commit 56ab4453ce438b10bd3520c72baf7e9c168d97ba
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 11 19:23:11 2023 -0400
+
+    ioctl
+
+commit 1b302ebef95899c0b875fbcd8ff7277e2f87d5f0
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 10 19:18:13 2023 -0400
+
+    ioctl
+
+commit 2d36061e68d2a8507bbd526ac054cb56f046d1d9
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 10 19:15:11 2023 -0400
+
+    ioctl
+
+commit 6a5a6bcdc6a3b0e54af5683877b73225d6a76498
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 10 19:10:24 2023 -0400
+
+    ioctl
+
+commit f0156708f5f8b9f1853528f3bdf916c4e16e5a8e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 10 19:02:21 2023 -0400
+
+    ioctl
+
+commit 2a6e57e3560c49493aacda3e892393e3fd55e2fb
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 10 19:02:01 2023 -0400
+
+    ioctl
+
+commit 30bba4f346c24c24a8bd6156f0f0aa05b0af56de
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 10 19:01:31 2023 -0400
+
+    ioctl
+
+commit 22573c1a3ab0cf7fbe40dbac9441ab612cd47fff
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 10 19:00:53 2023 -0400
+
+    ioctl
+
+commit ddbfcdf12a046aaadafd12901e53a554ec78d553
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 10 18:34:49 2023 -0400
+
+    ioctl
+
+commit df8c7d8cb8e51994d4a346bfe646309fc5502485
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 10 18:27:06 2023 -0400
+
+    ioctl
+
+commit 058aa4908b57f6c2a427a2217a0f5e1cba6a9d7f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 10 16:45:04 2023 -0400
+
+    ioctl
+
+commit 0de07b8d1edcc1b6a2551d286278658f7ae672f9
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 10 16:44:13 2023 -0400
+
+    ioctl
+
+commit e146a64bf71e1f8677fb7df59904c799e925a38c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 10 16:17:03 2023 -0400
+
+    ioctl
+
+commit e0060815b3c0cc82eecba08a0bfcde1082bf39b7
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 10 10:47:32 2023 -0400
+
+    ioctl
+
+commit a1349e3d4cab97bfbfc92e3c18a337a9369a7803
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Sep 9 23:11:43 2023 -0400
+
+    ioctl
+
+commit 1d564ade84707a13f035f150bdab4be58311f16f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Sep 9 22:56:02 2023 -0400
+
+    ioctl
+
+commit 211363d1951b2299525b25a9fb40645a66bf125f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Sep 9 22:52:40 2023 -0400
+
+    ioctl
+
+commit 37701ebe93c99e6180a07b0224bd1ea5984663f5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Sep 9 19:47:26 2023 -0400
+
+    ioctl
+
+commit 27e7e1b0d6812b40dd7203f4703365e734b2789d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Sep 9 19:40:21 2023 -0400
+
+    kvm-mmu
+
+commit eeec3a4c826781bbd3fd82a76179432d94916edf
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 8 22:28:31 2023 -0400
+
+    ioctl
+
+commit 59bf1c8ce27fc557a61c2053cb2b92db090d0547
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 8 22:27:27 2023 -0400
+
+    ioctl
+
+commit 105f53ba55f7491db6040f725c6b5ba7f2392abe
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 8 21:22:45 2023 -0400
+
+    ioctl
+
+commit 5fe681b60e422e956c411638c6c4ba5954e5e024
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 8 21:19:44 2023 -0400
+
+    ioctl
+
+commit 1cab49c31ea7746522cb5b6e2a7b3152e9c9b38f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 8 21:18:56 2023 -0400
+
+    ioctl
+
+commit e39f5ad60c0ffd6374ce9470d00ae160baf6f543
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 8 21:16:21 2023 -0400
+
+    ioctl
+
+commit 95c628cac1ad6791b1b1da0921e314eb61108c87
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 8 21:15:50 2023 -0400
+
+    ioctl
+
+commit 3498d00efa29bf4fec8d82f8552009519f490377
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 8 21:15:11 2023 -0400
+
+    ioctl
+
+commit 7339e5e62670e33499bca9a17132c18377c7557e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 8 21:13:59 2023 -0400
+
+    ioctl
+
+commit 998eeb2da3ccc2a6212e067437fa24fddff03c94
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 8 21:13:31 2023 -0400
+
+    ioctl
+
+commit 0c53f9ef4d77d08d857064ace9126d9548d47fc6
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 8 21:13:05 2023 -0400
+
+    ioctl
+
+commit 3662dcf09d63c0a7c396f3f5ebb0c45d676385be
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 8 21:11:10 2023 -0400
+
+    ioctl
+
+commit 793abd5be37d29b07e4942c8be8d5247a0db07e3
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 8 21:09:44 2023 -0400
+
+    ioctl
+
+commit 4c8d9ef184ac6096a31a479c0229ecd55d957e71
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 8 19:42:37 2023 -0400
+
+    ioctl
+
+commit 92cf4ad918986d2c4be3899f79784f7a5c97c86a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 8 17:05:17 2023 -0400
+
+    ioctl
+
+commit f2ae3fb338eee094248bc3075718af931402b5e1
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Sep 8 17:00:06 2023 -0400
+
+    kvm-mmu
+
+commit c242587d4d431d05278831ca98855e3d4cdb06d9
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 7 20:22:52 2023 -0400
+
+    kvm ioctl flag
+
+commit e28e891ded12194fc9f0b986cc473280e079f6d5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 7 20:21:46 2023 -0400
+
+    kvm ioctl flag
+
+commit e85f010693c4e5ef7d8ca353da6ad753a957a0d3
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 7 20:20:11 2023 -0400
+
+    kvm ioctl flag
+
+commit 1448e13638dd59339ed9d2c2019580883690e72f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 7 20:09:56 2023 -0400
+
+    kvm ioctl flag
+
+commit 98bebdcae64c856c995dfa08f6491818ff879728
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 7 19:09:57 2023 -0400
+
+    kvm ioctl flag
+
+commit 775e45bef31b1b651a276150bf600556b4ac6e43
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Sep 7 18:53:59 2023 -0400
+
+    kvm ioctl flag
+
+commit 01966d028b866606f973f9f2278eb33cf04a816b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 22:40:33 2023 -0400
+
+    femu cxl mmio
+
+commit efce3432b6f1c74b8551716ecdae8442d8068d93
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 22:39:53 2023 -0400
+
+    femu cxl mmio
+
+commit 0650110d58ba8c6ea0c1c8b6d1aadfb7a7a08903
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 22:19:06 2023 -0400
+
+    femu cxl mmio
+
+commit 10433c772040faeedb5cae1428d054a51c239000
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 22:14:20 2023 -0400
+
+    femu cxl mmio
+
+commit ee2e467263ce2233720505616420a4fb28484208
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 22:01:43 2023 -0400
+
+    femu cxl mmio
+
+commit 408a6a92e1c7e82fabdd34f639f7ef1de036c7db
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 21:11:32 2023 -0400
+
+    femu cxl mmio
+
+commit b76e3f8a315e1c518192ea385cad14ac58b1b1ab
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 21:02:14 2023 -0400
+
+    femu cxl mmio
+
+commit 477fc79caf24505362dd6f82a454e1ab8fd1916f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 20:48:41 2023 -0400
+
+    femu cxl mmio
+
+commit a76383b121cb1276d5342c639d2e02a4f0da426b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 20:23:42 2023 -0400
+
+    femu cxl mmio
+
+commit c8a374215a28cf4e165f4be08146d9ce390dbcfd
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 20:22:34 2023 -0400
+
+    femu cxl mmio
+
+commit d25b31855459d5a404e0a786b35fe3b03fb70fbf
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 20:19:31 2023 -0400
+
+    femu cxl mmio
+
+commit 09ad9b3a0111eaec135b5f74a2d40ae0ad6cafa6
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 20:10:25 2023 -0400
+
+    femu cxl mmio
+
+commit 4414de1e8cea8473508adbde874be1f28c4c46f8
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 20:09:50 2023 -0400
+
+    femu cxl mmio
+
+commit c97d141831233c3681e06477e7debe4a50bec3a5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 20:08:45 2023 -0400
+
+    femu cxl mmio
+
+commit e8bd722fe759e2757c062abefbedbf2388aedcf8
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 20:07:02 2023 -0400
+
+    femu cxl mmio
+
+commit 5220bab5b2daabe385e2ec1ca9e7ec20ac47904a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 19:55:16 2023 -0400
+
+    femu cxl mmio
+
+commit 6fa437fe7d2ef33c626cb1a9a8d9b1a9935fe780
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 19:19:52 2023 -0400
+
+    femu cxl mmio
+
+commit a797146c9a7d0164c978513211cab0b021c227a4
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 19:17:02 2023 -0400
+
+    femu cxl mmio
+
+commit d6a5123fe76f5f1f96f9b6da4a01d6c4259143c8
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 17:34:12 2023 -0400
+
+    femu cxl mmio
+
+commit 8386d011122acc7450654e05c2dbf8cbc331e541
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Wed Sep 6 15:07:25 2023 -0500
+
+    Nits
+
+commit 35e0391dd542bba38e98c4cce7bd8894ac129800
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Sep 6 12:50:53 2023 -0400
+
+    kvm ioctl
+
+commit 3e5cb75d9a840c5757d44e4bb12a56dcefc738a0
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 5 16:06:55 2023 -0400
+
+    kvm ioctl flag
+
+commit 46d2513ab9dfe87263df6aae52aeef906ccbe437
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 5 15:53:59 2023 -0400
+
+    kvm ioctl flag
+
+commit 8e8d635661a5364360d820452f1fd7a945ac5e7b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 5 15:43:21 2023 -0400
+
+    kvm ioctl flag
+
+commit 9f57d4d16d4e6dbdf09464d1a8178f67d5e3223b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 5 15:40:43 2023 -0400
+
+    kvm ioctl flag
+
+commit 98d28a4d4bad3ee8df52b94baf1d2e90962b7e6c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 5 15:26:40 2023 -0400
+
+    kvm ioctl flag
+
+commit 445a335e6efbd90c454f45a4ae5f2145b73e2e28
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 5 15:00:41 2023 -0400
+
+    kvm ioctl flag
+
+commit b5f91327b4bd90723e20653c6ee98cce798a43ff
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 5 13:43:21 2023 -0400
+
+    kvm ioctl flag
+
+commit c67cc8313a5c710f8ec9cba9a1c0471e1d75dd0c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 5 13:37:56 2023 -0400
+
+    kvm ioctl flag
+
+commit cebd80a9d10e9884de47078835681fdd26ab23aa
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 5 13:36:12 2023 -0400
+
+    kvm ioctl flag
+
+commit db5a947b06de6e37a5d4e2989fe4470ce1933513
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 5 13:34:36 2023 -0400
+
+    kvm ioctl flag
+
+commit 5748a761dd05991b2d9b9d731b8063a6201198ae
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 5 13:34:01 2023 -0400
+
+    kvm ioctl flag
+
+commit fc2b1ce29ca8b60a86716bab2a3c55aa00ccdc5e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 5 13:32:30 2023 -0400
+
+    kvm ioctl flag
+
+commit 9461dca2042df1c0faa8bb6e90eed61c0c855c25
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 5 13:30:24 2023 -0400
+
+    kvm ioctl flag
+
+commit 3014cfea1168ea39d5d1e0a9de4aa5e541d71d4b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 5 13:10:51 2023 -0400
+
+    kvm ioctl flag
+
+commit 93d1ee5561add9ecf308722bb949021db2364361
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Sep 5 13:10:27 2023 -0400
+
+    kvm ioctl flag
+
+commit 1f693f6e7a59064aca1ae1f802fe86778c5b7e80
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 23:36:51 2023 -0400
+
+    mr test
+
+commit e15ab824e8e9fd6b0205b2ca21a45d8857f01615
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 23:34:11 2023 -0400
+
+    mr test
+
+commit 056a16e3c3eb5853ac1c9c8a4ee4a2046590f016
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 23:33:38 2023 -0400
+
+    mr test
+
+commit f07e27ec9b0d0edfd747514e05e88798c2363b8b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 23:32:59 2023 -0400
+
+    mr test
+
+commit 2414cd8d331806dfd49422da558fcefe4f2be6e8
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 23:32:14 2023 -0400
+
+    mr test
+
+commit 422c52526e84a45fb7d9821a513eb0e0b196626a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 23:32:08 2023 -0400
+
+    mr test
+
+commit d6c9db0666a2b821780cd1a10a6c23e29d3798ce
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 23:28:57 2023 -0400
+
+    mr test
+
+commit 99f4b4f2831c68983243468c4a73d39673911aac
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 23:26:58 2023 -0400
+
+    mr test
+
+commit 718b1bafa62b528b3bfbe56bd776e4458da3c5cb
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 23:25:25 2023 -0400
+
+    mr test
+
+commit 4d29e50ad0dcec14c2eb7921ec52da65ee8360a0
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 23:24:05 2023 -0400
+
+    mr test
+
+commit 992c70ebe171b4186671b4290f51a0151f0b8980
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Mon Sep 4 22:23:09 2023 -0500
+
+    Allocate FEMU backend from Node-1 and print out poller tid
+
+commit 5fd64b7d183745d8cbea3cb03cbb166a4f56d2ac
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 23:22:13 2023 -0400
+
+    mr test
+
+commit d2a491ca60225eb2c4d9912f6c10e1eeddcfb4dd
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 23:21:30 2023 -0400
+
+    mr test
+
+commit 47d48d6bf980025544409dc2caef75739fe9e297
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 23:20:34 2023 -0400
+
+    mr test
+
+commit dc5d666506ccaaa44737fc211fa1d2c6bf2976b5
+Merge: 9b74056ed7 253d794277
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 23:18:56 2023 -0400
+
+    Merge branch 'femu-cxl' of https://github.com/dongha-yoon/FEMU-cxl into femu-cxl
+
+commit 9b74056ed76da2930c6ab0cb494bf718f92bb835
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 23:17:59 2023 -0400
+
+    mr test
+
+commit 253d794277b57d184d260e2dc1d1c581b799805b
+Author: Dongha <66735814+dongha-yoon@users.noreply.github.com>
+Date:   Mon Sep 4 20:31:45 2023 -0400
+
+    Update README.rst
+
+commit a6482d9bcf70bd6729b3c81dfda6911d2102e088
+Author: Dongha <66735814+dongha-yoon@users.noreply.github.com>
+Date:   Mon Sep 4 20:30:43 2023 -0400
+
+    Update README.rst
+
+commit ed157544a6a3ec15f9402f1bba92919dd7b6dfaf
+Author: Dongha <66735814+dongha-yoon@users.noreply.github.com>
+Date:   Mon Sep 4 20:30:32 2023 -0400
+
+    Update README.rst
+
+commit 67234c6abe51c0b034e4085ad3488b4e61467021
+Author: Dongha <66735814+dongha-yoon@users.noreply.github.com>
+Date:   Mon Sep 4 20:30:17 2023 -0400
+
+    Update README.rst
+
+commit 93c24a926c20c79ab1f93cadeae0bab8e678feb5
+Author: Dongha <66735814+dongha-yoon@users.noreply.github.com>
+Date:   Mon Sep 4 20:30:01 2023 -0400
+
+    Update README.rst
+
+commit cfebfb3c3ca97cb611ace5944cd41a4a55a9323f
+Author: Dongha <66735814+dongha-yoon@users.noreply.github.com>
+Date:   Mon Sep 4 20:29:40 2023 -0400
+
+    Update README.rst
+
+commit 93f96f6059fe6982126305bf8ce0dac2e0e725a7
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 18:28:13 2023 -0400
+
+    mr test
+
+commit c4ea9a1805fade844b7e96ecc0577c03fc8d5398
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 18:16:30 2023 -0400
+
+    mr test
+
+commit 9a7905b9838b0e0da1ec5b527eb207bf0402c12e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 18:02:21 2023 -0400
+
+    mr test
+
+commit a42b4636f4cf214fad908907c8a3e69d5fed92f8
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 18:00:16 2023 -0400
+
+    mr test
+
+commit 5ada3ffa220238e88a0ee2fe47f5c5660f57444f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 18:00:05 2023 -0400
+
+    mr test
+
+commit 62b687a1b179b6594666fe8cb1487dd3b5b56b1f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 16:57:26 2023 -0400
+
+    mr test
+
+commit 09319d183ed45c915366e9068723bddf57ab4011
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 16:54:41 2023 -0400
+
+    mr test
+
+commit 3ed16bc37deae23930b6fc43e7bea59ce85b05d5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 16:50:09 2023 -0400
+
+    mr test
+
+commit c32a1cbd0a84d701617d02204789860999074849
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 16:47:21 2023 -0400
+
+    mr test
+
+commit 22ada40c7efe0428021f7f17a943fea51bd5a31b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 16:46:11 2023 -0400
+
+    mr test
+
+commit 2f2cb572117a50c9ace925f39bdf73bfc54115e7
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 16:45:37 2023 -0400
+
+    mr test
+
+commit df2f8ef74db71f368b35ba018a1b8fba7bc4780d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 16:34:19 2023 -0400
+
+    mr test
+
+commit 2d47ea685016a2992e40b385291499eca37ea885
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 16:33:09 2023 -0400
+
+    mr test
+
+commit a849590cf590046719af4493ec48ed2d1f1cec80
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 15:44:18 2023 -0400
+
+    mr test
+
+commit 938ba0e14c45f8bbd8fbe6d28058c9b4cb1ed9b1
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 15:41:41 2023 -0400
+
+    mr test
+
+commit 1dfe1b5fb6438137e28de71903514a10b958c1dc
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 15:35:49 2023 -0400
+
+    mr test
+
+commit 179a62accba24654c24aa9cdd6f66367228eb8db
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 15:25:33 2023 -0400
+
+    mr test
+
+commit 1222a903d5ba1d376e421e6a77198faf022367fe
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 15:09:36 2023 -0400
+
+    mr test
+
+commit 8504f523be32a501b130e5f5508c147c12f4036d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 13:37:36 2023 -0400
+
+    mr test
+
+commit 71336c15e9cc30ee8fb6c09bd3d053c6d156ab58
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 13:35:20 2023 -0400
+
+    mr test
+
+commit dbf66571fb9880a7459b85f900b2c285df8f1922
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 13:33:19 2023 -0400
+
+    mr test
+
+commit fc82aabda97de1ad0b90c7158413aecb312ed0c7
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 13:31:45 2023 -0400
+
+    mr test
+
+commit aa8446bf5f5ba6c9a285b3b104049b1d337daba1
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 13:21:41 2023 -0400
+
+    mr test
+
+commit 91ea0afebd44c7148b6a70b1460b682886eb9f74
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Sep 4 13:18:10 2023 -0400
+
+    mr test
+
+commit 379fc57f4229d1014fab944d436e71106e123244
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 3 20:59:50 2023 -0400
+
+    mr test
+
+commit 3b2940928484b7b5656b19c118759db73e0b7097
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 3 20:44:38 2023 -0400
+
+    mr test
+
+commit 5775193b85709295a844479bd31dc17eddfae67d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 3 20:44:18 2023 -0400
+
+    mr test
+
+commit 48e07ca58dd0e46bcca0ec57d69647b93b7b1429
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 3 20:33:16 2023 -0400
+
+    mr test
+
+commit 52d4733794ab5575d0981a21449470efa2a552f5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 3 20:32:33 2023 -0400
+
+    mr test
+
+commit 1d1b9fab56b7c128d1d0bc43e8ffafc18b6be4c4
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 3 19:08:52 2023 -0400
+
+    mr test
+
+commit d1dd2027ce8f4d5e34bb9d7e3b348383934aa520
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 3 18:04:39 2023 -0400
+
+    mr test
+
+commit d3b6be98302ab01ddc4b68d3ee3e4c0e192fc485
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Sep 3 17:33:29 2023 -0400
+
+    mr test
+
+commit b9bb4eaea99633ae44c9d3f0e557cc8b077969c8
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Sat Sep 2 18:25:23 2023 -0500
+
+    Update vCPU pinning scripts
+
+commit cd0ee258d62b4b08c0863f2667b60f181d35ba8b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 30 20:02:04 2023 -0400
+
+    femu-cxl
+
+commit 15c0a48eeeee9f95483b3a3749265e0fb4fb2ed9
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 30 20:01:19 2023 -0400
+
+    femu-cxl
+
+commit c2adc6090cea211fd8e2dce427c8008b516d1ea5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 30 19:50:55 2023 -0400
+
+    femu-cxl
+
+commit b21287ff507ca77a8827ad504799ea2d37ee3785
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 30 19:49:26 2023 -0400
+
+    femu-cxl
+
+commit f68f1c4a326957782c68f24341d9ed3ade569b1a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 30 19:45:33 2023 -0400
+
+    femu-cxl
+
+commit e4f399c19a6b4bd97a32c09bf9bf8a65d5514c37
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 30 19:43:26 2023 -0400
+
+    femu-cxl
+
+commit 7c5052a79c7e7be972b960fb91daed4b8349a616
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 30 13:13:44 2023 -0400
+
+    femu-cxl
+
+commit 4b972032fd3c434cafa4970a9fa9063b1f978e02
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 30 13:04:00 2023 -0400
+
+    femu-cxl
+
+commit e1fd2a71d0b26474a07cba364bf142db077237b3
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 30 12:56:54 2023 -0400
+
+    femu-cxl
+
+commit e6e04bc34421c1dc378033618de9fa9c817e37af
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 30 12:56:35 2023 -0400
+
+    femu-cxl
+
+commit dbb85713059753be0ca44c781d9531e1d0838ddd
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 30 12:55:27 2023 -0400
+
+    femu-cxl
+
+commit 3ebcf7a3bc352b18998768178bab60b6f7de4d47
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 30 12:47:25 2023 -0400
+
+    femu-cxl
+
+commit 3d95bd5259f731be6bf5ab37691fe7152e93ebbb
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 30 12:45:27 2023 -0400
+
+    femu-cxl
+
+commit a7981e55bbac64811e6be266d2e2d90782f602e5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Aug 27 07:13:00 2023 -0400
+
+    femu-cxl
+
+commit 4e4686f6ef14f4d4f388fff4fd48f5688e323ed6
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Aug 27 07:11:43 2023 -0400
+
+    femu-cxl
+
+commit 3f8a730fe232725b4658921d29eef22c600e8c25
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Aug 27 07:11:11 2023 -0400
+
+    femu-cxl
+
+commit 1bcaa50f4f8f60ac575902749aa7bf48c2d54d0d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Aug 27 07:09:45 2023 -0400
+
+    femu-cxl
+
+commit d6985b286d83ccbe4797d1b34ca4d25a3856d1f5
+Author: Muhammad Akmal Arifin <makmalarifin25@gmail.com>
+Date:   Sat Aug 26 23:40:56 2023 +0700
+
+    Add BBSSD param config interface
+
+commit 79f3326fb053a1c84442db89eeff219d54d6885c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Aug 25 11:54:43 2023 -0400
+
+    femu-cxl
+
+commit 700c6fae8428eea64ae836225cbeb2e081a1b4e5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Aug 25 11:04:46 2023 -0400
+
+    test
+
+commit d044979c2b5469ea46bf4cf40d3973acab67221e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 24 16:57:04 2023 -0400
+
+    femu-cxl
+
+commit 04c61b3b3a58e5c3467c6737df35a24f26137859
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 24 15:39:03 2023 -0400
+
+    femu-cxl
+
+commit b49deca56a04b2486d16bcc906b6fdf68a513641
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 24 15:37:52 2023 -0400
+
+    femu-cxl
+
+commit 2b346347bc8e854e743c126774fa506e8a472d65
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 24 14:23:46 2023 -0400
+
+    femu-cxl
+
+commit 1f7ea0b8ec46b295140b55d2cab157fc58909c1a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 24 12:52:14 2023 -0400
+
+    femu-cxl
+
+commit 701a6b352b9e3f52f761987b9748b740ae85d4c5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 24 12:49:56 2023 -0400
+
+    femu-cxl
+
+commit 1bfb6df03dac2b78a40255ef8bae82214dfc279e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 24 11:44:50 2023 -0400
+
+    femu-cxl
+
+commit 0d588afe1dfdc737c2820057c190e7882833946f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 23 20:54:00 2023 -0400
+
+    femu-cxl
+
+commit 07d77bfa9ac8152c63de29fcf751336734ecd0ba
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 23 20:44:38 2023 -0400
+
+    femu-cxl
+
+commit 5f47614a6cbd61740228e077ce351e057970ceaa
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 23 20:44:04 2023 -0400
+
+    femu-cxl
+
+commit 1a98a6a689e4b93220cff314fdffbad8372ce67c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 23 20:38:47 2023 -0400
+
+    femu-cxl
+
+commit 4a5fc468586dd3f263c3660dd6c3e03eec51b697
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 23 20:30:19 2023 -0400
+
+    femu-cxl
+
+commit 5c72ffaa2ee5e7da1af4bb00d473c70e2cc99900
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 23 20:05:08 2023 -0400
+
+    femu-cxl
+
+commit 8233bd553a232b57674317d72dc7e0cacebe4e43
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 23 19:17:05 2023 -0400
+
+    femu-cxl
+
+commit b4e31c5d67672547966a88854d9ee2504d137e52
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 23 19:06:46 2023 -0400
+
+    femu-cxl
+
+commit ff5aa60affaa69d3fb89299c8866315a6259d5e4
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 23 17:47:54 2023 -0400
+
+    femu-cxl
+
+commit c1621947daf184a2fe5bd538fd8baf41a393f494
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 23 17:33:51 2023 -0400
+
+    femu-cxl
+
+commit 680893fb9b08fed5ad8df4d2d6f6c5c9e593d4ac
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 23 17:26:40 2023 -0400
+
+    femu-cxl
+
+commit 0cb6102b4c4753412e0e5d73739ab7fd2c103136
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 23 17:26:10 2023 -0400
+
+    femu-cxl
+
+commit 03a6ae098558eac194c9f2d6038368b4a900951b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 23 13:45:31 2023 -0400
+
+    femu-cxl
+
+commit ec55bfecab6f7b8747aab1be572ce9075b612232
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 23 10:17:52 2023 -0400
+
+    femu-cxl
+
+commit 0b1fc85360dd53511e5c56f918300ef4e4b8e7f7
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 22 19:25:59 2023 -0400
+
+    femu-cxl
+
+commit fdb8ce141ea0f1edf52024ff398f7040613f18f6
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 22 19:22:40 2023 -0400
+
+    femu-cxl
+
+commit 0672316511b1ce7d105f29b6ad45335f8722a4e9
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 22 19:15:25 2023 -0400
+
+    femu-cxl
+
+commit bcfec905fe0d9c1c124480dbaf8357834cd913ef
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 22 19:14:48 2023 -0400
+
+    femu-cxl
+
+commit 27442202b03c4dbecb12fedb1f26aede23a9869a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 22 19:08:54 2023 -0400
+
+    femu-cxl
+
+commit 76fd96b83cdf51c97eba6ed8b32c3650ccefeacd
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 22 19:06:37 2023 -0400
+
+    femu-cxl
+
+commit 6d94a9a5e8491dcd9be65c46df1ebb39b88729c2
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 22 19:01:23 2023 -0400
+
+    femu-cxl
+
+commit ad0f527b2e751c978d2934afe8bc7bf7bdad678d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 22 17:32:47 2023 -0400
+
+    femu-cxl
+
+commit c3b8ad0674fcf5a01751a5bb38a12e8bd7276ffc
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 22 17:08:57 2023 -0400
+
+    femu-cxl
+
+commit 4de3514c03a62b0fb4374851a49ebfc5efedb90a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 22 17:01:14 2023 -0400
+
+    femu-cxl
+
+commit 28e71e55a9e9930c3f3fee9be54f84b1fa2cdcf1
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 22:50:15 2023 -0400
+
+    femu-cxl
+
+commit 6ba2ff8b0d6ab5812da6841d7e9686028b118b3f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 22:25:07 2023 -0400
+
+    femu-cxl
+
+commit 41b041d7ae4544e19d6deb015db2263e0b34dd1f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 21:15:16 2023 -0400
+
+    femu-cxl
+
+commit c7de799805ecc1b7f63423e2ac08a63b21d5052c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 20:28:20 2023 -0400
+
+    femu-cxl
+
+commit 551c0416c4ddb27a0544358fae5651d9b55c22c1
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 20:22:04 2023 -0400
+
+    femu-cxl
+
+commit bfee132a39278e318810efe8589a39c7acb7349b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 20:04:30 2023 -0400
+
+    femu-cxl
+
+commit 7ca6484116c8b1275577f7aa226bd23ab3ab8d57
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 19:51:49 2023 -0400
+
+    femu-cxl
+
+commit a575549a099e45c82dd570aba814893af830ca1b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 19:42:26 2023 -0400
+
+    femu-cxl
+
+commit 0a5eb7fd7679020a4de59d102e5b44497b917d13
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 19:14:12 2023 -0400
+
+    femu-cxl
+
+commit 42e186e239db85c4f08e6d8fa1d35bc76c4b307b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 19:12:20 2023 -0400
+
+    femu-cxl
+
+commit d8b5b89f0cc6f63ad494d8905327ee33a922adbf
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 18:58:14 2023 -0400
+
+    femu-cxl
+
+commit 068f21d7df8741f7b6c80c3d4719a19bd0bdea2b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 18:50:20 2023 -0400
+
+    femu-cxl
+
+commit 19f17ef4f0d0e2ddf37e7462f54ca31badfc8757
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 16:10:31 2023 -0400
+
+    femu-cxl
+
+commit 318e5b378ff7328167f157eab189440cdfbbdad3
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 16:09:43 2023 -0400
+
+    femu-cxl
+
+commit fddc682707d9cc9a147c6090e874cbc42116d21a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 15:42:13 2023 -0400
+
+    femu-cxl
+
+commit 067badb295575e3f6ed1487681e10329775dae69
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 14:40:23 2023 -0400
+
+    femu-cxl
+
+commit e6f510c02c17f23d4e0a8daa4c4dc9efbe330e82
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 14:38:22 2023 -0400
+
+    femu-cxl
+
+commit 3f6b9f21f06285f2b3a219bdfb240f66d0881198
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 14:33:52 2023 -0400
+
+    femu-cxl
+
+commit 365749717898ee22e96de4b81242f9c6df84e170
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 14:21:03 2023 -0400
+
+    femu-cxl
+
+commit 9d95b6fc80e4c9bcb5599d7bb733866d04e6d586
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 14:12:31 2023 -0400
+
+    femu-cxl
+
+commit 5b42c9434a894264e35c26558d66744a843aa924
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 13:48:29 2023 -0400
+
+    femu-cxl
+
+commit 1bbecd286e6c63b73d472634dc09d0ea79e731c1
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 13:14:45 2023 -0400
+
+    femu-cxl
+
+commit 152faea98374e6aa20d49126ed86ff8aeee327af
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 21 13:10:27 2023 -0400
+
+    femu-cxl
+
+commit cfc7d2e53b43f434659773042430f16dcec6a181
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 19 10:27:44 2023 -0400
+
+    femu-cxl
+
+commit 0d9e66d939030f048588c099cd45964a9fa365e5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 19 10:24:07 2023 -0400
+
+    femu-cxl
+
+commit 687cf314b7ad11422bf549fcccadd775c1465f8c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 19 10:23:18 2023 -0400
+
+    femu-cxl
+
+commit 1f2402cb363d57957f112b1d783e06f7f8499b63
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 19 10:22:39 2023 -0400
+
+    femu-cxl
+
+commit b711277cbdb3ab6a0da1034564c10f71b299d246
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 19 10:20:45 2023 -0400
+
+    femu-cxl
+
+commit c80b44d77c82a3a3f2f27484dfa3a6b348c7a440
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 19 10:10:20 2023 -0400
+
+    femu-cxl
+
+commit f881e79abdc3192d04b707830377ef84c092fd41
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 19 10:09:57 2023 -0400
+
+    femu-cxl
+
+commit e772480767c94d849df9188fc3fcf885413792a5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 19 10:08:00 2023 -0400
+
+    femu-cxl
+
+commit aedd081e17dd2450496dfb75a7e57d391cdb6a85
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 19 10:04:24 2023 -0400
+
+    femu-cxl
+
+commit ea150968f6336b145824545ee482a27f2d111592
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 19 10:03:04 2023 -0400
+
+    femu-cxl
+
+commit 4a4e05adae3f3be20018ef937b8d51e98d34756d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 19 09:39:45 2023 -0400
+
+    femu-cxl
+
+commit 986703355e184625e980a6db9aa555470f16bd6a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 19 09:38:10 2023 -0400
+
+    femu-cxl
+
+commit 7e8a24a398c53ac0949810b975990be8b0f7be70
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 19 09:18:15 2023 -0400
+
+    femu-cxl
+
+commit 706f5d2b710a178e3e3d42056b134250794035f8
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 19 09:17:31 2023 -0400
+
+    femu-cxl
+
+commit 964d9ead4ad993562645ab9e6220a25ee4b9e398
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 19 09:16:56 2023 -0400
+
+    femu-cxl
+
+commit 0a78c44f62c8b28e066c348a12729a2efa394ade
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 19 09:14:58 2023 -0400
+
+    femu-cxl
+
+commit 083cc48f8beab0d5d8e030ef31a83f37cd402eff
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 17 15:40:32 2023 -0400
+
+    femu-cxl
+
+commit 49b76854884ef0297eb4402d8e5fc63351eb90a0
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 17 15:39:48 2023 -0400
+
+    femu-cxl
+
+commit e61b74a72d5e2b1748b13b3a02ee5d4ac02b86e8
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 17 15:37:28 2023 -0400
+
+    femu-cxl
+
+commit 543f3c934380cc87130681068b0725aaf6c624f2
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 17 11:46:29 2023 -0400
+
+    femu-cxl
+
+commit f5de3b1bd6500fb97d985f483005b44941369fa8
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 16 02:05:57 2023 -0400
+
+    femu-cxl
+
+commit 64dea6d6e2d0853c596fb032c00b55de9fa54ba8
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 16 02:05:15 2023 -0400
+
+    femu-cxl
+
+commit bd0a23a5da3ac5989a7a270042e842132d24a7a3
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 16 02:02:00 2023 -0400
+
+    femu-cxl
+
+commit d8a23b8be41dd1aee3dbed8dccc20673e361e939
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 16 01:58:17 2023 -0400
+
+    femu-cxl
+
+commit 3b5bacf73bba159b49d113d95760a9fa1fc13c4b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 16 01:47:40 2023 -0400
+
+    femu-cxl
+
+commit cd653e4a630507ad2599289298fc71e60662507c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 16 01:44:11 2023 -0400
+
+    femu-cxl
+
+commit d3d865a8090c85c68b2871a86af8b3e7d46bf2ce
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 16 01:43:33 2023 -0400
+
+    femu-cxl
+
+commit 4421fb492e0e2cc77486b04a5c647d8f5c50b7e6
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 16 01:42:12 2023 -0400
+
+    femu-cxl
+
+commit 1920fbe57aaaba45e994d7d5d6909f5c90ca05f9
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 16 01:38:42 2023 -0400
+
+    femu-cxl
+
+commit 97ab6231dd6056ceb5cd6a275f68b4ce3d3ca222
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 16 01:34:09 2023 -0400
+
+    femu-cxl
+
+commit 2aa23a88d8d1791c12c5aef492e481279c1cd8b4
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 16 01:25:59 2023 -0400
+
+    femu-cxl
+
+commit 3f6250999b1870c623ea36f5a634aaf6f34b09e5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 16 01:15:14 2023 -0400
+
+    femu-cxl
+
+commit cd353f2040e667cceabdc9b7bb4bedb85515786e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 16 01:12:37 2023 -0400
+
+    femu-cxl
+
+commit 69a09150640375939643b908e6ca156911427a0b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 16 00:56:17 2023 -0400
+
+    femu-cxl
+
+commit a9620391c1c091334e3b953234fa24c534f06acd
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 16 00:06:24 2023 -0400
+
+    femu-cxl
+
+commit 573405eae9af6cc2d687dd9f9048ea38c33a65e0
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 16 00:00:39 2023 -0400
+
+    femu-cxl
+
+commit 23dd667cf6f7d913a0038d72f50474edaddd2214
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 15 23:53:07 2023 -0400
+
+    femu-cxl
+
+commit 6eedaf742741bae5d9230ffd3d6cf83163bb0f6a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 15 23:51:02 2023 -0400
+
+    femu-cxl
+
+commit ab8db9db0ec967204336ffe18816e57e208e8402
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 15 22:52:06 2023 -0400
+
+    femu-cxl
+
+commit 9d27b1e6d4536874abcef7a4d4ebdeb2e3728c77
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 15 22:51:37 2023 -0400
+
+    femu-cxl
+
+commit 2a32337d59c7cd854be0b36ad4ed13312e879c69
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 15 22:50:14 2023 -0400
+
+    femu-cxl
+
+commit b21f5e69407db552f7c285f6de6c8703268a01b6
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 15 22:48:13 2023 -0400
+
+    femu-cxl
+
+commit fa520cb6c19d03022eeaa863728f77cf2c905cdc
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 15 14:13:02 2023 -0400
+
+    femu-cxl
+
+commit b33fd94a2456ea3b9cd1cbc3ce6139045a884773
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 15 14:12:12 2023 -0400
+
+    femu-cxl
+
+commit b75f16e32b7f3720c237e23ebef0dacfd9d0caa0
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 15 13:59:56 2023 -0400
+
+    femu-cxl
+
+commit 3d326f19aa4aae14c4dd0d0d86235396a58b951b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Aug 13 22:39:37 2023 -0400
+
+    sda
+
+commit 32f8818b0bff8c670715df4a61698192d62ce36e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Aug 13 20:46:20 2023 -0400
+
+    sda
+
+commit fc88915d32d6dbe2b73f5048b81426b69ded1613
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Aug 13 09:23:15 2023 -0400
+
+    sda
+
+commit fd96eaf51e5e88fe3835d3a0ccfaeaa2a5caad9c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Aug 13 09:22:50 2023 -0400
+
+    sda
+
+commit 4e0b9cc2c23d287f1e54802a7ecdfcc0026c32ff
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 20:13:47 2023 -0400
+
+    sda
+
+commit 09fcd1d942e4390a187c74c0f81eb1359e7653e2
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 20:08:58 2023 -0400
+
+    sda
+
+commit c683c625afc1d129b052c5785800c20465ff434a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 19:40:57 2023 -0400
+
+    sda
+
+commit 22c3e6bb8578eb08f0c8a2b5319812cb778d1582
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 18:38:38 2023 -0400
+
+    sda
+
+commit eb866d2b0dc9ebde3d0ffb1985d8e203333b6661
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 18:35:19 2023 -0400
+
+    sda
+
+commit 68ff1f6ca6ec1d8506c598b3d9da898c42b7be81
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 18:32:21 2023 -0400
+
+    sda
+
+commit fba8f28533b364281a078c0a7e5677be843742b4
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 18:31:44 2023 -0400
+
+    sda
+
+commit 4a85740bff2b8c28e6560fed12e96a0e7780f98d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 18:29:27 2023 -0400
+
+    sda
+
+commit 7d78e74f10ff52f1a67e81a2c3b5c05f6a0759f0
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 18:26:42 2023 -0400
+
+    sda
+
+commit 2473bbd8381a89078bc312862eeddb49bbe5d178
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 18:24:43 2023 -0400
+
+    sda
+
+commit b989ff9ab3b67d06f8599bd2b3da132399172fbf
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 18:20:08 2023 -0400
+
+    sda
+
+commit eb59bff248ddbbe25fdca32c477f93a0812fd23f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 18:11:18 2023 -0400
+
+    sda
+
+commit 33b96b5e20d19f91b26d8ad7d98708652116e070
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 18:08:40 2023 -0400
+
+    sda
+
+commit b746033b9c7d44b69160e189bba2fcab46eefb20
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 17:47:22 2023 -0400
+
+    sda
+
+commit 440336c54255df081634252b5b8f224daccf09c7
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 17:09:36 2023 -0400
+
+    sda
+
+commit 0317c5e164353ed952006e5225978ccbc4ebf3bd
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 17:08:11 2023 -0400
+
+    sda
+
+commit e7b83a5ebec87a434c53b3e0a50a4f5872bcc232
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 17:01:32 2023 -0400
+
+    sda
+
+commit 3be2de65e203c6e8c5389b5377e6f61c04328653
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 16:20:47 2023 -0400
+
+    sda
+
+commit cc6dab7d245b36116a496c8b531d7dfe47cba064
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 16:14:08 2023 -0400
+
+    sda
+
+commit 72cf0f9c114b3efc6d71c0539e9f5f8a90162f3f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 12 16:01:34 2023 -0400
+
+    sda
+
+commit 3ca7272e75a0031a792844c0debecc05f182b97e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Aug 11 15:02:32 2023 -0400
+
+    sda
+
+commit 31b039722e8d4d381c1b4daef71f76cfd0a66258
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Aug 11 10:51:17 2023 -0400
+
+    CDAT
+
+commit 1489b64c0815a0f8b2e1f812ba0bfa3a3e1b8b18
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 10 04:59:41 2023 -0400
+
+    buffer
+
+commit 2c4cbe4d08ed82c7e727f7791a4104c751478c91
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 10 04:34:25 2023 -0400
+
+    buffer
+
+commit 3cb9c84b796b62db15e787c72aa562a6834bd0b0
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 10 01:21:26 2023 -0400
+
+    buffer
+
+commit 142c189c2ae9c734eaa4da4e08b38ea81ba3b25a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 10 00:25:16 2023 -0400
+
+    buffer
+
+commit f6fc512f0fa3c36cd9ab5ab6f4b8f751abcb92be
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 07:22:25 2023 -0400
+
+    buffer
+
+commit add6ea183cbf9956df86ff5d725099e3874a0b6d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 07:04:54 2023 -0400
+
+    buffer
+
+commit 6eb565e0abf42d85cdf68588ebf5d1a3c2e0ed96
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 06:54:49 2023 -0400
+
+    buffer
+
+commit fee2f9cc952ea18b90b74dc8cc803df1847a4e12
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 06:48:47 2023 -0400
+
+    buffer
+
+commit 2eae618aa9f14f1155b488f69492138dd9b63cb5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 06:45:11 2023 -0400
+
+    buffer
+
+commit fe5ed4c2f8d510deccf2c1f91519bfd9c6513341
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 06:43:59 2023 -0400
+
+    buffer
+
+commit 02c0ecfb24cc09a5ec981a917980fe97c933d6af
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 05:55:22 2023 -0400
+
+    buffer
+
+commit 026974054adcad8f83d6618524a9e2f36c1d6f0d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 05:41:05 2023 -0400
+
+    buffer
+
+commit 25ed985437c35c4ba24150178708e0b8953ace90
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 04:59:05 2023 -0400
+
+    buffer
+
+commit a4281d94d1ecc5dd12b7f110798984eea49f71d5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 04:29:04 2023 -0400
+
+    buffer
+
+commit 485ea98c663e9b2212b51d148f5c1103d9853730
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 02:52:35 2023 -0400
+
+    buffer
+
+commit b3b2b2641981ce9b0a38017f83568a97e181630c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 02:17:08 2023 -0400
+
+    buffer
+
+commit d00a362399061b5a6de029e5757e09d8c214d7ee
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 02:10:16 2023 -0400
+
+    buffer
+
+commit c89550949a3c1b0a270cdc7be3c9ffb458e1e25f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 01:52:03 2023 -0400
+
+    buffer
+
+commit b2d1a21dd5c0abaa7da3225a12930fc69154517b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 01:17:18 2023 -0400
+
+    buffer
+
+commit c3f9a3f19798614a57e0a1d691ee04f30fd37517
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 00:52:13 2023 -0400
+
+    buffer
+
+commit 383050710ab3bbfa0b0b617899b47157d1c18b0c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 00:44:57 2023 -0400
+
+    buffer
+
+commit ed80959146c2a003634d254bbc96aea5e807f4a5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 00:30:35 2023 -0400
+
+    buffer
+
+commit 3703a7f454e58d32a7a97e8dabc6bd9669f715be
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 00:10:34 2023 -0400
+
+    buffer
+
+commit dfbe7553a2b8128ae9da91ed514a793fd995a9c1
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Wed Aug 9 00:01:05 2023 -0400
+
+    buffer
+
+commit 3fb9a697007c3355ebccf5beafa6d0d40fbc679d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 23:29:47 2023 -0400
+
+    buffer
+
+commit be43bcce3445a81d3ecd455c64f64a3c17e5a41a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 23:11:10 2023 -0400
+
+    buffer
+
+commit c5c36a4cfcf74eff6837391567053c860286f460
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 23:05:49 2023 -0400
+
+    buffer
+
+commit cd2c478a98f6f350003ebe25163e8b3802172c31
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 22:55:59 2023 -0400
+
+    buffer
+
+commit 69eff95cfeb25aa5865795a04d42f39eb4fe9fe3
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 22:45:27 2023 -0400
+
+    buffer
+
+commit d57c75636c228ee6b70bed9f23bb7e57078b42c4
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 22:33:22 2023 -0400
+
+    buffer
+
+commit 1355033af47b8aa135c58a6a7e8c409b324127b7
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 22:31:18 2023 -0400
+
+    buffer
+
+commit 6db09b2f35158f4ec9ae830ba9a3ed540217567a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 22:17:34 2023 -0400
+
+    buffer
+
+commit d5037463bb405b1ad96644a2175053deea469ec0
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 22:12:50 2023 -0400
+
+    buffer
+
+commit 51aeffd2b596edf508a500300ad34415a5784acd
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 22:03:03 2023 -0400
+
+    buffer
+
+commit d641db33318345f6c07b0753228ae0fc5b4f8c1f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 22:02:19 2023 -0400
+
+    buffer
+
+commit 2a6be09d6d310f062e04492a9de75b79c68d2401
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 22:00:27 2023 -0400
+
+    buffer
+
+commit 2e1dbfe8a75f71c944753ff1a3fb2ddff43685bf
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 21:50:33 2023 -0400
+
+    buffer
+
+commit 7f6c8d458c7710bb4ccfd27c5e14455aaaa97303
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 21:44:10 2023 -0400
+
+    buffer
+
+commit 093220e318f1ef5208fa5e37c948658ec3c54bab
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 21:42:16 2023 -0400
+
+    buffer
+
+commit be92a8210d9d3b6f1bcc88f1bcc7a247dc4def8e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 19:02:15 2023 -0400
+
+    buffer
+
+commit 5a77aa9d2f68654cfa559007b62ed161dd5f5d58
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 18:48:49 2023 -0400
+
+    buffer
+
+commit ccf4b47b26fb6d92d63afa5a6ef06b3988b8ee1f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 18:40:01 2023 -0400
+
+    buffer
+
+commit a3d190409149bed58b1b3a4ce496ac1cbcfe3002
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 18:32:18 2023 -0400
+
+    buffer
+
+commit 9fc88073f7cb7c6708eccd511aa79c0ba47bc2a7
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 18:29:01 2023 -0400
+
+    buffer
+
+commit aeff91703cfe63f6a3f09771eaa9c5446efd0f0f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 18:28:27 2023 -0400
+
+    buffer
+
+commit 3e9db450d687328ab005f778ec1e78394e9ae8b9
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 18:25:39 2023 -0400
+
+    buffer
+
+commit 000a3981f8090fc77ad7ba872291a56b367cf9e6
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 18:24:32 2023 -0400
+
+    buffer
+
+commit c47496005d3bbcf83b174b77edd1bf2fc22fab3c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 18:23:56 2023 -0400
+
+    buffer
+
+commit c8a27f707d9da9b897f0c2d68daf84b1e9c98534
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 18:17:50 2023 -0400
+
+    buffer
+
+commit 80bb0d6f0154604592d9b39495c80bd34ef27294
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 18:15:13 2023 -0400
+
+    buffer
+
+commit ca0d5ee91651fece7cca05ce277ddbb42c7763cf
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 18:09:31 2023 -0400
+
+    buffer
+
+commit 49e388defe00d3a5b729c616642f0c234f374667
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 18:08:43 2023 -0400
+
+    buffer
+
+commit 6e46768497fc9c8e39515e180cfe28145c8fec38
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 18:03:36 2023 -0400
+
+    buffer
+
+commit 0242e57af5050687dc9f1e5bbfbec6bf5cfd8475
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Tue Aug 8 17:59:55 2023 -0400
+
+    buffer
+
+commit 29ee02229c9970635fb536f6a74baff6a605e832
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 23:13:49 2023 -0400
+
+    buffer
+
+commit 42b12d830ab78a3459d8fa5aba71defcce8f2ab7
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 23:12:20 2023 -0400
+
+    buffer
+
+commit 6107a5f3bbc676358c7ed3a6e9b4c1217e6edcdb
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 21:06:28 2023 -0400
+
+    buffer
+
+commit 14a11c8b93a49ee9bfbbd0c5e5b78d68979bdb6f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 21:05:49 2023 -0400
+
+    buffer
+
+commit 68e8f586b5fe8d6c748537497c88aad1d56f9200
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 20:58:05 2023 -0400
+
+    buffer
+
+commit c6a1b8664ccbd247d6987d35db7f88becb3ecc1e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 20:57:28 2023 -0400
+
+    buffer
+
+commit 46464ba243f80ca14eccc083a462f7fd2223dc7c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 20:33:18 2023 -0400
+
+    buffer
+
+commit dd74b72086befd3f12f166b0369f5ec1330ca1a9
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 20:30:24 2023 -0400
+
+    buffer
+
+commit 02678188c92cc7ac65f08aa8657a613b302b4232
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 20:26:41 2023 -0400
+
+    buffer
+
+commit ab4c31f67665555667c9f797d6a6be8fb68addb2
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 20:17:51 2023 -0400
+
+    buffer
+
+commit a3303967c7579d5fb817f0808275f314a47a7fec
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 20:06:35 2023 -0400
+
+    buffer
+
+commit 550820238d016ae6d5c3283a67d1d615b9b42d21
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 20:04:22 2023 -0400
+
+    buffer
+
+commit 8316dfed7a0d69249969e949cdae1569bd798654
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 19:59:53 2023 -0400
+
+    buffer
+
+commit 893536c8b511df5802f9982b77cc0953e82d5bb1
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 19:57:48 2023 -0400
+
+    buffer
+
+commit 6964d5e1e1143bc0710b655267e53b5e9b7d8d51
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 15:27:24 2023 -0400
+
+    buffer
+
+commit ceabafb0d10f475421a5cbf68af0e91b255742d4
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 15:23:01 2023 -0400
+
+    buffer
+
+commit 17c38609202f2eafcd8bd0888db38f3130b62602
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 15:15:20 2023 -0400
+
+    buffer
+
+commit 22e336e62e7084caef71b4796689eb3f7210261b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 15:14:57 2023 -0400
+
+    buffer
+
+commit 5bf14d0aca61b79067500a6a36909367031d2ede
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 15:14:02 2023 -0400
+
+    buffer
+
+commit ceb2626082f7f069529d07e70a6359d2571ee492
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 15:07:18 2023 -0400
+
+    buffer
+
+commit 88df1acb093ba2eec378580df9ac6162240ccf0e
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 14:44:16 2023 -0400
+
+    buffer
+
+commit 0c52b02995bafaa0726b6f4faa4afd90127f6f8d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 14:43:14 2023 -0400
+
+    buffer
+
+commit 2420f41df64396cc304e1466e35c2455ab3eb6c5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 14:34:41 2023 -0400
+
+    buffer
+
+commit f2cc43a506af2ae48a9eb17e1e55ac70a92e6a15
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 14:30:07 2023 -0400
+
+    buffer
+
+commit 20d1a797c58aa19bac104f9575e7988863ba8347
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 14:28:57 2023 -0400
+
+    buffer
+
+commit d68405b8902566db7a1635c1340de36c9a5d8cde
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 14:28:25 2023 -0400
+
+    buffer
+
+commit cbd2b4fdbc2aa11c94fd1dbf74d7c541bf90aa78
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 14:22:50 2023 -0400
+
+    buffer
+
+commit 26f1302132a03e9768b6ec006cf6f7da43eb0463
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 13:54:58 2023 -0400
+
+    buffer
+
+commit af8895e837ff1e26ff2d75bb521bbe026b404a42
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 13:38:36 2023 -0400
+
+    buffer
+
+commit 5457269d9aa5acdc34e5f0aef63ff8cb66c63052
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 13:17:43 2023 -0400
+
+    buffer
+
+commit 9ecd02a54fd573e83746e3e088f1c4bb3d69b447
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Mon Aug 7 13:13:45 2023 -0400
+
+    buffer
+
+commit dfc09b3909cc3b1c693b53f53730ca44e7f6caa4
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Aug 6 22:07:09 2023 -0400
+
+    buffer
+
+commit cc064964dc478a1c42900978e14bfc0673e76fca
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Aug 6 21:56:56 2023 -0400
+
+    buffer
+
+commit f5eab36f77f0b67e52a93418b75a7ab71e678e46
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Aug 6 21:53:16 2023 -0400
+
+    buffer
+
+commit 515925080eff712037125d79318e61f3c20f3d42
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Aug 6 21:49:01 2023 -0400
+
+    buffer
+
+commit 5d38264fce39e3ccb1a45b384bf60badc84d5642
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Aug 6 21:38:15 2023 -0400
+
+    buffer
+
+commit a5a86103288013ccc542ac3fb67645864b984464
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sun Aug 6 21:02:45 2023 -0400
+
+    buffer
+
+commit be8fd95dd2c60a7cf259b779d577deba9f3db439
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 18:12:22 2023 -0400
+
+    buffer
+
+commit 5fb0f32b65feb69902bbe7fa0018e9990b6e080c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 18:08:20 2023 -0400
+
+    rollback
+
+commit 71cc78363b6e2b2d35c605fc3748257ef071deaf
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 18:05:07 2023 -0400
+
+    buf
+
+commit a881d04eb6dd9bbd4dd5100f74efb377b7958e33
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 17:58:32 2023 -0400
+
+    buf
+
+commit 5b9d7a333287546afc375372c18ea45a6cfb89cf
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 16:16:23 2023 -0400
+
+    rollback
+
+commit 93e25ca2c7843254930026c54a10b7d135b250f0
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 16:13:12 2023 -0400
+
+    rollback
+
+commit 1e2d1c06d8f01189752efef40836934406761746
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 16:06:49 2023 -0400
+
+    buf
+
+commit b39fb87da08523cbafccacd640708c97303740e2
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 16:05:58 2023 -0400
+
+    ops
+
+commit e8a25aef99f969400b1802c701c7a0e55692fc71
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 16:03:14 2023 -0400
+
+    ops
+
+commit 1632e1b74b74527ff6f2cfcf105ac9828d9cae90
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 16:01:13 2023 -0400
+
+    ops
+
+commit 8b2305d30b4de8b05397b763ee97a2a2c959d70d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 15:59:34 2023 -0400
+
+    ops
+
+commit 7577bf113820f86c81d0cc87fc32f95fb5d024dd
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 15:56:07 2023 -0400
+
+    ops
+
+commit a57811b98d96cfdb4fb70a775940c0596b9e22e5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 15:47:14 2023 -0400
+
+    ops
+
+commit d9ce4760dc8dfbc2ad876bcc899f1188f34e5569
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 15:36:46 2023 -0400
+
+    ops
+
+commit 398bc0db877f9c6eda8ccb7493b0d12034e88709
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 15:29:52 2023 -0400
+
+    ops
+
+commit 6d2f74bc52c39f626b3eded4e3f2ac07ace0199f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 15:28:24 2023 -0400
+
+    ops
+
+commit d236fbc93fed5230dc595b4af58fca254b67ee98
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 13:40:01 2023 -0400
+
+    ops
+
+commit 85990717ca9ac97c75a33ed483d80edb000ce739
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 13:35:14 2023 -0400
+
+    ops
+
+commit 3606c1736b418d77224ead3bfc4b91b4dd25480b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 13:34:34 2023 -0400
+
+    ops
+
+commit 4bef1e786572fc9b17eaecfb97cdfd8bbdbdbb60
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 13:32:59 2023 -0400
+
+    ops
+
+commit 00083f5ecdb00ed0e1a9da2b208036826d564dd4
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Sat Aug 5 13:30:55 2023 -0400
+
+    ops
+
+commit 44efe8a0b6811046ed976208c79ce2e3fb2a7ade
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Aug 4 13:28:49 2023 -0400
+
+    virtio error debug off
+
+commit 27c5e87155cb304cfc1829fa38ef50b042f313fb
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Aug 4 00:06:40 2023 -0400
+
+    virtio error debug
+
+commit 36d527a35137f8054238aca05c94ab3c8c331159
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 3 21:49:56 2023 -0400
+
+    virtio error debug
+
+commit 66145a6587acb71572e83c571efdc2586aa1879b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 3 21:46:33 2023 -0400
+
+    virtio error debug
+
+commit a1aa75171ddd26fbd28b7ce610b82ca21a0806e6
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Thu Aug 3 21:44:47 2023 -0400
+
+    femu-ct3d
+
+commit 1fcdcbef19c07aacb1d2d9bb45a3f7646bd0bb5f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 20:19:54 2023 -0400
+
+    femu-ct3d
+
+commit bf168e7761f0f0652aeb869ccb814dc4cd4ccf00
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 18:59:19 2023 -0400
+
+    femu-ct3d
+
+commit b9362657f52c2a3627761ebdc390fff1460ca70d
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 18:53:27 2023 -0400
+
+    femu-ct3d
+
+commit 8f98d4c77845c5a3b9be304c010c6938631d23ad
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 18:35:48 2023 -0400
+
+    femu-ct3d
+
+commit 90874af60c6fdb6874758d4689ccf216076872fa
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 18:21:30 2023 -0400
+
+    femu-ct3d
+
+commit 5068b3287cc791150f2ee19e2717c421eea6f8e2
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 17:32:40 2023 -0400
+
+    femu-ct3d
+
+commit f830127f7a0dc22f052fd5ee0bab54cbd9f252e6
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 17:31:42 2023 -0400
+
+    femu-ct3d
+
+commit 6f6af7eea20c10ef5bf2e370c12ced0f11bd1c6a
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 17:29:28 2023 -0400
+
+    femu-ct3d
+
+commit e04146b46ebca2d761a14c47de359f1fa52fe9d9
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 17:26:46 2023 -0400
+
+    femu-ct3d
+
+commit 214e4a8b1caa08296bf991fc7365aaf29e752941
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 17:20:51 2023 -0400
+
+    femu-ct3d
+
+commit 3f1b3525d7bbcbf6eea339d838c22a0c8dfcd6e7
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 16:11:28 2023 -0400
+
+    femu-ct3d
+
+commit fc9e3a7e71ef0b91c2018621f9ebcd1ac6228edc
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 15:51:53 2023 -0400
+
+    femu-ct3d
+
+commit 72954526a6c5f50240339283f424728105f07c50
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 15:45:49 2023 -0400
+
+    femu-ct3d
+
+commit caf231d4190c26426ae0d39d2691143de4577941
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 15:44:24 2023 -0400
+
+    femu-ct3d
+
+commit e72870e3019dc76a8a3069c954c06cc4d5b97803
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 15:41:04 2023 -0400
+
+    femu-ct3d
+
+commit 92b28bc70cf3e1511506c2928c68184d4a1aaea5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 15:37:22 2023 -0400
+
+    femu-ct3d
+
+commit f754ac7a6e44c44b54c205eac70cd5cee6d295cf
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 15:35:34 2023 -0400
+
+    femu-ct3d
+
+commit 2784ece127b372036462ed81523c88e775354dd1
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 15:34:32 2023 -0400
+
+    femu-ct3d
+
+commit bdea28ad2c12de1de264610c9769e158c1630d0c
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 14:42:30 2023 -0400
+
+    femu-ct3d
+
+commit 6848b85037f7c2d0a402e89387542952db8ece99
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 14:26:30 2023 -0400
+
+    femu-ct3d
+
+commit a2443a9a4353e2115c2085e883ff394348c1fa07
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 14:19:37 2023 -0400
+
+    femu-ct3d
+
+commit 7ed31533631e5890d56690732da989b9143ac9f5
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 00:48:02 2023 -0400
+
+    femu-ct3d
+
+commit e011e18d3340be3f4c93e5679b8135f024e26f06
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 00:34:55 2023 -0400
+
+    femu-ct3d
+
+commit 1b783bfa19b9328f864fe142a8d317c5d78f12be
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 00:32:44 2023 -0400
+
+    femu-ct3d
+
+commit d71d4550151d482b8296b3e758aab8744f176b3b
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 00:24:38 2023 -0400
+
+    femu-ct3d
+
+commit 95a613d1347f1907f4ef82f916719bc801afb357
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 00:18:39 2023 -0400
+
+    femu-ct3d
+
+commit e894250c3b81852d5c5b8002a8a61309b6dde00f
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 00:16:24 2023 -0400
+
+    femu-ct3d
+
+commit d08c50577686363a531c953984b44b6727b9eef8
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 00:09:45 2023 -0400
+
+    femu-ct3d
+
+commit 852add248bdd4185803c2ae3632dde65cb96c128
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 28 00:02:41 2023 -0400
+
+    femu-ct3d
+
+commit 52d368dd7a93b9ab328a9f537a67829bd062c270
+Author: dongha-yoon <cs.donghayoon@gmail.com>
+Date:   Fri Jul 21 20:16:29 2023 -0400
+
+    femu-ct3d
+
+commit 4ec028b4aae73bfb923c4e99f4ff5219cf952844
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Tue Jun 6 16:47:22 2023 -0400
+
+    Fix #109
+
+commit 72df816e82d24ae41af9eb4fc71ba54b7690a204
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Tue Jun 6 16:38:53 2023 -0400
+
+    Nits
+
+commit 4858b26f0fe6276f0ad71c5a8974851f69deb74d
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Wed May 24 10:55:27 2023 -0500
+
+    Bump requests from 2.25.1 to 2.31.0 in /roms/u-boot/test/py (#111)
+    
+    Bumps [requests](https://github.com/psf/requests) from 2.25.1 to 2.31.0.
+    - [Release notes](https://github.com/psf/requests/releases)
+    - [Changelog](https://github.com/psf/requests/blob/main/HISTORY.md)
+    - [Commits](https://github.com/psf/requests/compare/v2.25.1...v2.31.0)
+    
+    ---
+    updated-dependencies:
+    - dependency-name: requests
+      dependency-type: direct:production
+    ...
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+    Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+commit 550f84d4f1046018360d2bfa5d8e239dd610d1b7
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Thu May 4 16:13:02 2023 +0000
+
+    Cleanup ZNS code
+
+commit 5188179583d3ef9052fde3201b32db051ff28705
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Thu May 4 14:47:51 2023 +0000
+
+    Attempting to fix the virq bug
+
+commit fbf9a907c267120df9559fae40aec3ac5e268280
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Tue May 2 02:51:22 2023 +0000
+
+    Nits
+
+commit 6819f1219a960ceecc1be976c171d57124526423
+Author: Hansen Idden <62301187+hansenidden18@users.noreply.github.com>
+Date:   Thu May 4 21:02:36 2023 +0700
+
+    Add Delay Emulation to FEMU ZNS Mode (#104)
+    
+    - Add delay emulation for ZNS mode
+    - Add a logical zone mapping mechanism
+    - Update ``run-zns.sh`` script with some additional configuration knobs
+    
+    
+    Co-authored-by: Hasen Idden (hansenidden@gmail.com)
+
+commit 3b0cee5bec633931e53ffd91ab1cdfff17287dfe
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Sun Apr 30 03:56:45 2023 +0000
+
+    Update README
+
+commit 040c1f9d297f988040f447ea2809fff037dea2b4
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Sun Apr 30 03:55:41 2023 +0000
+
+    Update README
+
+commit 47f9b016efcbf16ce9ba6e47b188dd9b9a5afc6e
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Sun Apr 30 02:38:35 2023 +0000
+
+    Add more cleanups
+
+commit ba1fc752d13a46b5c50657b50e2b315b0fe66cf1
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Sun Apr 30 02:22:36 2023 +0000
+
+    Cleanup multi-poller
+
+commit ef6d632f060c1566bd2bafd323cfecbfc601c1ba
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Wed Apr 26 04:07:28 2023 +0000
+
+    Fix typo
+
+commit c48a86d9f8b11e922a02cd80bc5bf2bd49e0229f
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Tue Apr 25 18:20:33 2023 +0000
+
+    Update README
+
+commit e616a58304b97cf17c8b38bbf1439cc3bdbaa284
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Tue Apr 25 18:14:17 2023 +0000
+
+    Update FEMU compilation script
+
+commit ed18f2dedd8b2ef7542904033dcf93b3ad7fc6f3
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Tue Apr 25 18:12:54 2023 +0000
+
+    Update README
+
+commit f589957c1ca847be6fe250c2243843509dda63f4
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Tue Apr 25 16:53:08 2023 +0000
+
+    Rebase FEMU on QEMU-v8.0
+
+commit ad786ad152e6113057799f2d3edc0ef3295423bf
+Author: Chanyoung Park <park910113@gmail.com>
+Date:   Tue Feb 21 11:06:42 2023 +0900
+
+    nand: fix TLC/QLC latency tables (#97)
+
+commit 262f3ba2336384a55452034913cd663d0c1c2e5c
+Merge: d2988839c8 68e57dd91e
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Mon Feb 20 18:00:57 2023 -0800
+
+    Merge pull request #96 from nicktehrany/fix_nvme_cc_5.19-Linux
+    
+    Fix 5.19 Kernel NVMe CC issue
+
+commit 68e57dd91ef7332d4a1653567a726af238dcdd40
+Author: Nick Tehrany <nicktehrany1@gmail.com>
+Date:   Thu Feb 2 23:15:16 2023 +0100
+
+    Fix 5.19 Kernel NVMe CC info issue
+
+commit d2988839c87bf8ef951c16c680df6bba79d2940d
+Merge: e1bf4f00ac 543af91ccf
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Tue Jan 10 10:02:47 2023 -0600
+
+    Merge pull request #94 from chanyoung/wip-wbssd-script
+    
+    femu-scripts/run-whitebox.sh: update flash_type option
+
+commit e1bf4f00ac20b6fdd504970e3e007679347249ee
+Merge: b13b4828e6 91bbff696e
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Tue Jan 10 10:01:55 2023 -0600
+
+    Merge pull request #95 from hansenidden18/fix_zns_zone_append
+    
+    Fix zone append in ZNSSSD mode
+
+commit 91bbff696e0362ac1e149d2b9530a736496f895b
+Author: root <root@localhost>
+Date:   Tue Jan 10 02:39:42 2023 -0600
+
+    changing is_write parameter in zns_do_write
+
+commit 543af91ccf1f291aeb9b223b07e829b91b756d95
+Author: chanyoung <park910113@gmail.com>
+Date:   Mon Jan 9 13:01:59 2023 +0900
+
+    femu-scripts/run-whitebox.sh: update flash_type option
+
+commit b13b4828e6db5779b053c90647be0e78a2284844
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Sun Oct 16 23:46:55 2022 -0400
+
+    Update README
+
+commit b388b400e7363a0eb20c1c726114ebe6aab374b1
+Author: I think I'm ok <41386292+Haltz@users.noreply.github.com>
+Date:   Tue Jun 7 00:14:17 2022 +0800
+
+    Fix qmp-vcpu-pin.sh for vCPU pinning (#81)
+    
+    Fix qmp-vcpu-pin.sh and make it compatible with python2
+
+commit f27b74a159b27b009fcaea24c4cef971e05318e7
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Fri Apr 22 01:53:43 2022 -0500
+
+    Update FEMU compilation script
+
+commit a73620bf8f2453aa76a810a6847ef9ac481c315b
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Fri Apr 22 01:50:21 2022 -0500
+
+    Fix compilation warnings under gcc 9.4.0
+
+commit 9f5123c9fbdd3e2db7cba39e4bb8f14d182bc1e7
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Fri Apr 22 01:40:45 2022 -0500
+
+    Fix nvme virq bug
+
+commit 1cfe6187b168495df3ebd4e2c3d49faf5f0a5d58
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Fri Apr 22 01:23:36 2022 -0500
+
+    Relocate FEMU related code to hw/
+
+commit 18febbf5791071a29ecf704b102299cd18a10352
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Fri Apr 22 01:01:24 2022 -0500
+
+    Re-add femu-scripts/
+
+commit d3bd68ae2993ab414d1333ad48a74d5b402f5bfe
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Fri Apr 22 01:00:51 2022 -0500
+
+    Re-add FEMU README
+
+commit 91e855100c49702ccd6ea2ad672fe213646fe0cb
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Thu Apr 21 18:46:11 2022 -0500
+
+    Rebase FEMU on QEMU-v7.0.0
+
+commit 7e238cc5d09379dadbe05daa28e20c981ca30597
+Author: Penghao Sun <35950308+sunpenghao@users.noreply.github.com>
+Date:   Thu Jan 13 05:21:01 2022 +0800
+
+    Fix "missing prototype" on some compilers (#67)
+
+commit 9638585588c9671083fe56d84ce5bf9f8f7992ea
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Mon Oct 18 13:22:41 2021 -0500
+
+    Revert bbssd line->vpc updating logic (#65)
+
+commit 0ab8c456989b556e0dacb6264e3fcbf1cb0c12b8
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Tue Oct 12 00:31:50 2021 -0400
+
+    Handle bbssd per-line valid page count correctly
+
+commit 17157607f5ac77f064730b47b4bbbf9a4ed0a4b7
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Mon Oct 11 22:32:20 2021 -0400
+
+    Fix bbssd I/O processing
+
+commit 27487964f7e26ac0ad6c1ef97687bcefd2db799e
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Mon Oct 11 16:12:39 2021 -0400
+
+    Fix a silly bug
+
+commit 74609fbee203fb98a78ba0dda9fea5ea6224c289
+Author: ywang_wnlo <ywang_wnlo@qq.com>
+Date:   Fri Oct 8 11:51:21 2021 +0800
+
+    Fix number of msix interrupt calculate error (#63)
+
+commit b9025c24fa08689893d78a7a515a094254df5dda
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Mon Oct 4 20:20:38 2021 -0400
+
+    Update README.md
+
+commit cece595e8430380aa072aecef1216246047127f1
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Mon Oct 4 19:05:09 2021 -0500
+
+    Update instructions to prepare VM images
+
+commit 5eb6b9bac7b61eb6ae6425c6b63735ec7bb61ceb
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Mon Oct 4 18:20:10 2021 -0500
+
+    Add minor fix
+
+commit 3e7767aada06cccf66fa19f045f5b60e590ba73c
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Mon Oct 4 18:15:15 2021 -0500
+
+    Constrain FEMU thread to only process read/write/erase requests (#53)
+
+commit fe007e3363f4ea421b4c77682460b4687d638a7c
+Author: ywang_wnlo <ywang_wnlo@qq.com>
+Date:   Mon Oct 4 05:45:42 2021 +0800
+
+    Fix selecting gc line wrong in BlackBox mode (#61)
+    
+    Line priority needs to be updated upon flash page over-writes  (`mark_page_invalid`).
+
+commit 2c8a14f8d21f12badfdb8df0f367b58076f033fc
+Author: ywang_wnlo <ywang_wnlo@qq.com>
+Date:   Sat Sep 11 01:58:58 2021 +0800
+
+    Fix read end_lpn calculate error in BlackBox mode (#59)
+
+commit d3af80124a55fbd28c12096ef1d93a9a7ccaf475
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Tue May 11 22:40:07 2021 -0500
+
+    Add initial suppport to run SPDK FTL on OCSSD2.0 (#48, #51)
+
+commit e3345eb70b58850d675b345e9837f739b997b75f
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Tue May 11 16:14:43 2021 -0500
+
+    Fix subsystem multiple controllers support
+
+commit 76a9d8e333f081a9df30b5f8706e9be81517665c
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Wed Feb 17 00:55:26 2021 -0600
+
+    Update ZNS support statements
+
+commit d516fc48ae2bba14c98a18b41f1db74fc0d1843e
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Tue Feb 9 12:00:37 2021 -0600
+
+    Fix compilation error under recent gcc versions
+
+commit 0ba6ac2a95c0fc0ef89b47d03112c33c7986c2a9
+Author: Huaicheng Li <hcli@cmu.edu>
+Date:   Tue Feb 9 02:31:20 2021 -0600
+
+    Add initial NVMe ZNS support in FEMU
+    
+    - Support base ZNS interface (require very recent kernels to work)
+    - Decouple the NAND emulation & timing/delay model to be independent from
+      certain FEMU modes
+    - Stick to the same initialization interface to register all FEMU SSD modes
+    - Refactor code across several places to prepare for next-phase changes
+
+commit 5b23cddb7b396ee35fef0afb6a8208293876bdae
+Author: Shehbaz Jaffer <shehbazjaffer007@gmail.com>
+Date:   Thu Feb 4 19:24:38 2021 -0500
+
+    Add TLC and QLC-NAND Support (#47)
+    
+    This Commit extends the default FEMU MLC-NAND Interface to emulate
+        TLC and QLC Flash Drive.
+    
+        The latency values for each drive are derived from:
+    
+        1) SimpleSSD: Modeling Solid State Drives for Holistic System Simulation
+        2) Component-Level Characterization of 3D TLC, QLC, and Low-Latency NAND (FMS'20)
+    
+        Each device contains the same number of pages per block, however the
+        type of page changes based on the "cell_type" parameter specified while
+        running FEMU.
+    
+        cell_type = MLC_CELL (2) has two types of pages - UP, LP
+        This is the default device operation mode.
+        cell_type = TLC_CELL (3) has three types of pages - UP, CP and LP
+        cell_type = QLC_CELL (4) has four types of pages - UP, CLP, CUP and LP.
+    
+        Latency is added to each page access based on this page type.
+
+commit d8548ce0f3639a7f483b817d5a98d109de4a3265
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Jan 30 18:40:26 2021 -0600
+
+    Update README
+
+commit ad962d26944f4dd18d8cddb225610745c7c28fbc
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Jan 30 17:18:05 2021 -0600
+
+    Do not abort FEMU upon non-recognizable admin cmd
+
+commit 2f8aaec360604b89cc3ea81c058f465945ae1789
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Jan 30 13:41:22 2021 -0600
+
+    Fix a bug related to guest kernel 4.16 admin cmd proc
+
+commit 6f18086e84e49ddb01ab8aa3e43d08ef9fa4ec24
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Jan 23 16:32:28 2021 -0600
+
+    Release new FEMU VM image and update scripts
+
+commit 1730ba87b5af3d297d41ccf8c29a86ea7182aa94
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Jan 22 01:18:38 2021 -0600
+
+    Release FEMU support for OCSSD Spec 2.0 and others
+    
+     - OpenChannel-SSD Specification 2.0 is now supported
+     - FEMU code structure refactored for readability and modularity
+
+commit 783d4fb4ce46e0e10ef83d48046566cbba1e6b6d
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Thu Jan 14 22:02:21 2021 -0600
+
+    Add some cleanup
+
+commit 5c99c4d00f9a5dc6d36b504e7b89f2ebe6968731
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Thu Jan 14 12:00:07 2021 -0600
+
+    Make the whitebox mode delay emulation model per-drive-safe
+
+commit b813710d0b66f09c170554490f4954469c55392b
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Thu Jan 14 11:13:13 2021 -0600
+
+    Fix compilation error introduced by -Werror=type-limits
+
+commit 92541b045d1a79fd70489d0f40562f016ea9225b
+Author: HongweiQin <460897705@qq.com>
+Date:   Fri Jan 15 00:06:24 2021 +0800
+
+    Check overflow, preserve atomicity, and enhance feasibility. (#40)
+    
+    Fix concurrency issues for FEMU OCSSD-mode under multi-pollers
+    
+    - Check configuration overflows
+    - Use pthread_spin_lock to protect chip_next_avail_time[] and chnl_next_avail_time[]
+    - Correctly handle write requests larger than 32KiB
+    - Fix an indentation
+
+commit 18d92ac796da7a2f3a0f34022a227aa87d95ccba
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Jan 13 18:56:57 2021 -0600
+
+    Fix configure warning about non-existent submodule
+
+commit cc8f8d473964ea47f5308f4b9103e50ef2239aa2
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Jan 13 18:44:23 2021 -0600
+
+    Add ROM files
+
+commit 7024b9d3cbb97adf07510b0968907a1592f232fc
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Jan 12 02:28:16 2021 -0600
+
+    Update README.md
+
+commit 9bc61f77bf50537ac223de57a2940f45d2605546
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Jan 12 02:21:09 2021 -0600
+
+    Update README
+
+commit 8d3dcc11109863178c224b4d5f63f571268329bd
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Jan 12 02:03:05 2021 -0600
+
+    Update README.md
+
+commit 3ae3c99904a6dd38b6cc018780120eeacda58786
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Jan 12 01:33:40 2021 -0600
+
+    Update Travis CI
+
+commit 873006646723cccbc2ce86c0c1f32c4cb5863413
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Jan 12 01:22:56 2021 -0600
+
+    Add Travis CI
+
+commit 3d98005fffdb5d4da7f72fb27227ff6bd70020f4
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Mon Jan 11 23:37:48 2021 -0600
+
+    Add minor fix
+
+commit ae934f75b3818328ff20431a76419f04357f1760
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Mon Jan 11 23:35:42 2021 -0600
+
+    FTL: Only enable assert() under debug mode
+
+commit 07b31be3e0c6f19c193d6919d6378a92820ff74f
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Mon Jan 11 22:38:58 2021 -0600
+
+    Update black-box FTL
+
+commit dac878f11bdca02cd79b9bd876d2d272e635ce07
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Mon Jan 11 02:28:16 2021 -0600
+
+    Add minor cleanups
+
+commit 5fcdccd84239fcb81ca3e3f73d60835f123ba10f
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Mon Jan 11 00:55:04 2021 -0600
+
+    Remove unnecessary files
+
+commit 6176e24f505477179d4c589c6b46652f55a10acb
+Author: HongweiQin <glqhw@qq.com>
+Date:   Sun Jan 3 08:27:58 2021 +0800
+
+    Enable multi-poller by default (#38)
+
+commit d59e2fae494857b9c1617cf405b4f06a971080b2
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Dec 12 17:47:16 2020 -0600
+
+    Update README
+
+commit efb5b212c8c4efcdb4b6dff59a7e743b420d86c7
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Dec 12 17:45:17 2020 -0600
+
+    Update README
+
+commit 68baa7cb78730d0dbb1bc64a446ab70f956f57db
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Dec 12 17:42:42 2020 -0600
+
+    Update README
+
+commit 3d153c8d45ecc4944de9696e69e80593b36206b4
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Dec 12 17:40:56 2020 -0600
+
+    Update README
+
+commit d7417a6dbf540902d38d543a5dbdf0e370cacdda
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Dec 12 17:12:38 2020 -0600
+
+    Fix FEMU bib entry
+
+commit 7e31d1a591662ce64641d40bc2d45320a1a023ce
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Dec 12 06:30:49 2020 +0000
+
+    Update README.md
+
+commit 9df02d248b8ba61c8820dbf9caed9de4cd13cebe
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Dec 12 00:25:04 2020 -0600
+
+    Update README
+
+commit 84911441b0f35659e667642244f39d589cf1ea4f
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Dec 12 00:23:15 2020 -0600
+
+    Update README
+
+commit db22b7d6122506e7589564bbd73505c5091a0eaa
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Dec 12 00:19:13 2020 -0600
+
+    Update README
+
+commit 4ad3e15a2b39decf9cc94ba646e4faa549bf8d6f
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Dec 11 23:28:53 2020 -0600
+
+    Update scripts
+
+commit 81d82de700de21ec42d3581196e5b0d913db5851
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Dec 11 23:03:34 2020 -0600
+
+    Enable more QPs on the FEMU side by default to unlease more performance
+
+commit 83624b5d37d780fd6db440591ca617e9f6056441
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Sat Dec 12 04:38:55 2020 +0000
+
+    Set theme jekyll-theme-midnight
+
+commit bf889cf067d9730f501a1d6e6fd52d82ae51b708
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Dec 11 22:28:03 2020 -0600
+
+    Add missing trace.h files
+
+commit 09900c0b74e304cfbeca89b672a1fbf6e53c1d74
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Dec 11 22:17:02 2020 -0600
+
+    Re-add README.md
+
+commit 395b4fb81bc6f7ca424d89ba91e48544030d1853
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Dec 11 22:12:42 2020 -0600
+
+    Add femu-scripts/
+
+commit 9f626f3e313ba0dba903ea07c065d85d93fbe821
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Dec 11 21:34:51 2020 -0600
+
+    Rebase FEMU on top of QEMU v5.2.0
+
+commit 464d8aab1810a738cd22187bd9a8ffd6a22c7683
+Author: HongweiQin <glqhw@qq.com>
+Date:   Sat Aug 1 13:50:40 2020 +0800
+
+    Check all PPAs for OC requests to prevent from potential segmentation fault. (#32)
+
+commit 64f5f326c915387dbcc2e0eade68fcd62b018df1
+Author: Yang Yuanzhi <yangyuanzhi+github@gmail.com>
+Date:   Wed Mar 11 16:15:33 2020 +0800
+
+    Fix potential memory leaks after calling getline in OCSSD. (#25)
+    
+    According to the man page of getline on Linux, "If *lineptr is set to
+    NULL and *n is set 0 before the call, then getline() will allocate a
+    buffer for storing the line.  This buffer should be freed by the user
+    program even if getline() failed."
+    
+    When calling getline in OCSSD, we do intend to let getline allocate the
+    line buffers for us, but we forget to free them afterwards, hence
+    potential memory leaks.
+
+commit 1bc7e015a20ac28c68a1f3ddf5d40246e5c34e6c
+Author: Yesa <yesa@yesasurya.com>
+Date:   Wed Mar 11 15:15:16 2020 +0700
+
+    Multithreaded Poller and Optimized IO path (#28)
+    
+    * Modify related struct and function
+    
+    1. In FemuCtrl struct, poller need to be pointer to QemuThread as it will contain several poller threads.
+    2. Additionally, status, which indicates if multithreaded poller is enabled, is represented by uint8_t variable, and number of poller threads is represented by uint32_t variable.
+    3. Function ssd_init need to take argument of FemuCtrl as in the implementation, it will require the number of poller, which is the member variable of FemuCtrl.
+    
+    * Define property for enabling multithreaded pollers
+    
+    * Implement multithreaded pollers
+    
+    * Adjust the FTL
+    
+    * Optimize NoSSD IO path
+
+commit 0dac40c3268eb9d0a6b6bc153862ccee7ecc9c04
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Thu Dec 19 16:23:14 2019 +0000
+
+    Add contact information
+
+commit b5b9f101c288579e6c0935a3ca983963abf965e9
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Thu Dec 19 10:12:22 2019 -0600
+
+    Add bib entry
+
+commit dc87d2dd6ecd0bc4c92133746c557e7ade6e552a
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Thu Dec 19 09:07:24 2019 +0000
+
+    Update README.md
+
+commit 0b45b6f57952772bfc67c7cdbdb23eb5cf8b8af0
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Thu Dec 19 09:05:41 2019 +0000
+
+    Update README.md
+
+commit 1fc6ee943bf1f09b18029f8f0af920f135ef7cfe
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Thu Dec 19 02:59:53 2019 -0600
+
+    Update README on VM image downloading info
+
+commit 29e3a2a55f6924a3a20cc56213472376b3462338
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Oct 11 17:28:15 2019 -0500
+
+    Fix parameters in run-whitebox.sh
+
+commit 2a6955a54901ae42d3d5b993e32a7ac4ba504bd3
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Oct 11 16:48:04 2019 +0000
+
+    Update README.md
+
+commit 9f02b9248d7b09f3c25806de0da95e540e718074
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Oct 11 11:43:13 2019 -0500
+
+    Update README
+
+commit d6a2406e9acf4507b22e979b894fdc794544cd1f
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Oct 11 11:36:59 2019 -0500
+
+    Update README
+
+commit 23bdc389698a58d68bb4aaa73767983fc2fafa16
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Oct 11 11:35:52 2019 -0500
+
+    Update README
+
+commit 423dd62036a309185f83f4e858bad86682d01bf1
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Oct 11 11:34:01 2019 -0500
+
+    Remove .gdbinit link
+
+commit 1019058b91f0eb6716b13deeb13f30f0adf1b5fb
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Oct 11 11:32:41 2019 -0500
+
+    Re-add README
+
+commit 4e02ef91d180169e478f7edbca4382e40cb555b5
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Oct 11 16:21:01 2019 +0000
+
+    Set theme jekyll-theme-hacker
+
+commit 34b3567d277a13357c4849208a3aaaabf874a472
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Oct 11 11:05:45 2019 -0500
+
+    Upgrade FEMU to use QEMU4.1
+
+commit 2be5b9babaacc8d28746e6e25a13823f4ffe7c58
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Feb 13 10:29:20 2019 -0600
+
+    Update README
+
+commit ebe58a7965319af23a179f9f2b08a0095d8a0ed9
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Feb 13 10:04:11 2019 -0600
+
+    Add a new FTL implementation for FEMU blackbox mode
+     - Disable VSSIM FTL (will be remove in the future)
+
+commit 117288e76542f4cc83a25581b6dbb7ea57e8aa05
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sun Nov 25 16:22:46 2018 -0600
+
+    Make NVMe poller be safe across controller reset
+
+commit 6ec7aca9801dd0f26efa3b2e7f755f3dd1de3dc0
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Nov 24 13:20:18 2018 -0600
+
+    Cleanup poller logic
+
+commit 2dc2c173402d0f69556de36b26586b7091799e16
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Nov 24 12:20:46 2018 -0600
+
+    Restore one namespace
+
+commit 742baa59405bdff2da3aac675006a2ca2fa4dfcb
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Nov 24 02:29:17 2018 -0600
+
+    Fix the delay emulation bug
+
+commit 7d99dc05f37f4fb01fb94807fd92eb4594621bad
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Thu Nov 22 23:10:15 2018 -0600
+
+    Use priority queue to manage req->expire_time
+
+commit c17eb4f65e46ab1257368ff9f9669a2b46535b13
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Thu Nov 22 21:30:13 2018 -0600
+
+    Add binary heap based priority queue utility
+
+commit ad32cd94255eaca6d113930bae442be8a8ce778b
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Thu Nov 22 21:21:25 2018 -0600
+
+    Re-organize util lib
+
+commit c8d454af8c452e798bab9c9747db8f77d5acb783
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Thu Nov 22 20:57:29 2018 -0600
+
+    Make use of cq host virtual addr
+
+commit d4b9273fc2f75fb6cbcb19719d88e18f202708a3
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Thu Nov 22 20:35:47 2018 -0600
+
+    Avoid NvmeRequest copy ops
+
+commit 847197073bf4a73c979cbbabdd2259444979070b
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Nov 21 17:35:39 2018 -0600
+
+    Make use of ringbuf to pass NvmeRequests
+
+commit 64d3dd68695d679bbb18334aabf676204dbf0d91
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Nov 21 01:20:39 2018 -0600
+
+    Update README.md
+
+commit 94f3d83d441d3647f7527cec39692d5e2484c1f8
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Nov 21 00:57:20 2018 -0600
+
+    Import ring buffer impl from DPDK
+
+commit 8eff6453eaf5e61d9242ae166b01e5b7f3590ecd
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Nov 21 00:50:20 2018 -0600
+
+    Cleanup NVMe sq_poller
+
+commit 508b31742612c1b776ed840b5f2c51da5129656d
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Nov 21 00:25:27 2018 -0600
+
+    Fix memory leak
+
+commit e82038fd9de6197a6eaf3e4769ce3d8796037269
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Nov 21 00:01:15 2018 -0600
+
+    Code cleanup
+
+commit 78e9981794ce56c0ffd42e51d4fc20c00f0b3bb4
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 20 23:39:15 2018 -0600
+
+    Use host virtual addr for SQ commands
+
+commit f2f3aa6698dfac287285a2bbacae819c1c1f7021
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 20 22:47:37 2018 -0600
+
+    Use host virtual addr for shadow doorbell read
+
+commit d87ed8ab5d58c719c990dfaec0433913a2947c20
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 20 18:32:49 2018 -0600
+
+    Update VM image link
+
+commit 6ee186baf7f7b8d45c418c01cbd34788305465f8
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Mon Nov 19 22:47:58 2018 -0600
+
+    Add initial NVMe poller thread for NoSSD mode
+
+commit 38c249def7d530522f656750298dffa62d7332ac
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Mon Nov 19 16:23:41 2018 -0600
+
+    Update VM scripts
+
+commit b8d334001eb1ed4b5dbe5ca22be3f2dbff25600c
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Nov 17 11:55:21 2018 -0600
+
+    Refactor code
+
+commit a8bbb4c8079db326d333319cf3213b370d99bf27
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Thu Nov 15 09:34:02 2018 -0600
+
+    Simply NVMe memory backend operations
+
+commit 8d765c9c93770160da53e1f7e8f1889b8781b0ec
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Nov 14 15:55:29 2018 -0600
+
+    Set dev info properly according to FEMU mode
+
+commit 5bba34b91f5049f667b9a706432acc73bdcc07ba
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Nov 14 11:11:45 2018 -0600
+
+    Refactor NVMe code
+
+commit 4b341553fc66bc6457454298bc18d55e6d215302
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Nov 14 00:42:10 2018 -0600
+
+    Stage intermediate changes
+
+commit 661f8eb954c789804edb4693c8201f2a027b2874
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 13 22:06:40 2018 -0600
+
+    Make femu a separate blkdev type; prepare for adding vanilla QEMU NVMe code
+
+commit 4c7a24ab7ca85f5ad5fb67ba2dcf25867744373d
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 13 21:45:21 2018 -0600
+
+    Remove remaining dependency on QEMU blk layer
+
+commit f61673c70f3866ca6fb68690939e9f9015642d84
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 13 20:03:47 2018 -0600
+
+    Adjust file organization
+
+commit e57659ca3f956a962925bd7634cb24cb771096ac
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 13 16:35:21 2018 -0600
+
+    Remove dependency on backend image file for oc-mode
+
+commit c42f2c5220cb5cf3827766b01d3763758636aeb8
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 13 15:34:43 2018 -0600
+
+    Remove dependency on backend image file for bb-mode
+
+commit d604bd5ea24fd5f18e3c71260d767d541ec16209
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 13 14:55:51 2018 -0600
+
+    Rename func name for readability
+
+commit b0e6f4a34cb86196b79f6fb1a6ca2bc2461492a0
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 13 14:41:10 2018 -0600
+
+    Make IO processing logic synchronous
+
+commit c20a92a0b4344bff2da82f24c70ca9d931427343
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 13 14:20:51 2018 -0600
+
+    Remove aer support
+
+commit 2dc55a2ae2f6a3c943d60f0886c4de98ef582479
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 13 14:10:50 2018 -0600
+
+    Update SQ IO path
+
+commit a17c490b07f55c428dbba0ffe0a6c0b57c49f4b6
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 13 12:44:08 2018 -0600
+
+    Cleanup admin path
+
+commit db9849bd32776f6c1a6116e4b21a3af944caee18
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 13 11:37:05 2018 -0600
+
+    Refactor nvme_isr_notify
+
+commit 533b7fb58b8cfc23099d659f191ed39528758ae6
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 13 00:49:36 2018 -0600
+
+    Remove gdbinit softlink
+
+commit 6500f64b9dcb2a413fd933c59b2b5cba60fec6a4
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 13 00:48:20 2018 -0600
+
+    Set theme jekyll-theme-dinky
+
+commit 02b5ad4fc899682667cbbce516e1cd7dfc03f8a8
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 13 00:33:01 2018 -0600
+
+    Code cleanup
+
+commit f4e9386c9fc0b3192641892f5219a49666367490
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Nov 13 00:09:21 2018 -0600
+
+    Update io doorbell process logic
+
+commit 91d7998442cac61e7421baedae740ddd933616dc
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Mon Nov 12 13:46:36 2018 -0600
+
+    Fix warnings in nvme
+
+commit da37290c0b8a875ee8e1eb422e7c49c05313f630
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Mon Nov 12 11:38:32 2018 -0600
+
+    Separate admin path
+
+commit 54ef73265640a2f80e42179c22ad4dea77c3d5ad
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sun Nov 11 22:46:06 2018 -0600
+
+    Update VM link
+
+commit a8796f28418bee048bff9507f91c370e311bb91f
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sun Nov 11 22:41:32 2018 -0600
+
+    Update FEMU VM link in README
+
+commit c7447dee083b444c4e8ddab4be75251e9e84981d
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sun Nov 11 22:39:45 2018 -0600
+
+    Update README.md
+
+commit 1909b29d6056241926a0c4f7a6a2b45b9a2397c3
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sun Nov 11 22:06:31 2018 -0600
+
+    Change file names
+
+commit 390faa47bfcfc44c0c7b7c094e69edf7e91a91ed
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sun Nov 11 21:28:36 2018 -0600
+
+    Rename NVMe memory backend to mbe
+
+commit 6afee65b216851402d03653db8f5cc41b4ad8f30
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sun Nov 11 18:20:27 2018 -0600
+
+    Separate nvme memory backend logic
+
+commit e5831064844fa2cee4cfdf02159bcf6717493ec5
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sun Nov 11 17:46:02 2018 -0600
+
+    Reorganize code structure
+
+commit 3378b99e83b202d37a39189255a51b89c80477dd
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sun Nov 11 17:22:30 2018 -0600
+
+    Add error checking logic for SSD backend memory allocation
+
+commit a732b9f0a0c3f72e2dc6270cb979cd0402053f29
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sun Nov 11 16:54:17 2018 -0600
+
+    Cleanup unused code in nvme
+
+commit beeb9d563c8be03ab19572d2e5f1d153b517d2e2
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sun Nov 11 16:36:21 2018 -0600
+
+    Enable irqfd for interrupt injection
+
+commit ba56426057f57f7eab839e860c7672d5289e25c5
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Nov 9 18:08:19 2018 -0600
+
+    Add irqfd support
+
+commit 805e0b955b6c906b9a9d4d53762a35cb2eb11177
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Nov 9 16:34:09 2018 -0600
+
+    Fix num_io_queues
+
+commit 2702164c91ceb940c04ce036aa09225c70c2593b
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Mon Sep 24 12:11:52 2018 -0500
+
+    Update README.md
+
+commit 74697e20c4725622453aa8fbb9ea9deb9120b221
+Author: BrightestSirius <BrightSirius@users.noreply.github.com>
+Date:   Sun Jun 24 00:41:29 2018 +0800
+
+    fix small bug of num_lun computation in func: femu_oc_erase_async (#5)
+
+commit ea3dd920285df13211e28c0ce0bb1985f1a05d4c
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Fri Jun 22 21:29:47 2018 -0700
+
+    Fixes #2, compile under Ubuntu 18.04
+
+commit 4cf5f3766442cf98a5b9811870bf5494df6b7029
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat May 5 00:52:03 2018 -0500
+
+    Add small fix
+
+commit 64bbbf04740170f45a5ebb5faa284b5e425d65a6
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Apr 11 23:30:23 2018 -0500
+
+    Add "FEMU VM login instructions" to README
+
+commit 68e97eda5fd50f6569cb0ff9606bf5c81f535adb
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Apr 11 20:47:20 2018 -0500
+
+    Update README.md
+
+commit c8ef4275c852269fb4e3d8b7397ff8e45a20d06d
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Apr 11 01:26:37 2018 -0500
+
+    Update information about preparing VM image
+
+commit 6c5ea3f749dce4dec5410cb98ab92ba48c4a8d2b
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Thu Mar 8 15:04:18 2018 -0600
+
+    Mask LightNVM corrupted read LBA for now
+    Need to fix the meta buf management in FEMU side later
+
+commit ed6dcd189c3226edbf8f43cc0bd27410f9a08295
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Mar 7 01:33:03 2018 -0600
+
+    Update README.md
+
+commit 6842a322fb0841e29e2fdecd7db577c4a1f9afdc
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Mar 7 01:30:31 2018 -0600
+
+    Update README
+
+commit 20d5a46b5c6ba7cb4834c6f42f49d1c2b854187f
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Mar 7 01:30:16 2018 -0600
+
+    Update FEMU scripts
+
+commit 7f19cc06a2e031e2591f0439b2496eb689b2f4dc
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Wed Mar 7 00:29:35 2018 -0600
+
+    Add DEF_NOSSD mode for performance benchmark
+
+commit 4dd3b7aa619f1cdf250e2a5f1064eb96d1425c5d
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Tue Mar 6 23:59:32 2018 -0600
+
+    Add polling support for SPDK
+
+commit e6bf6f44b4201555cc9dec422c8ee62acbb9728a
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Mon Mar 5 16:27:22 2018 -0600
+
+    Update the doorbell buffer config bit to keep up with newer (>=4.14) kernels
+
+commit a0686d7ebbe64c3e82a915de8502afd2598410ec
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Feb 24 16:56:28 2018 -0600
+
+    Update README.md
+
+commit 100c83f129e3aa738bf539ffe19e83dddc945680
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Feb 24 16:54:03 2018 -0600
+
+    Update README.md
+
+commit ee303decc78248c8a9271fae423671d43365520c
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Sat Feb 24 16:50:03 2018 -0600
+
+    Make preparations for FEMU VM image
+
+commit 344e432b62087df0b2c42d792c28b4316894a075
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Sat Feb 24 15:33:14 2018 -0600
+
+    Remove generated files
+
+commit c8b31037fb77e084dabfea2be6193a03fc307d39
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Sat Feb 24 15:31:56 2018 -0600
+
+    Clear build-femu directory and avoid tracking it in git
+
+commit 9da973f0d5132e6e86c8e8f3362720a458e1999a
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Feb 24 02:42:09 2018 -0600
+
+    Fix typos in README
+
+commit fbe4029207ba6886b4ab1c601d3739b0a83f60d3
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Feb 24 02:29:33 2018 -0600
+
+    Adjust code indentation
+
+commit b0ab44dafec0b71b70f6da8f3e28a0f381e7572e
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Feb 24 02:25:39 2018 -0600
+
+    Update FEMU README & scripts
+
+commit 89f3b04319433b501e69e002f1c73e114e09659f
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Sat Feb 24 01:13:40 2018 -0600
+
+    Remove cscope related files
+
+commit a4ee625a84767b791124ac13a79cb38e424417a7
+Author: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Date:   Thu Feb 22 01:41:11 2018 -0600
+
+    Small bug fix on meta buffer upper range
+
+commit 96be3c0a21e153695bfc2bdea81ffdcfed008a34
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Fri Feb 16 00:37:24 2018 -0600
+
+    Add .gitignore
+
+commit 4ddbc4f4dc9fcc3ebca42b48eb5482b8c3e2ee4a
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Fri Feb 16 00:36:53 2018 -0600
+
+    Remove .[od] files
+
+commit 6919f98c988305a71962d266b325381b565d0a3f
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Tue Feb 13 16:17:05 2018 -0600
+
+    Rename README
+
+commit d5e2c38c2770294f71fd07329c27bc07d5dc0ae1
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Tue Feb 13 16:16:15 2018 -0600
+
+    Add FEMU README
+
+commit 186a773c8510c16fd501e6257634cead973dffed
+Author: Huaicheng Li <lhcwhu@gmail.com>
+Date:   Tue Feb 13 16:13:38 2018 -0600
+
+    Add initial public version
