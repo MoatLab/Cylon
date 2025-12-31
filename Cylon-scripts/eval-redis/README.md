@@ -25,7 +25,7 @@ This experiment is to see the impact of different eviction policies on Cylon lat
     ```
 * After that you can run 
     ```sh
-    gnuplot plot-figure11.sh
+    gnuplot plot-figure11.gp
     ```
     Check the graph result in `../plot/redis-eviction-cylon.pdf`
 
