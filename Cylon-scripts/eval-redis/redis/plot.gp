@@ -1,6 +1,6 @@
 #!/usr/bin/gnuplot
 # Usage:
-#   gnuplot -e "SMALL_DAT='...';MED_DAT='...';LARGE_DAT='...';CMMH_SMALL_DAT='...';CMMH_MED_DAT='...';CMMH_LARGE_DAT='...';OUT_PDF='../plot/out.pdf'" plot_1t_1m3m6m.gp
+#   gnuplot -e "SMALL_DAT='...';MED_DAT='...';LARGE_DAT='...';CMMH_SMALL_DAT='...';CMMH_MED_DAT='...';CMMH_LARGE_DAT='...';OUT_PDF='../plot/out.pdf'" plot.gp
 
 set style line 1 lt 1 lw 3 pt 7 ps 1.2 lc rgb "#1f77b4"
 set style line 2 lt 1 lw 3 pt 5 ps 1.2 lc rgb "#ff7f0e"
