@@ -32,6 +32,7 @@
 #include <linux/types.h>
 #include <linux/string.h>
 #include <linux/mm.h>
+#include <linux/userfaultfd_k.h>
 #include <linux/highmem.h>
 #include <linux/moduleparam.h>
 #include <linux/export.h>
@@ -7311,13 +7312,21 @@ int kvm_arch_vcpu_ioctl_set_spte_flag(struct kvm_vcpu *vcpu, struct kvm_set_spte
 	u64 *sptep = NULL;
 	struct kvm_shadow_walk_iterator it;
 	struct kvm_mmu_page *sp = NULL;
-	struct kvm_memory_slot *slot = kvm_vcpu_gfn_to_memslot(vcpu, gfn);	
+	struct kvm_memory_slot *slot;
 	bool async;
 
 	if (flag == 0) {
 		kvm_flush_remote_tlbs_range(vcpu->kvm, data->gpa >> 12, 1);
 		return 0;
 	}
+
+	/*
+	 * Other flags edited the SPTE here with no mmu_lock, RCU or root
+	 * validation, before the vCPU is serialized; the dual-mode slot's
+	 * linear tables replace them. Only the flush remains.
+	 */
+	return -EINVAL;
+	slot = kvm_vcpu_gfn_to_memslot(vcpu, gfn);
 
 	// printk("\tgpa: 0x%llx, lpn:` 0x%llx flag: %llx", gpa, data->lpn, flag);
 	if (!slot) {
@@ -7439,7 +7448,7 @@ int kvm_arch_vm_ioctl_get_linear_spt(struct kvm *kvm, struct kvm_memslot_get_lin
 		 */
 		vma = vma_lookup(mm, uaddr);
 		if (!vma || vma->vm_start != uaddr || vma->vm_end - uaddr != sz ||
-		    !vma_is_anon_shmem(vma) ||
+		    !vma_is_anon_shmem(vma) || userfaultfd_armed(vma) ||
 		    (vma->vm_flags & (VM_PFNMAP | VM_IO)) ||
 		    vma->vm_file->f_mapping->nrpages) {
 			r = -EINVAL;
