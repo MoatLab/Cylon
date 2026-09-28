@@ -4841,24 +4841,19 @@ static int kvm_vm_ioctl_get_stats_fd(struct kvm *kvm)
 // }
 
 
-static int handle_kvm_get_linear_spt(struct kvm* kvm, void __user *argp)
+static int handle_kvm_get_linear_spt(struct kvm *kvm, void __user *argp)
 {
-	struct kvm_memslot_get_linear_spt data;
-	int ret = -EINVAL;
-	
-	printk("%s\n", __func__);
-	if (copy_from_user(&data, argp, sizeof(struct kvm_memslot_get_linear_spt))){
-		printk("KVM_GET_LINEAR_SPT arg copy_from_user err\n");
-		return -EINVAL;		
-	}
-	// printk("KVM_GET_LINEAR_SPT arg copy_from_user done\n");
-	ret = kvm_arch_vm_ioctl_get_linear_spt(kvm, &data);
+	struct kvm_memslot_get_linear_spt *data;
+	int ret;
 
-	if (copy_to_user(argp, &data, sizeof(struct kvm_memslot_get_linear_spt))){
-		printk("KVM_GET_LINEAR_SPT ret copy_to_user err\n");
-		return -EINVAL;
-	}
-
+	/* About 1 KiB: too large for the stack. */
+	data = memdup_user(argp, sizeof(*data));
+	if (IS_ERR(data))
+		return PTR_ERR(data);
+	ret = kvm_arch_vm_ioctl_get_linear_spt(kvm, data);
+	if (!ret && copy_to_user(argp, data, sizeof(*data)))
+		ret = -EFAULT;
+	kfree(data);
 	return ret;
 }
 
