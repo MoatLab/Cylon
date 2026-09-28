@@ -1646,8 +1646,26 @@ static int kvm_prepare_memory_region(struct kvm *kvm,
 		}
 	}
 
-	r = kvm_arch_prepare_memory_region(kvm, old, new, change);
+	/*
+	 * A dual-mode slot owns its leaf page tables. Allocate them before the
+	 * slot becomes visible so a failure fails the ioctl and no vCPU can fault
+	 * on the slot without them; flag and move updates keep the old tables.
+	 */
+	if (new && (new->flags & KVM_MEMSLOT_DUAL_MODE)) {
+		if (change == KVM_MR_CREATE) {
+			r = dualslot_create_leaf_spt_cont(new);
+			if (r)
+				goto out_bitmap;
+		} else if (old && change != KVM_MR_DELETE) {
+			new->aux = old->aux;
+		}
+	}
 
+	r = kvm_arch_prepare_memory_region(kvm, old, new, change);
+	if (r && change == KVM_MR_CREATE && (new->flags & KVM_MEMSLOT_DUAL_MODE))
+		dualslot_destroy_leaf_spt_cont(new);
+
+out_bitmap:
 	/* Free the bitmap on failure if it was allocated above. */
 	if (r && new && new->dirty_bitmap && (!old || !old->dirty_bitmap))
 		kvm_destroy_dirty_bitmap(new);
@@ -1790,10 +1808,6 @@ static void kvm_create_memslot(struct kvm *kvm,
 	/* Add the new memslot to the inactive set and activate. */
 	kvm_replace_memslot(kvm, NULL, new);
 	kvm_activate_memslot(kvm, NULL, new);
-
-	if (new->flags & KVM_MEMSLOT_DUAL_MODE) {
-		dualslot_create_leaf_spt_cont(new);
-	}
 }
 
 static void kvm_delete_memslot(struct kvm *kvm,

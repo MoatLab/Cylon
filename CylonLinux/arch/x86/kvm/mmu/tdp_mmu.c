@@ -452,6 +452,19 @@ static void handle_removed_pt(struct kvm *kvm, tdp_ptep_t pt, bool shared)
 				    old_spte, REMOVED_SPTE, level, shared);
 	}
 
+	/*
+	 * A dual-mode table is the slot's and is linked again on the next fault.
+	 * Leave its entries non-present rather than frozen, or that fault could
+	 * never install them.
+	 */
+	if (sp->role.dual_mode) {
+		for (i = 0; i < SPTE_ENT_PER_PAGE; i++) {
+			u64 removed = REMOVED_SPTE;
+
+			try_cmpxchg64(&sp->spt[i], &removed, 0ull);
+		}
+	}
+
 	call_rcu(&sp->rcu_head, tdp_mmu_free_sp_rcu_callback);
 }
 
@@ -1113,24 +1126,19 @@ int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
 		if (fault->slot != NULL
 				&& fault->slot->flags & KVM_MEMSLOT_DUAL_MODE
 				&& iter.level == fault->goal_level+1) {
-			sp = kvm_mmu_memory_cache_alloc(&vcpu->arch.mmu_page_header_cache);
-			sp->spt = (u64*)dualslot_get_leaf_spt(fault->slot, iter.gfn);
+			u64 *spt = dualslot_get_leaf_spt(fault->slot, iter.gfn);
 
-			if (!sp || !sp->spt) {
-				printk("dual mode invalid sp");
-				ret = -EINVAL;
-				goto retry;
+			if (WARN_ON_ONCE(!spt)) {
+				/* No slot-owned table: map it as an ordinary slot. */
+				sp = tdp_mmu_alloc_sp(vcpu);
+				tdp_mmu_init_child_sp(sp, &iter);
+			} else {
+				sp = kvm_mmu_memory_cache_alloc(&vcpu->arch.mmu_page_header_cache);
+				sp->spt = spt;
+				tdp_mmu_init_child_sp(sp, &iter);
+				/* The table belongs to the slot: never free it with sp. */
+				sp->role.dual_mode = 1;
 			}
-
-			// parent_sp = sptep_to_sp(rcu_dereference(iter.sptep));
-			// role = parent_sp->role;
-			// role.level--;
-			// role.direct = true;
-			// role.dual_mode = true;
-
-			// tdp_mmu_init_sp(sp, iter.sptep, iter.gfn, role);
-			
-			tdp_mmu_init_child_sp(sp, &iter);
 		}
 		else {
 			sp = tdp_mmu_alloc_sp(vcpu);
@@ -1921,64 +1929,69 @@ int kvm_arch_vm_ioctl_set_spte_flag(struct kvm *kvm, struct kvm_set_spte_flag *d
 
 #define MAX_CONT_ALLOC_SZ (1<< (MAX_ORDER + PAGE_SHIFT))
 
+static void dualslot_free_info(struct kvm_memslot_get_linear_spt *info)
+{
+	int i;
+
+	for (i = 0; i < info->n; i++)
+		free_pages((unsigned long)info->spt_list[i].spt,
+			   get_order(info->spt_list[i].npages << PAGE_SHIFT));
+	free_pages((unsigned long)info, 0);
+}
+
+/*
+ * Leaf page tables for a dual-mode slot, one entry per 4 KiB page, in chunks
+ * of at most MAX_CONT_ALLOC_SZ. Each 2 MiB region must map to a whole page of
+ * entries, so the slot has to be 2 MiB aligned in both base and size.
+ */
 int dualslot_create_leaf_spt_cont(struct kvm_memory_slot *slot)
-{	
+{
 	struct kvm_memslot_get_linear_spt *info;
-	u64 size;
-	int idx, npg_offset = 0;
-	
-	printk("%s\n",__func__);
-	slot->aux = (void*)__get_free_pages(GFP_KERNEL|__GFP_ZERO, 0);
-	if (!slot->aux) {
-		pr_err("alloc memory for dualslot_info failed\n");
-		// printk("alloc memory for dualslot_info failed\n");
+	u64 size = slot->npages * sizeof(u64);
+	int npg_offset = 0;
+
+	if (!IS_ALIGNED(slot->base_gfn, SPTE_ENT_PER_PAGE) ||
+	    !IS_ALIGNED(slot->npages, SPTE_ENT_PER_PAGE))
+		return -EINVAL;
+
+	info = (void *)__get_free_pages(GFP_KERNEL_ACCOUNT | __GFP_ZERO, 0);
+	if (!info)
 		return -ENOMEM;
-	}
 
-	info = (struct kvm_memslot_get_linear_spt*)slot->aux;
+	while (size > 0) {
+		u64 sz = min_t(u64, size, MAX_CONT_ALLOC_SZ);
+		int idx = info->n;
 
-	size = ((slot->npages * sizeof(u64*)));
-	
-	// printk("alloc size: 0x%llx, order: %d", leaf_spt_alloc_size, order);
-	
-	idx = 0;
-	while (size > 0 && idx < BASE_LEAF_SPT_SZ) {
-		u64 sz = (size > MAX_CONT_ALLOC_SZ)? MAX_CONT_ALLOC_SZ:size;
-		int npages = sz >> PAGE_SHIFT;
-		int o = get_order(sz);
-		
-		info->spt_list[idx].spt = (u64*)__get_free_pages(GFP_KERNEL|__GFP_ZERO, o);
+		if (idx >= ARRAY_SIZE(info->spt_list)) {
+			dualslot_free_info(info);
+			return -E2BIG;
+		}
+		info->spt_list[idx].spt = (u64 *)__get_free_pages(
+			GFP_KERNEL_ACCOUNT | __GFP_ZERO, get_order(sz));
 		if (!info->spt_list[idx].spt) {
-			printk("alloc memory for spte failed\n");
-			// pr_err("alloc memory for spte failed\n");
+			dualslot_free_info(info);
 			return -ENOMEM;
 		}
-		
-		info->spt_list[idx].npages = npages;
+		info->spt_list[idx].npages = sz >> PAGE_SHIFT;
 		info->spt_list[idx].offset = npg_offset;
-		// printk("i: %d, npgs: 0x%x, off: 0x%x\n", idx, npages, npg_offset);
+		info->n = idx + 1;
 
 		size -= sz;
-		npg_offset += npages;
-		idx++;
+		npg_offset += sz >> PAGE_SHIFT;
 	}
-	
-	info->n = idx;
 
+	slot->aux = info;
 	return 0;
 }
 
-
 int dualslot_destroy_leaf_spt_cont(struct kvm_memory_slot *slot)
 {
-	struct kvm_memslot_get_linear_spt *info = (struct kvm_memslot_get_linear_spt*)slot->aux;
-	printk("dualslot_destroy_leaf_spt_cont\n");
+	struct kvm_memslot_get_linear_spt *info = slot->aux;
 
-	for (int i = 0; i < info->n; i++) {
-		free_pages((unsigned long)info->spt_list[i].spt, get_order(info->spt_list[i].npages << PAGE_SHIFT));
-	}
-
-	free_pages((unsigned long)slot->aux, 0);
+	if (!info)
+		return 0;
+	slot->aux = NULL;
+	dualslot_free_info(info);
 	return 0;
 }
 
@@ -1989,11 +2002,19 @@ static inline int dualslot_get_leaf_spt_idx(gfn_t lpn)
 
 u64 *dualslot_get_leaf_spt(struct kvm_memory_slot *slot, gfn_t gfn)
 {
-	struct kvm_memslot_get_linear_spt *info = (struct kvm_memslot_get_linear_spt*)slot->aux;
+	struct kvm_memslot_get_linear_spt *info = slot->aux;
+	gfn_t lpn, off;
+	int i;
 
-	gfn_t lpn = gfn - slot->base_gfn;
-	int i = dualslot_get_leaf_spt_idx(lpn);
-	gfn_t off = lpn - info->spt_list[i].offset*512;
+	if (!info || gfn < slot->base_gfn || gfn - slot->base_gfn >= slot->npages)
+		return NULL;
+	lpn = gfn - slot->base_gfn;
+	i = dualslot_get_leaf_spt_idx(lpn);
+	if (i >= info->n)
+		return NULL;
+	off = lpn - info->spt_list[i].offset * 512;
+	if (off >= (gfn_t)info->spt_list[i].npages * 512)
+		return NULL;
 	// printk("gfn: 0x%llx, lpn: 0x%llx, i: %d, off: 0x%llx spt.off: 0x%x\n", gfn, lpn, i, off, info->spt_list[i].offset);
 	return info->spt_list[i].spt + off;
 }

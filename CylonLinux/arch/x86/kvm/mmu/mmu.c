@@ -7390,53 +7390,47 @@ int kvm_arch_vcpu_ioctl_set_spte_flag(struct kvm_vcpu *vcpu, struct kvm_set_spte
 
 int kvm_arch_vm_ioctl_get_linear_spt(struct kvm *kvm, struct kvm_memslot_get_linear_spt *data)
 {
-	u64 gfn = data->gfn;
-	struct kvm_memory_slot *slot = NULL;
 	struct mm_struct *mm = current->mm;
-	u64 size;
-	int idx;
-	struct kvm_memslot_get_linear_spt *info = NULL;
-	
-	// printk("\tgfn to memslot gfn: 0x%llx\n", gfn);
-	slot = gfn_to_memslot(kvm, gfn);
-	if (!slot) {
-		printk("%s NULL slot\n", __func__);
+	struct kvm_memslot_get_linear_spt *info;
+	struct kvm_memory_slot *slot;
+	int idx, r = 0;
+
+	slot = gfn_to_memslot(kvm, data->gfn);
+	if (!slot || !(slot->flags & KVM_MEMSLOT_DUAL_MODE) || !slot->aux)
 		return -EINVAL;
-	}
-	info = (struct kvm_memslot_get_linear_spt*)slot->aux;
+	info = slot->aux;
 
-	size = ((slot->npages * sizeof(u64*)));
-    
-	// printk("\tsize: 0x%llx \n",size);
-    idx = 0;
-    while (size > 0) {
-        u64 sz = (size > MAX_CONT_ALLOC_SZ)? MAX_CONT_ALLOC_SZ:size;
-		unsigned long uaddr = (u64)data->spt_list[idx].spt;
-		struct vm_area_struct *vma = find_vma(mm, uaddr);
-		// vma->vm_flags |= ~VM_IO;
-		// vma->vm_flags |= ~VM_PFNMAP;
-		unsigned long pfn = virt_to_phys(info->spt_list[idx].spt) >> PAGE_SHIFT;
+	/*
+	 * Map each chunk of the slot's leaf tables at the caller's address. The
+	 * caller supplies one untouched shared mapping of exactly the chunk size
+	 * per chunk; anything else is refused rather than remapped.
+	 */
+	mmap_write_lock(mm);
+	for (idx = 0; idx < info->n; idx++) {
+		unsigned long uaddr = (unsigned long)data->spt_list[idx].spt;
+		unsigned long sz = (unsigned long)info->spt_list[idx].npages << PAGE_SHIFT;
+		struct vm_area_struct *vma;
 
-		
-		// vm_flags_clear(vma, VM_PFNMAP);
-		
 		data->spt_list[idx].npages = info->spt_list[idx].npages;
 		data->spt_list[idx].offset = info->spt_list[idx].offset;
-		
-		// printk("idx: %d, uaddr: 0x%lx, vma->vm_start: 0x%lx, pfn: 0x%lx\n",idx, uaddr, vma?vma->vm_start:0, pfn);
-		// printk("\t0x%llx 0x%llx 0x%llx 0x%llx\n", (u64)info->spt_list[idx].spt[0], (u64)info->spt_list[idx].spt[1], (u64)info->spt_list[idx].spt[2], (u64)info->spt_list[idx].spt[3]);
-        if (!vma) {
-            printk("find vma failed %d!\n", idx);
-            return -EINVAL;
-        }
+		if (!uaddr)
+			continue;
 
-		if (uaddr) {
-			remap_pfn_range(vma, vma->vm_start, pfn, sz, vma->vm_page_prot);
+		vma = vma_lookup(mm, uaddr);
+		if (!vma || vma->vm_start != uaddr || vma->vm_end - uaddr != sz ||
+		    !(vma->vm_flags & VM_SHARED)) {
+			r = -EINVAL;
+			break;
 		}
-			
-        size -= sz;
-        idx++;
-    }
+		r = remap_pfn_range(vma, uaddr,
+				    virt_to_phys(info->spt_list[idx].spt) >> PAGE_SHIFT,
+				    sz, vma->vm_page_prot);
+		if (r)
+			break;
+	}
+	mmap_write_unlock(mm);
+	if (r)
+		return r;
 
 	data->n = idx;
 
