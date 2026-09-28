@@ -11,6 +11,7 @@
 #include "tdp_iter.h"
 #include "tdp_mmu.h"
 #include "spte.h"
+#include "x86.h"
 
 #include <asm/cmpxchg.h>
 #include <trace/events/kvm.h>
@@ -1041,6 +1042,14 @@ static int tdp_mmu_map_handle_target_level(struct kvm_vcpu *vcpu,
 		vcpu->stat.pf_mmio_spte_created++;
 		trace_mark_mmio_spte(rcu_dereference(iter->sptep), iter->gfn,
 				     new_spte);
+		/*
+		 * A dual-mode slot has a host mapping, so the emulator would
+		 * take this GPA for RAM and access the slot's backing instead
+		 * of exiting to userspace. Record it as MMIO, as a later
+		 * misconfiguration exit would.
+		 */
+		if (fault->slot && (fault->slot->flags & KVM_MEMSLOT_DUAL_MODE))
+			vcpu_cache_mmio_info(vcpu, 0, iter->gfn, ACC_ALL);
 		ret = RET_PF_EMULATE;
 	} else {
 		trace_kvm_mmu_set_spte(iter->level, iter->gfn,
