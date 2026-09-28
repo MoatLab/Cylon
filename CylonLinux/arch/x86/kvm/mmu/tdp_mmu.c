@@ -1089,13 +1089,17 @@ static int tdp_mmu_split_huge_page(struct kvm *kvm, struct tdp_iter *iter,
  * Link the slot-owned leaf table for iter's 2 MiB region. One table page can
  * back only one shadow page at a time: its page_private() names that header,
  * and teardown finds the header through it. So a table is attached only while
- * no root links it, under the slot's lock, and teardown releases it once its
- * entries are reset (see handle_removed_pt()). While a table is still linked
- * elsewhere, e.g. by a root being torn down, the caller maps the region with
- * an ordinary table instead.
+ * no root owns it, under the slot's lock, and teardown releases it once its
+ * entries are reset (see handle_removed_pt()). Ownership is taken before the
+ * parent entry is published, so teardown always finds it.
  *
- * Returns the linked shadow page, NULL to use an ordinary table, or
- * ERR_PTR(-EBUSY) if the parent entry changed and the fault must retry.
+ * While another root still owns the table (one being torn down, as there is
+ * a single valid root without SMM or nested guests), the fault retries rather
+ * than mapping an ordinary table, which userspace's table updates could never
+ * reach.
+ *
+ * Returns the linked shadow page, NULL to use an ordinary table (no slot
+ * table exists), or ERR_PTR(-EBUSY) if the fault must retry.
  */
 static struct kvm_mmu_page *dualslot_attach(struct kvm_vcpu *vcpu,
 					    struct kvm_memory_slot *slot,
@@ -1119,19 +1123,25 @@ static struct kvm_mmu_page *dualslot_attach(struct kvm_vcpu *vcpu,
 	if (READ_ONCE(info->owner[idx])) {
 		spin_unlock(&info->lock);
 		kmem_cache_free(mmu_page_header_cache, sp);
-		return NULL;
+		return ERR_PTR(-EBUSY);
 	}
 	sp->spt = spt;
 	tdp_mmu_init_child_sp(sp, iter);
 	/* The table belongs to the slot: never free it with sp. */
 	sp->role.dual_mode = 1;
 	sp->dual_owner = &info->owner[idx];
+	WRITE_ONCE(info->owner[idx], sp);
 	if (tdp_mmu_link_sp(vcpu->kvm, iter, sp, true)) {
+		WRITE_ONCE(info->owner[idx], NULL);
 		spin_unlock(&info->lock);
-		kmem_cache_free(mmu_page_header_cache, sp);
+		/*
+		 * page_private() of the table already names sp, and a walker
+		 * still inside an old link of this table may look it up: free
+		 * the header only after those walkers are done.
+		 */
+		call_rcu(&sp->rcu_head, tdp_mmu_free_sp_rcu_callback);
 		return ERR_PTR(-EBUSY);
 	}
-	WRITE_ONCE(info->owner[idx], sp);
 	spin_unlock(&info->lock);
 	return sp;
 }
@@ -1789,6 +1799,10 @@ retry:
 		 * out-of-bounds access.
 		 */
 		if (iter.gfn < start || iter.gfn >= end)
+			continue;
+
+		/* Dual-mode slots own 4 KiB leaf tables; never collapse them. */
+		if (slot->flags & KVM_MEMSLOT_DUAL_MODE)
 			continue;
 
 		max_mapping_level = kvm_mmu_max_mapping_level(kvm, slot,

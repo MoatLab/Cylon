@@ -7432,10 +7432,16 @@ int kvm_arch_vm_ioctl_get_linear_spt(struct kvm *kvm, struct kvm_memslot_get_lin
 		if (!uaddr)
 			continue;
 
+		/*
+		 * remap_pfn_range() BUGs on a populated range. An anonymous
+		 * shared mapping whose shmem object has no pages cannot have
+		 * any PTEs, so require exactly that.
+		 */
 		vma = vma_lookup(mm, uaddr);
 		if (!vma || vma->vm_start != uaddr || vma->vm_end - uaddr != sz ||
-		    !(vma->vm_flags & VM_SHARED) ||
-		    (vma->vm_flags & (VM_PFNMAP | VM_IO))) {
+		    !vma_is_anon_shmem(vma) ||
+		    (vma->vm_flags & (VM_PFNMAP | VM_IO)) ||
+		    vma->vm_file->f_mapping->nrpages) {
 			r = -EINVAL;
 			break;
 		}

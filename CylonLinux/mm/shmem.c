@@ -245,6 +245,7 @@ bool vma_is_anon_shmem(struct vm_area_struct *vma)
 {
 	return vma->vm_ops == &shmem_anon_vm_ops;
 }
+EXPORT_SYMBOL_GPL(vma_is_anon_shmem);
 
 bool vma_is_shmem(struct vm_area_struct *vma)
 {
