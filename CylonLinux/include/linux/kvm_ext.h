@@ -3,6 +3,7 @@
 
 // #include <linux/kvm_host.h>
 #include <linux/kvm_types.h>
+#include <linux/spinlock_types.h>
 
 struct kvm_memory_slot;
 
@@ -24,6 +25,20 @@ struct kvm_memslot_get_linear_spt {
     void *backend_ptr;
     u64 gfn;
     int n;
+};
+
+struct kvm_mmu_page;
+
+/* Kernel-side state of a dual-mode slot; slot->aux points here. */
+struct dualslot_info {
+	struct kvm_memslot_get_linear_spt tables;
+	/* The shadow page each 2 MiB table is linked as, or NULL. */
+	struct kvm_mmu_page **owner;
+	unsigned long nr_tables;
+	/* Serializes attaching tables; see dualslot_attach(). */
+	spinlock_t lock;
+	/* Mapped to userspace at least once: never returned to the allocator. */
+	bool mapped;
 };
 
 #define KVM_SET_SPTE_FLAG		  _IOW(KVMIO, 0xdd, struct kvm_set_spte_flag)

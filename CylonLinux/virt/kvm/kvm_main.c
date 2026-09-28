@@ -981,6 +981,8 @@ static void kvm_destroy_dirty_bitmap(struct kvm_memory_slot *memslot)
 /* This does not remove the slot from struct kvm_memslots data structures */
 static void kvm_free_memslot(struct kvm *kvm, struct kvm_memory_slot *slot)
 {
+	if (slot->flags & KVM_MEMSLOT_DUAL_MODE)
+		dualslot_destroy_leaf_spt_cont(slot);
 	kvm_destroy_dirty_bitmap(slot);
 
 	kvm_arch_free_memslot(kvm, slot);
@@ -1656,7 +1658,7 @@ static int kvm_prepare_memory_region(struct kvm *kvm,
 			r = dualslot_create_leaf_spt_cont(new);
 			if (r)
 				goto out_bitmap;
-		} else if (old && change != KVM_MR_DELETE) {
+		} else if (change == KVM_MR_FLAGS_ONLY) {
 			new->aux = old->aux;
 		}
 	}
@@ -1820,10 +1822,6 @@ static void kvm_delete_memslot(struct kvm *kvm,
 	 */
 	kvm_replace_memslot(kvm, old, NULL);
 	kvm_activate_memslot(kvm, invalid_slot, NULL);
-
-	if (old->flags & KVM_MEMSLOT_DUAL_MODE) {
-		dualslot_destroy_leaf_spt_cont(old);
-	}
 }
 
 static void kvm_move_memslot(struct kvm *kvm,
@@ -2058,7 +2056,9 @@ int __kvm_set_memory_region(struct kvm *kvm,
 	} else { /* Modify an existing slot. */
 		if ((mem->userspace_addr != old->userspace_addr) ||
 		    (npages != old->npages) ||
-		    ((mem->flags ^ old->flags) & KVM_MEM_READONLY)){
+		    ((mem->flags ^ old->flags) & KVM_MEM_READONLY) ||
+		    ((mem->flags ^ old->flags) & KVM_MEMSLOT_DUAL_MODE) ||
+		    ((old->flags & KVM_MEMSLOT_DUAL_MODE) && base_gfn != old->base_gfn)){
 			printk("modify");
 			return -EINVAL;
 		}

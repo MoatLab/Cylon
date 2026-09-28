@@ -129,6 +129,9 @@ struct kvm_mmu_page {
 	/* Used for freeing the page asynchronously if it is a TDP MMU page. */
 	struct rcu_head rcu_head;
 #endif
+
+	/* For a dual-mode slot table, the owner entry to clear on teardown. */
+	struct kvm_mmu_page **dual_owner;
 };
 
 extern struct kmem_cache *mmu_page_header_cache;

@@ -463,6 +463,14 @@ static void handle_removed_pt(struct kvm *kvm, tdp_ptep_t pt, bool shared)
 
 			try_cmpxchg64(&sp->spt[i], &removed, 0ull);
 		}
+		/*
+		 * Only now may the table be attached again. A walker that
+		 * descended before the unlink can still write an entry here,
+		 * but for a dual-mode slot KVM only ever installs MMIO SPTEs,
+		 * the same value a fresh fault would produce.
+		 */
+		if (sp->dual_owner)
+			cmpxchg(sp->dual_owner, sp, NULL);
 	}
 
 	call_rcu(&sp->rcu_head, tdp_mmu_free_sp_rcu_callback);
@@ -1078,6 +1086,57 @@ static int tdp_mmu_split_huge_page(struct kvm *kvm, struct tdp_iter *iter,
 				   struct kvm_mmu_page *sp, bool shared);
 
 /*
+ * Link the slot-owned leaf table for iter's 2 MiB region. One table page can
+ * back only one shadow page at a time: its page_private() names that header,
+ * and teardown finds the header through it. So a table is attached only while
+ * no root links it, under the slot's lock, and teardown releases it once its
+ * entries are reset (see handle_removed_pt()). While a table is still linked
+ * elsewhere, e.g. by a root being torn down, the caller maps the region with
+ * an ordinary table instead.
+ *
+ * Returns the linked shadow page, NULL to use an ordinary table, or
+ * ERR_PTR(-EBUSY) if the parent entry changed and the fault must retry.
+ */
+static struct kvm_mmu_page *dualslot_attach(struct kvm_vcpu *vcpu,
+					    struct kvm_memory_slot *slot,
+					    struct tdp_iter *iter)
+{
+	struct dualslot_info *info = slot->aux;
+	struct kvm_mmu_page *sp;
+	unsigned long idx;
+	u64 *spt;
+
+	spt = dualslot_get_leaf_spt(slot, iter->gfn);
+	if (!info || !spt)
+		return NULL;
+	idx = (iter->gfn - slot->base_gfn) / SPTE_ENT_PER_PAGE;
+	if (idx >= info->nr_tables)
+		return NULL;
+
+	sp = kvm_mmu_memory_cache_alloc(&vcpu->arch.mmu_page_header_cache);
+
+	spin_lock(&info->lock);
+	if (READ_ONCE(info->owner[idx])) {
+		spin_unlock(&info->lock);
+		kmem_cache_free(mmu_page_header_cache, sp);
+		return NULL;
+	}
+	sp->spt = spt;
+	tdp_mmu_init_child_sp(sp, iter);
+	/* The table belongs to the slot: never free it with sp. */
+	sp->role.dual_mode = 1;
+	sp->dual_owner = &info->owner[idx];
+	if (tdp_mmu_link_sp(vcpu->kvm, iter, sp, true)) {
+		spin_unlock(&info->lock);
+		kmem_cache_free(mmu_page_header_cache, sp);
+		return ERR_PTR(-EBUSY);
+	}
+	WRITE_ONCE(info->owner[idx], sp);
+	spin_unlock(&info->lock);
+	return sp;
+}
+
+/*
  * Handle a TDP page fault (NPT/EPT violation/misconfiguration) by installing
  * page tables and SPTEs to translate the faulting guest physical address.
  */
@@ -1123,42 +1182,34 @@ int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
 		 * needs to be split.
 		 */
 
-		if (fault->slot != NULL
-				&& fault->slot->flags & KVM_MEMSLOT_DUAL_MODE
-				&& iter.level == fault->goal_level+1) {
-			u64 *spt = dualslot_get_leaf_spt(fault->slot, iter.gfn);
-
-			if (WARN_ON_ONCE(!spt)) {
-				/* No slot-owned table: map it as an ordinary slot. */
-				sp = tdp_mmu_alloc_sp(vcpu);
-				tdp_mmu_init_child_sp(sp, &iter);
-			} else {
-				sp = kvm_mmu_memory_cache_alloc(&vcpu->arch.mmu_page_header_cache);
-				sp->spt = spt;
-				tdp_mmu_init_child_sp(sp, &iter);
-				/* The table belongs to the slot: never free it with sp. */
-				sp->role.dual_mode = 1;
-			}
+		sp = NULL;
+		if (fault->slot && (fault->slot->flags & KVM_MEMSLOT_DUAL_MODE) &&
+		    fault->goal_level == PG_LEVEL_4K &&
+		    iter.level == PG_LEVEL_4K + 1 &&
+		    !is_shadow_present_pte(iter.old_spte)) {
+			sp = dualslot_attach(vcpu, fault->slot, &iter);
+			if (IS_ERR(sp))
+				goto retry;
 		}
-		else {
+
+		if (!sp) {
 			sp = tdp_mmu_alloc_sp(vcpu);
 			tdp_mmu_init_child_sp(sp, &iter);
-		}
-		
-		sp->nx_huge_page_disallowed = fault->huge_page_disallowed;
+			sp->nx_huge_page_disallowed = fault->huge_page_disallowed;
 
-		if (is_shadow_present_pte(iter.old_spte))
-			r = tdp_mmu_split_huge_page(kvm, &iter, sp, true);
-		else
-			r = tdp_mmu_link_sp(kvm, &iter, sp, true);
+			if (is_shadow_present_pte(iter.old_spte))
+				r = tdp_mmu_split_huge_page(kvm, &iter, sp, true);
+			else
+				r = tdp_mmu_link_sp(kvm, &iter, sp, true);
 
-		/*
-		 * Force the guest to retry if installing an upper level SPTE
-		 * failed, e.g. because a different task modified the SPTE.
-		 */
-		if (r) {
-			tdp_mmu_free_sp(sp);
-			goto retry;
+			/*
+			 * Force the guest to retry if installing an upper level
+			 * SPTE failed, e.g. because a different task modified it.
+			 */
+			if (r) {
+				tdp_mmu_free_sp(sp);
+				goto retry;
+			}
 		}
 
 		if (fault->huge_page_disallowed &&
@@ -1929,14 +1980,15 @@ int kvm_arch_vm_ioctl_set_spte_flag(struct kvm *kvm, struct kvm_set_spte_flag *d
 
 #define MAX_CONT_ALLOC_SZ (1<< (MAX_ORDER + PAGE_SHIFT))
 
-static void dualslot_free_info(struct kvm_memslot_get_linear_spt *info)
+static void dualslot_free_info(struct dualslot_info *info)
 {
 	int i;
 
-	for (i = 0; i < info->n; i++)
-		free_pages((unsigned long)info->spt_list[i].spt,
-			   get_order(info->spt_list[i].npages << PAGE_SHIFT));
-	free_pages((unsigned long)info, 0);
+	for (i = 0; i < info->tables.n; i++)
+		free_pages((unsigned long)info->tables.spt_list[i].spt,
+			   get_order(info->tables.spt_list[i].npages << PAGE_SHIFT));
+	kvfree(info->owner);
+	kfree(info);
 }
 
 /*
@@ -1946,7 +1998,7 @@ static void dualslot_free_info(struct kvm_memslot_get_linear_spt *info)
  */
 int dualslot_create_leaf_spt_cont(struct kvm_memory_slot *slot)
 {
-	struct kvm_memslot_get_linear_spt *info;
+	struct dualslot_info *info;
 	u64 size = slot->npages * sizeof(u64);
 	int npg_offset = 0;
 
@@ -1954,27 +2006,35 @@ int dualslot_create_leaf_spt_cont(struct kvm_memory_slot *slot)
 	    !IS_ALIGNED(slot->npages, SPTE_ENT_PER_PAGE))
 		return -EINVAL;
 
-	info = (void *)__get_free_pages(GFP_KERNEL_ACCOUNT | __GFP_ZERO, 0);
+	info = kzalloc(sizeof(*info), GFP_KERNEL_ACCOUNT);
 	if (!info)
 		return -ENOMEM;
+	spin_lock_init(&info->lock);
+	info->nr_tables = slot->npages / SPTE_ENT_PER_PAGE;
+	info->owner = kvcalloc(info->nr_tables, sizeof(*info->owner),
+			       GFP_KERNEL_ACCOUNT);
+	if (!info->owner) {
+		dualslot_free_info(info);
+		return -ENOMEM;
+	}
 
 	while (size > 0) {
 		u64 sz = min_t(u64, size, MAX_CONT_ALLOC_SZ);
-		int idx = info->n;
+		int idx = info->tables.n;
 
-		if (idx >= ARRAY_SIZE(info->spt_list)) {
+		if (idx >= ARRAY_SIZE(info->tables.spt_list)) {
 			dualslot_free_info(info);
 			return -E2BIG;
 		}
-		info->spt_list[idx].spt = (u64 *)__get_free_pages(
+		info->tables.spt_list[idx].spt = (u64 *)__get_free_pages(
 			GFP_KERNEL_ACCOUNT | __GFP_ZERO, get_order(sz));
-		if (!info->spt_list[idx].spt) {
+		if (!info->tables.spt_list[idx].spt) {
 			dualslot_free_info(info);
 			return -ENOMEM;
 		}
-		info->spt_list[idx].npages = sz >> PAGE_SHIFT;
-		info->spt_list[idx].offset = npg_offset;
-		info->n = idx + 1;
+		info->tables.spt_list[idx].npages = sz >> PAGE_SHIFT;
+		info->tables.spt_list[idx].offset = npg_offset;
+		info->tables.n = idx + 1;
 
 		size -= sz;
 		npg_offset += sz >> PAGE_SHIFT;
@@ -1984,13 +2044,24 @@ int dualslot_create_leaf_spt_cont(struct kvm_memory_slot *slot)
 	return 0;
 }
 
+/*
+ * Called once no root can link the tables any more (after the slot's zap, or
+ * after the MMU is torn down). Tables userspace ever mapped are left
+ * allocated: the process may still map them, and remap_pfn_range() takes no
+ * reference on them.
+ */
 int dualslot_destroy_leaf_spt_cont(struct kvm_memory_slot *slot)
 {
-	struct kvm_memslot_get_linear_spt *info = slot->aux;
+	struct dualslot_info *info = slot->aux;
 
 	if (!info)
 		return 0;
 	slot->aux = NULL;
+	if (info->mapped) {
+		pr_warn_once("kvm: leaving %d dual-mode table chunks allocated\n",
+			     info->tables.n);
+		return 0;
+	}
 	dualslot_free_info(info);
 	return 0;
 }
@@ -2002,18 +2073,21 @@ static inline int dualslot_get_leaf_spt_idx(gfn_t lpn)
 
 u64 *dualslot_get_leaf_spt(struct kvm_memory_slot *slot, gfn_t gfn)
 {
-	struct kvm_memslot_get_linear_spt *info = slot->aux;
+	struct dualslot_info *dinfo = slot->aux;
+	struct kvm_memslot_get_linear_spt *info;
 	gfn_t lpn, off;
 	int i;
 
-	if (!info || gfn < slot->base_gfn || gfn - slot->base_gfn >= slot->npages)
+	if (!dinfo || gfn < slot->base_gfn || gfn - slot->base_gfn >= slot->npages)
 		return NULL;
+	info = &dinfo->tables;
 	lpn = gfn - slot->base_gfn;
 	i = dualslot_get_leaf_spt_idx(lpn);
 	if (i >= info->n)
 		return NULL;
 	off = lpn - info->spt_list[i].offset * 512;
-	if (off >= (gfn_t)info->spt_list[i].npages * 512)
+	if (!IS_ALIGNED(off, SPTE_ENT_PER_PAGE) ||
+	    off >= (gfn_t)info->spt_list[i].npages * 512)
 		return NULL;
 	// printk("gfn: 0x%llx, lpn: 0x%llx, i: %d, off: 0x%llx spt.off: 0x%x\n", gfn, lpn, i, off, info->spt_list[i].offset);
 	return info->spt_list[i].spt + off;

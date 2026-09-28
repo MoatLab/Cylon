@@ -3195,6 +3195,10 @@ void kvm_mmu_hugepage_adjust(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
 	if (unlikely(fault->max_level == PG_LEVEL_4K))
 		return;
 
+	/* Dual-mode slots own 4 KiB leaf tables only. */
+	if (slot && (slot->flags & KVM_MEMSLOT_DUAL_MODE))
+		return;
+
 	if (is_error_noslot_pfn(fault->pfn))
 		return;
 
@@ -7393,18 +7397,30 @@ int kvm_arch_vm_ioctl_get_linear_spt(struct kvm *kvm, struct kvm_memslot_get_lin
 	struct mm_struct *mm = current->mm;
 	struct kvm_memslot_get_linear_spt *info;
 	struct kvm_memory_slot *slot;
+	struct dualslot_info *dinfo;
 	int idx, r = 0;
 
+	/* slots_lock keeps the slot and its tables from being deleted. */
+	mutex_lock(&kvm->slots_lock);
 	slot = gfn_to_memslot(kvm, data->gfn);
-	if (!slot || !(slot->flags & KVM_MEMSLOT_DUAL_MODE) || !slot->aux)
-		return -EINVAL;
-	info = slot->aux;
+	if (!slot || !(slot->flags & KVM_MEMSLOT_DUAL_MODE) || !slot->aux) {
+		r = -EINVAL;
+		goto out;
+	}
+	dinfo = slot->aux;
+	info = &dinfo->tables;
 
 	/*
-	 * Map each chunk of the slot's leaf tables at the caller's address. The
-	 * caller supplies one untouched shared mapping of exactly the chunk size
-	 * per chunk; anything else is refused rather than remapped.
+	 * Map each chunk of the slot's leaf tables at the caller's address, once
+	 * per slot: remap_pfn_range() BUGs on a populated range, so a second
+	 * call, or a mapping that was already remapped, is refused. The caller
+	 * supplies one untouched shared mapping of exactly the chunk size per
+	 * chunk.
 	 */
+	if (dinfo->mapped) {
+		r = -EBUSY;
+		goto out;
+	}
 	mmap_write_lock(mm);
 	for (idx = 0; idx < info->n; idx++) {
 		unsigned long uaddr = (unsigned long)data->spt_list[idx].spt;
@@ -7418,10 +7434,13 @@ int kvm_arch_vm_ioctl_get_linear_spt(struct kvm *kvm, struct kvm_memslot_get_lin
 
 		vma = vma_lookup(mm, uaddr);
 		if (!vma || vma->vm_start != uaddr || vma->vm_end - uaddr != sz ||
-		    !(vma->vm_flags & VM_SHARED)) {
+		    !(vma->vm_flags & VM_SHARED) ||
+		    (vma->vm_flags & (VM_PFNMAP | VM_IO))) {
 			r = -EINVAL;
 			break;
 		}
+		/* From here on the tables may be reachable from userspace. */
+		dinfo->mapped = true;
 		r = remap_pfn_range(vma, uaddr,
 				    virt_to_phys(info->spt_list[idx].spt) >> PAGE_SHIFT,
 				    sz, vma->vm_page_prot);
@@ -7429,10 +7448,12 @@ int kvm_arch_vm_ioctl_get_linear_spt(struct kvm *kvm, struct kvm_memslot_get_lin
 			break;
 	}
 	mmap_write_unlock(mm);
+	if (!r)
+		data->n = idx;
+out:
+	mutex_unlock(&kvm->slots_lock);
 	if (r)
 		return r;
-
-	data->n = idx;
 
 	/* Clear vma flags for backend memory */
 	// if (data->backend_ptr != NULL) {
