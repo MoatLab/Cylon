@@ -2115,3 +2115,15 @@ u64 *dualslot_get_leaf_spt(struct kvm_memory_slot *slot, gfn_t gfn)
 	// printk("gfn: 0x%llx, lpn: 0x%llx, i: %d, off: 0x%llx spt.off: 0x%x\n", gfn, lpn, i, off, info->spt_list[i].offset);
 	return info->spt_list[i].spt + off;
 }
+
+/*
+ * Whether userspace has mapped @gfn of a dual-mode slot directly: its leaf entry
+ * is shadow-present rather than KVM's MMIO SPTE.
+ */
+bool dualslot_gfn_mapped(struct kvm_memory_slot *slot, gfn_t gfn)
+{
+	gfn_t idx = gfn - slot->base_gfn;
+	u64 *spt = dualslot_get_leaf_spt(slot, gfn - idx % SPTE_ENT_PER_PAGE);
+
+	return spt && is_shadow_present_pte(READ_ONCE(spt[idx % SPTE_ENT_PER_PAGE]));
+}

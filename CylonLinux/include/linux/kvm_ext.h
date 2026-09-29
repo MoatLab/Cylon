@@ -52,6 +52,7 @@ int kvm_arch_vm_ioctl_get_linear_spt(struct kvm *kvm, struct kvm_memslot_get_lin
 int dualslot_create_leaf_spt_cont(struct kvm_memory_slot *slot);
 int dualslot_destroy_leaf_spt_cont(struct kvm_memory_slot *slot);
 u64 *dualslot_get_leaf_spt(struct kvm_memory_slot *slot, gfn_t gfn);
+bool dualslot_gfn_mapped(struct kvm_memory_slot *slot, gfn_t gfn);
 // int kvm_arch_vcpu_ioctl_get_root_sptep(struct kvm_vcpu *vcpu, struct kvm_get_root_sptep *data)
 
 
