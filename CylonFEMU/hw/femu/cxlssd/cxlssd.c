@@ -3,6 +3,29 @@
 #include "../kvm_ext.h"
 FILE *mem_acc_log_file;
 
+/*
+ * Open a log file under the log_dir property (the working directory when it is
+ * unset), creating subdirectories. Returns NULL, with one warning, when the
+ * file cannot be opened, so a missing directory never stops the emulator.
+ */
+static FILE *cxlssd_open_log(FemuCtrl *n, const char *name, const char *mode)
+{
+    static bool warned;
+    g_autofree char *path = g_build_filename(n->log_dir ? n->log_dir : ".",
+                                             name, NULL);
+    g_autofree char *dir = g_path_get_dirname(path);
+    FILE *fp;
+
+    g_mkdir_with_parents(dir, 0755);
+    fp = fopen(path, mode);
+    if (!fp && !warned) {
+        warned = true;
+        femu_err("cannot open %s: %s; CXL SSD logs go to stderr or nowhere\n",
+                 path, strerror(errno));
+    }
+    return fp;
+}
+
 static void cxlssd_init_ctrl_str(FemuCtrl *n)
 {
     static int fsid_vcxlssd = 0;
@@ -73,9 +96,9 @@ static void cxlssd_init(FemuCtrl *n, Error **errp)
     femu_kvm_set_user_memory_region(n);
     ssd_init(n);
 
-    mem_acc_log_file = fopen("/home/necsst/cxlssd_log.txt", "w+");
+    mem_acc_log_file = cxlssd_open_log(n, "cxlssd_log.txt", "w+");
 
-    n->io_logfile = NULL;//fopen("/home/necsst/cxlssd_io.log", "w+");
+    n->io_logfile = NULL;
     n->lognum = 0;
 }
 
@@ -481,8 +504,10 @@ static uint16_t get_lsa(struct FemuCtrl *n, void *buf, uint64_t size, uint64_t o
     
     char new_logfilename[100];
     uint64_t time;
-    f = fopen("/home/necsst/cxlssd_buffer.txt", "a+");
-    assert(f != NULL);
+    f = cxlssd_open_log(n, "cxlssd_buffer.txt", "a+");
+    if (!f) {
+        f = stderr;
+    }
     struct buffer *buffer = &n->ssd->dram_buffer;
     switch(size) {
     case 1://print hit/miss count
@@ -534,8 +559,9 @@ static uint16_t get_lsa(struct FemuCtrl *n, void *buf, uint64_t size, uint64_t o
     
     case 13:
         n->lognum++;
-        sprintf(new_logfilename, "/home/necsst/log/cxlssd_log%d", n->lognum);
-        n->io_logfile = fopen(new_logfilename, "w+");
+        snprintf(new_logfilename, sizeof(new_logfilename), "log/cxlssd_log%d",
+                 n->lognum);
+        n->io_logfile = cxlssd_open_log(n, new_logfilename, "w+");
         break;
     case 15:
         if (n->io_logfile) {
@@ -589,7 +615,9 @@ static uint16_t get_lsa(struct FemuCtrl *n, void *buf, uint64_t size, uint64_t o
         printf("RESET mmio flags. ratio: %ld:%ld, time: %ld\n", size%10, 10-size%10, time);
         break;
     }
-    fclose(f);
+    if (f != stderr) {
+        fclose(f);
+    }
 #endif
     // printf("get lsa done\n");
 

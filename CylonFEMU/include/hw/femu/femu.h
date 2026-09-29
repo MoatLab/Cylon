@@ -1247,6 +1247,7 @@ typedef struct FemuCtrl {
     NvmeBar         bar;
     
     FILE *io_logfile;
+    char *log_dir;       /* where CXL SSD logs go; the working directory if unset */
     int lognum;
 
     /* Coperd: ZNS FIXME */

@@ -32,6 +32,8 @@ hpa_base=0xae80000000
 # CXL-SSD DRAM buffer parameters
 policy=2 # Replacement policy [1:LIFO 2:FIFO 3:S3FIFO 4:CLOCK]
 prf_dg=0 # Next-n Prefetch degree
+# Where buffer statistics and I/O logs are written
+log_dir=${LOG_DIR:-$PWD/cxlssd-logs}
 
 # Configurable SSD Controller layout parameters (must be power of 2)
 ssd_size=$1		# in MegaBytes
@@ -81,6 +83,7 @@ FEMU_OPTIONS=${FEMU_OPTIONS}",backend_dev=${backend_dev}"
 FEMU_OPTIONS=${FEMU_OPTIONS}",bdev_offset=${bdev_offset}"
 FEMU_OPTIONS=${FEMU_OPTIONS}",hpa_base=${hpa_base}"
 FEMU_OPTIONS=${FEMU_OPTIONS}",devsz_mb=${ssd_size}"
+FEMU_OPTIONS=${FEMU_OPTIONS}",log_dir=${log_dir}"
 FEMU_OPTIONS=${FEMU_OPTIONS}",namespaces=1"
 FEMU_OPTIONS=${FEMU_OPTIONS}",femu_mode=6"
 FEMU_OPTIONS=${FEMU_OPTIONS}",secsz=${secsz}"

@@ -76,6 +76,11 @@ prf_dg=0 # Next-n Prefetch degree
 ssd_size=$1		# in MegaBytes
 bufsz=$((ssd_size/20))
 ```
+#### Logs
+Buffer statistics (`cxl read-labels mem0 -s 1`) and per-access I/O logs are written under
+`log_dir` (`LOG_DIR` in `run-cxlssd.sh`, default `./cxlssd-logs`). If the directory cannot be
+created, QEMU keeps running and prints the statistics to stderr.
+
 #### NAND timing
 ```sh
 # Latency in nanoseconds

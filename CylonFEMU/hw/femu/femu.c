@@ -619,6 +619,7 @@ static void femu_exit(PCIDevice *pci_dev)
 
 static Property femu_props[] = {
     DEFINE_PROP_STRING("serial", FemuCtrl, serial),
+    DEFINE_PROP_STRING("log_dir", FemuCtrl, log_dir),
     DEFINE_PROP_UINT32("devsz_mb", FemuCtrl, memsz, 1024), /* in MB */
     DEFINE_PROP_UINT32("bufsz_mb", FemuCtrl, bufsz, 0), /* in MB */
     DEFINE_PROP_UINT8("replacement", FemuCtrl, rep, LIFO), /* 1=LIFO, 2=FIFO */

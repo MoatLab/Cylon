@@ -1099,7 +1099,6 @@ static void *ftl_thread(void *arg)
     bool skip = false;
 #endif
     bool read = false;
-    // FILE *f = fopen("/home/necsst/cxlssd_io.log", "a");
     while (1) {
         if (n->femu_mode == FEMU_CXLSSD_MODE) {
             // if (buffer_force_eviction(buffer))
