@@ -1810,6 +1810,14 @@ static void kvm_create_memslot(struct kvm *kvm,
 	/* Add the new memslot to the inactive set and activate. */
 	kvm_replace_memslot(kvm, NULL, new);
 	kvm_activate_memslot(kvm, NULL, new);
+
+	/*
+	 * The range may already be mapped through ordinary leaf tables, e.g.
+	 * holding MMIO SPTEs from before the slot existed. A dual-mode slot's
+	 * own tables are linked only where no table is, so drop the old ones.
+	 */
+	if (new->flags & KVM_MEMSLOT_DUAL_MODE)
+		kvm_arch_flush_shadow_memslot(kvm, new);
 }
 
 static void kvm_delete_memslot(struct kvm *kvm,
