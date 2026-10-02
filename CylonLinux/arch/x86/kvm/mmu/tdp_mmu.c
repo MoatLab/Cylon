@@ -994,6 +994,25 @@ void kvm_tdp_mmu_invalidate_all_roots(struct kvm *kvm)
 }
 
 /*
+ * Userspace can fill a slot table before any root links it. Keep a target
+ * leaf that maps the resolved page and permits this access. Linking the
+ * table has already made its siblings reachable; this checks only the target.
+ */
+static bool dualslot_leaf_usable(struct kvm *kvm, struct kvm_page_fault *fault,
+				struct kvm_mmu_page *sp, u64 spte, int level)
+{
+	return sp->role.dual_mode &&
+	       is_shadow_present_pte(spte) &&
+	       is_last_spte(spte, level) &&
+	       spte_to_pfn(spte) == fault->pfn &&
+	       (!is_writable_pte(spte) || fault->map_writable) &&
+	       !kvm_slot_dirty_track_enabled(fault->slot) &&
+	       !kvm_slot_page_track_is_active(kvm, fault->slot, fault->gfn,
+					      KVM_PAGE_TRACK_WRITE) &&
+	       is_access_allowed(fault, spte);
+}
+
+/*
  * Installs a last-level SPTE to handle a TDP page fault.
  * (NPT/EPT violation/misconfiguration)
  */
@@ -1008,6 +1027,11 @@ static int tdp_mmu_map_handle_target_level(struct kvm_vcpu *vcpu,
 
 	if (WARN_ON_ONCE(sp->role.level != fault->goal_level))
 		return RET_PF_RETRY;
+
+	if (fault->slot && (fault->slot->flags & KVM_MEMSLOT_DUAL_MODE) &&
+	    dualslot_leaf_usable(vcpu->kvm, fault, sp, iter->old_spte,
+				 iter->level))
+		return RET_PF_SPURIOUS;
 
 	if (unlikely(!fault->slot) || (fault->slot->flags & KVM_MEMSLOT_DUAL_MODE)){
 		new_spte = make_mmio_spte(vcpu, iter->gfn, ACC_ALL);
