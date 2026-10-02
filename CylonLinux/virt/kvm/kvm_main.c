@@ -1551,6 +1551,10 @@ static int check_memory_region_flags(const struct kvm_userspace_memory_region *m
 
 #ifdef KVM_MEMSLOT_DUAL_MODE
 	valid_flags |= KVM_MEMSLOT_DUAL_MODE;
+	/* Detached slot tables escape dirty-log write protection. */
+	if ((mem->flags & KVM_MEMSLOT_DUAL_MODE) &&
+	    (mem->flags & KVM_MEM_LOG_DIRTY_PAGES))
+		return -EINVAL;
 #endif
 
 	if (mem->flags & ~valid_flags){
