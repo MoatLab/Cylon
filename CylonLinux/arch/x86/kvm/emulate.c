@@ -4883,6 +4883,7 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len, int
 	u16 dummy;
 	struct desc_struct desc;
 
+	ctxt->unsupported_insn = false;
 	ctxt->memop.type = OP_NONE;
 	ctxt->memopp = NULL;
 	ctxt->_eip = ctxt->eip;
@@ -5093,8 +5094,10 @@ done_prefixes:
 			opcode = opcode.u.group[goffset];
 			break;
 		case Prefix:
-			if (ctxt->rep_prefix && op_prefix)
+			if (ctxt->rep_prefix && op_prefix) {
+				ctxt->unsupported_insn = true;
 				return EMULATION_FAILED;
+			}
 			simd_prefix = op_prefix ? 0x66 : ctxt->rep_prefix;
 			switch (simd_prefix) {
 			case 0x00: opcode = opcode.u.gprefix->pfx_no; break;
@@ -5140,6 +5143,7 @@ done_prefixes:
 	/* Unrecognised? */
 	if (ctxt->d == 0){
 		printk("[%d] Unrecognised: gpa:0x%llx(%d) rc:%d\n",cnt, ctxt->gpa_val, ctxt->gpa_available, rc);
+		ctxt->unsupported_insn = true;
 		return EMULATION_FAILED;
 	}
 		
@@ -5166,8 +5170,10 @@ done_prefixes:
 		 * KVM_CAP_CYLON_FAULT_EXIT, x86_emulate_instruction() hands the
 		 * GPA to userspace instead.
 		 */
-		if (ctxt->d & NotImpl)
+		if (ctxt->d & NotImpl) {
+			ctxt->unsupported_insn = true;
 			return EMULATION_FAILED;
+		}
 			
 
 		if (mode == X86EMUL_MODE_PROT64) {

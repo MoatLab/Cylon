@@ -8864,8 +8864,10 @@ EXPORT_SYMBOL_GPL(x86_decode_emulated_instruction);
  * MMIO SPTE, so its first access is emulated. When the emulator cannot handle
  * the instruction (VEX/EVEX, most SSE with memory operands), hand the GPA to
  * userspace instead of failing: userspace maps the page and the guest
- * executes the instruction again, natively. Only a decode failure qualifies:
- * nothing has been emulated yet, so RIP, registers and memory are unchanged.
+ * executes the instruction again, natively. Only a decode failure on the
+ * instruction itself qualifies, not a failure to fetch its bytes, so @gpa is
+ * the data access that faulted. Nothing has been emulated yet, so RIP,
+ * registers and memory are unchanged.
  * A failure during emulation may follow side effects (a segment load, say)
  * and keeps the stock path, as do genuine guest exceptions.
  */
@@ -8879,8 +8881,8 @@ static bool kvm_cylon_fault_exit(struct kvm_vcpu *vcpu, gpa_t gpa,
 
 	if (!READ_ONCE(vcpu->kvm->arch.cylon_fault_exit) ||
 	    !(emulation_type & EMULTYPE_PF) ||
-	    !vcpu->arch.mmu->root_role.direct || ctxt->have_exception ||
-	    vcpu->mmio_needed || vcpu->arch.pio.count)
+	    !vcpu->arch.mmu->root_role.direct || !ctxt->unsupported_insn ||
+	    ctxt->have_exception || vcpu->mmio_needed || vcpu->arch.pio.count)
 		return false;
 
 	slot = kvm_vcpu_gfn_to_memslot(vcpu, gpa_to_gfn(gpa));

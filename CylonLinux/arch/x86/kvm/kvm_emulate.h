@@ -318,6 +318,11 @@ struct x86_emulate_ctxt {
 	/* GPA available */
 	bool gpa_available;
 	gpa_t gpa_val;
+	/*
+	 * Decoding failed on the instruction itself (unknown or unsupported
+	 * opcode, conflicting prefixes), not on fetching its bytes.
+	 */
+	bool unsupported_insn;
 
 	/*
 	 * decode cache
