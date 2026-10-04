@@ -1353,6 +1353,11 @@ struct kvm_arch {
 	 * the opportunity to look at it.
 	 */
 	bool exit_on_emulation_error;
+	/*
+	 * Return KVM_EXIT_CYLON_FAULT when an access to a Cylon dual-mode slot
+	 * cannot be emulated, so userspace can map the page instead.
+	 */
+	bool cylon_fault_exit;
 
 	/* Deflect RDMSR and WRMSR to user space when they trigger a #GP */
 	u32 user_space_msr_mask;

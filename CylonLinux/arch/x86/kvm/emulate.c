@@ -5164,6 +5164,16 @@ done_prefixes:
 		ctxt->intercept = opcode.intercept;
 
 		if (ctxt->d & NotImpl){
+			struct kvm_memory_slot *slot;
+
+			/*
+			 * With KVM_CAP_CYLON_FAULT_EXIT, fail the decode and let
+			 * x86_emulate_instruction() hand the GPA to userspace.
+			 * The synthetic 8-byte MMIO read below cannot complete an
+			 * arbitrary instruction.
+			 */
+			if (ctxt->cylon_fault_exit)
+				return EMULATION_FAILED;
 			if (cnt-prev_cnt == 1 && ctxt->gpa_val == prev_gpa) {
 				// dump_stack();
 				__ccc++;
@@ -5181,7 +5191,8 @@ done_prefixes:
 			prev_gpa = ctxt->gpa_val;
 			// __DEBUG(ctxt->gpa_val, "(vcpu %d, ctxt:0x%llx) [%d] decode_insn: gpa:0x%llx(%d) emulation_type:%d eip:0x%lx, func:%pF\n",((struct kvm_vcpu*)ctxt->vcpu)->vcpu_id, (u64)ctxt, cnt, ctxt->gpa_val, ctxt->gpa_available, emulation_type, ctxt->eip, (void *)ctxt->_eip);
 			// printk("[%d] Not implemented: gpa:0x%llx(%d) rc:%d\n",cnt, ctxt->gpa_val, ctxt->gpa_available, rc);
-			if (kvm_vcpu_gfn_to_memslot(ctxt->vcpu, ctxt->gpa_val >> 12)->flags & KVM_MEMSLOT_DUAL_MODE) {
+			slot = kvm_vcpu_gfn_to_memslot(ctxt->vcpu, ctxt->gpa_val >> 12);
+			if (slot && (slot->flags & KVM_MEMSLOT_DUAL_MODE)) {
 				u64 tmp;		
 				
 				// rc = read_emulated(ctxt, ctxt->gpa_val, &tmp, sizeof(tmp)) 

@@ -264,6 +264,11 @@ struct kvm_xen_exit {
 #define KVM_EXIT_RISCV_SBI        35
 #define KVM_EXIT_RISCV_CSR        36
 #define KVM_EXIT_NOTIFY           37
+/*
+ * Cylon dual-mode slots: an access to a trapped page needed an instruction
+ * the emulator cannot handle. Outside the upstream range on purpose.
+ */
+#define KVM_EXIT_CYLON_FAULT      0x4359
 
 /* For KVM_EXIT_INTERNAL_ERROR */
 /* Emulate instruction failed. */
@@ -510,6 +515,20 @@ struct kvm_run {
 #define KVM_NOTIFY_CONTEXT_INVALID	(1 << 0)
 			__u32 flags;
 		} notify;
+		/* KVM_EXIT_CYLON_FAULT */
+		struct {
+#define KVM_CYLON_FAULT_DECODE		(1 << 0)
+#define KVM_CYLON_FAULT_EXECUTE		(1 << 1)
+			__u64 gpa;
+			__u64 rip;
+			__u32 flags;
+			/* Decoded length, 0 when decoding failed. */
+			__u8 insn_len;
+			/* Bytes fetched into @insn before the failure. */
+			__u8 insn_bytes;
+			__u8 pad[2];
+			__u8 insn[16];
+		} cylon_fault;
 		/* Fix the size of the union. */
 		char padding[256];
 	};
@@ -1190,6 +1209,8 @@ struct kvm_ppc_resize_hpt {
 #define KVM_CAP_DIRTY_LOG_RING_WITH_BITMAP 225
 #define KVM_CAP_PMU_EVENT_MASKED_EVENTS 226
 #define KVM_CAP_COUNTER_OFFSET 227
+/* Cylon: exit with KVM_EXIT_CYLON_FAULT instead of failing emulation. */
+#define KVM_CAP_CYLON_FAULT_EXIT 0x4359
 
 #ifdef KVM_CAP_IRQ_ROUTING
 

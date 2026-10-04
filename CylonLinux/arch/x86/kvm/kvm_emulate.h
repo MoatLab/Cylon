@@ -318,6 +318,8 @@ struct x86_emulate_ctxt {
 	/* GPA available */
 	bool gpa_available;
 	gpa_t gpa_val;
+	/* KVM_CAP_CYLON_FAULT_EXIT is on: no synthetic MMIO read on NotImpl. */
+	bool cylon_fault_exit;
 
 	/*
 	 * decode cache
