@@ -517,12 +517,12 @@ struct kvm_run {
 		} notify;
 		/* KVM_EXIT_CYLON_FAULT */
 		struct {
+/* The instruction could not be decoded; always set. */
 #define KVM_CYLON_FAULT_DECODE		(1 << 0)
-#define KVM_CYLON_FAULT_EXECUTE		(1 << 1)
 			__u64 gpa;
 			__u64 rip;
 			__u32 flags;
-			/* Decoded length, 0 when decoding failed. */
+			/* Reserved for a decoded length; 0. */
 			__u8 insn_len;
 			/* Bytes fetched into @insn before the failure. */
 			__u8 insn_bytes;

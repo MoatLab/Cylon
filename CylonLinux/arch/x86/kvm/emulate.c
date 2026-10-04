@@ -4872,9 +4872,6 @@ done:
 #define __DEBUG(x, fmt, ...) \
         do { if (x >= 0x2290000000) printk(fmt, ##__VA_ARGS__); } while (0)
 static int cnt = 0;
-static int prev_cnt = 0;
-static u64 prev_gpa = 0;
-static int __ccc = 0;
 int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len, int emulation_type)
 {
 	int rc = X86EMUL_CONTINUE;
@@ -5163,62 +5160,14 @@ done_prefixes:
 		ctxt->check_perm = opcode.check_perm;
 		ctxt->intercept = opcode.intercept;
 
-		if (ctxt->d & NotImpl){
-			struct kvm_memory_slot *slot;
-
-			/*
-			 * With KVM_CAP_CYLON_FAULT_EXIT, fail the decode and let
-			 * x86_emulate_instruction() hand the GPA to userspace.
-			 * The synthetic 8-byte MMIO read below cannot complete an
-			 * arbitrary instruction.
-			 */
-			if (ctxt->cylon_fault_exit)
-				return EMULATION_FAILED;
-			if (cnt-prev_cnt == 1 && ctxt->gpa_val == prev_gpa) {
-				// dump_stack();
-				__ccc++;
-
-				// if (__ccc > 1000) {
-				// 	printk("Too many consecutive failures\n");
-				// 	return EMULATION_FAILED;
-				// }
-			}
-			else {
-				__ccc = 0;
-			}
-			
-			prev_cnt = cnt;
-			prev_gpa = ctxt->gpa_val;
-			// __DEBUG(ctxt->gpa_val, "(vcpu %d, ctxt:0x%llx) [%d] decode_insn: gpa:0x%llx(%d) emulation_type:%d eip:0x%lx, func:%pF\n",((struct kvm_vcpu*)ctxt->vcpu)->vcpu_id, (u64)ctxt, cnt, ctxt->gpa_val, ctxt->gpa_available, emulation_type, ctxt->eip, (void *)ctxt->_eip);
-			// printk("[%d] Not implemented: gpa:0x%llx(%d) rc:%d\n",cnt, ctxt->gpa_val, ctxt->gpa_available, rc);
-			slot = kvm_vcpu_gfn_to_memslot(ctxt->vcpu, ctxt->gpa_val >> 12);
-			if (slot && (slot->flags & KVM_MEMSLOT_DUAL_MODE)) {
-				u64 tmp;		
-				
-				// rc = read_emulated(ctxt, ctxt->gpa_val, &tmp, sizeof(tmp)) 
-				// frag->gpa = gpa;
-				// frag->data = val;
-				// frag->len = bytes;
-				// rc = ctxt->ops->read_emulated(ctxt, ctxt->gpa_val, &tmp, sizeof(tmp), &ctxt->exception);
-				// printk("[%d] returning from read_emulated: gpa:0x%llx(%d) rc:%d\n",cnt, ctxt->gpa_val, ctxt->gpa_available, rc);
-				kvm_sev_es_mmio_read(ctxt->vcpu, ctxt->gpa_val, sizeof(tmp), &tmp);
-				if (rc == X86EMUL_CONTINUE || rc == X86EMUL_IO_NEEDED) {
-					static_call(kvm_x86_flush_tlb_gva)(ctxt->vcpu, ctxt->gpa_val);
-					return EMULATION_OK_RESTART;
-				}
-				else {
-					printk("[%d] kvm mmio failed: gpa:0x%llx(%d) rc:%d\n",cnt, ctxt->gpa_val, ctxt->gpa_available, rc);
-					// static_call(kvm_x86_flush_tlb_gva)(ctxt->vcpu, ctxt->gpa_val);
-					// return EMULATION_OK_RESTART;
-				}
-					
-			}
-			else {
-				printk("memslot not found for gpa:0x%llx\n", ctxt->gpa_val);
-			}
-
+		/*
+		 * Fail the decode as stock KVM does. A synthetic MMIO read here
+		 * cannot complete an arbitrary instruction; with
+		 * KVM_CAP_CYLON_FAULT_EXIT, x86_emulate_instruction() hands the
+		 * GPA to userspace instead.
+		 */
+		if (ctxt->d & NotImpl)
 			return EMULATION_FAILED;
-		}
 			
 
 		if (mode == X86EMUL_MODE_PROT64) {

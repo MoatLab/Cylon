@@ -8419,7 +8419,6 @@ static void init_emulate_ctxt(struct kvm_vcpu *vcpu)
 	ctxt->have_exception = false;
 	ctxt->exception.vector = -1;
 	ctxt->perm_ok = false;
-	ctxt->cylon_fault_exit = READ_ONCE(vcpu->kvm->arch.cylon_fault_exit);
 
 	init_decode_cache(ctxt);
 	vcpu->arch.emulate_regs_need_sync_from_vcpu = false;
@@ -8864,12 +8863,14 @@ EXPORT_SYMBOL_GPL(x86_decode_emulated_instruction);
  * A page of a Cylon dual-mode slot that userspace has not mapped carries an
  * MMIO SPTE, so its first access is emulated. When the emulator cannot handle
  * the instruction (VEX/EVEX, most SSE with memory operands), hand the GPA to
- * userspace instead of failing or retrying: userspace maps the page and the
- * guest executes the instruction again, natively. RIP does not move and no
- * register is written back. Genuine guest exceptions keep their stock path.
+ * userspace instead of failing: userspace maps the page and the guest
+ * executes the instruction again, natively. Only a decode failure qualifies:
+ * nothing has been emulated yet, so RIP, registers and memory are unchanged.
+ * A failure during emulation may follow side effects (a segment load, say)
+ * and keeps the stock path, as do genuine guest exceptions.
  */
 static bool kvm_cylon_fault_exit(struct kvm_vcpu *vcpu, gpa_t gpa,
-				 int emulation_type, u32 flags)
+				 int emulation_type)
 {
 	struct x86_emulate_ctxt *ctxt = vcpu->arch.emulate_ctxt;
 	struct kvm_memory_slot *slot;
@@ -8892,9 +8893,7 @@ static bool kvm_cylon_fault_exit(struct kvm_vcpu *vcpu, gpa_t gpa,
 	run->exit_reason = KVM_EXIT_CYLON_FAULT;
 	run->cylon_fault.gpa = gpa;
 	run->cylon_fault.rip = kvm_rip_read(vcpu);
-	run->cylon_fault.flags = flags;
-	if (flags & KVM_CYLON_FAULT_EXECUTE)
-		run->cylon_fault.insn_len = ctxt->_eip - ctxt->eip;
+	run->cylon_fault.flags = KVM_CYLON_FAULT_DECODE;
 	run->cylon_fault.insn_bytes = fetched;
 	memcpy(run->cylon_fault.insn, ctxt->fetch.data, fetched);
 	return true;
@@ -8947,8 +8946,7 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
 			
 
 		if (r != EMULATION_OK)  {
-			if (kvm_cylon_fault_exit(vcpu, cr2_or_gpa, emulation_type,
-						 KVM_CYLON_FAULT_DECODE))
+			if (kvm_cylon_fault_exit(vcpu, cr2_or_gpa, emulation_type))
 				return 0;
 			printk("x86_decode_emulated_instruction failed gpa:0x%llx, insn:0x%llx, len:%d r:%d\n", cr2_or_gpa, (insn)?*(u64*)insn:0, insn_len, r);
 
@@ -9041,9 +9039,6 @@ restart:
 		return 1;
 
 	if (r == EMULATION_FAILED) {
-		if (kvm_cylon_fault_exit(vcpu, cr2_or_gpa, emulation_type,
-					 KVM_CYLON_FAULT_EXECUTE))
-			return 0;
 		if (reexecute_instruction(vcpu, cr2_or_gpa, emulation_type))
 			return 1;
 
