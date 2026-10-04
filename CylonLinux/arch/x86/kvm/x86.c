@@ -8859,45 +8859,104 @@ int x86_decode_emulated_instruction(struct kvm_vcpu *vcpu, int emulation_type,
 }
 EXPORT_SYMBOL_GPL(x86_decode_emulated_instruction);
 
+static bool kvm_cylon_gpa(struct kvm_vcpu *vcpu, gpa_t gpa)
+{
+	struct kvm_memory_slot *slot;
+
+	slot = kvm_vcpu_gfn_to_memslot(vcpu, gpa_to_gfn(gpa));
+	return slot && (slot->flags & KVM_MEMSLOT_DUAL_MODE);
+}
+
 /*
- * A page of a Cylon dual-mode slot that userspace has not mapped carries an
- * MMIO SPTE, so its first access is emulated. When the emulator cannot handle
- * the instruction (VEX/EVEX, most SSE with memory operands), hand the GPA to
- * userspace instead of failing: userspace maps the page and the guest
- * executes the instruction again, natively. Only a decode failure on the
- * instruction itself qualifies, not a failure to fetch its bytes, so @gpa is
- * the data access that faulted. Nothing has been emulated yet, so RIP,
- * registers and memory are unchanged.
- * A failure during emulation may follow side effects (a segment load, say)
- * and keeps the stock path, as do genuine guest exceptions.
+ * Whether RIP, or the rest of an instruction that starts within 15 bytes of
+ * the end of RIP's page, lies on the faulting page @gpa. The walk is the one
+ * the emulator's instruction fetch would make.
+ */
+static bool kvm_cylon_code_page(struct kvm_vcpu *vcpu, gpa_t gpa)
+{
+	struct kvm_mmu *mmu = vcpu->arch.walk_mmu;
+	unsigned long rip = kvm_get_linear_rip(vcpu);
+	u64 access = PFERR_FETCH_MASK;
+	struct x86_exception e;
+	gpa_t code;
+
+	if (static_call(kvm_x86_get_cpl)(vcpu) == 3)
+		access |= PFERR_USER_MASK;
+	code = mmu->gva_to_gpa(vcpu, mmu, rip, access, &e);
+	if (code == INVALID_GPA)
+		return false;
+	if (gpa_to_gfn(code) == gpa_to_gfn(gpa))
+		return true;
+	/* An x86 instruction is at most 15 bytes long. */
+	if (offset_in_page(rip) <= PAGE_SIZE - 15)
+		return false;
+	code = mmu->gva_to_gpa(vcpu, mmu, PAGE_ALIGN(rip), access, &e);
+	return code != INVALID_GPA && gpa_to_gfn(code) == gpa_to_gfn(gpa);
+}
+
+static bool kvm_cylon_exit_allowed(struct kvm_vcpu *vcpu, gpa_t gpa,
+				   int emulation_type)
+{
+	return READ_ONCE(vcpu->kvm->arch.cylon_fault_exit) &&
+	       (emulation_type & EMULTYPE_PF) &&
+	       !(emulation_type & EMULTYPE_NO_DECODE) &&
+	       vcpu->arch.mmu->root_role.direct && !vcpu->mmio_needed &&
+	       !vcpu->arch.pio.count && kvm_cylon_gpa(vcpu, gpa);
+}
+
+static void kvm_cylon_fill_exit(struct kvm_vcpu *vcpu, gpa_t gpa, u32 flags,
+				const u8 *insn, unsigned int len)
+{
+	struct kvm_run *run = vcpu->run;
+
+	len = min_t(unsigned int, len, sizeof(run->cylon_fault.insn));
+	memset(&run->cylon_fault, 0, sizeof(run->cylon_fault));
+	run->exit_reason = KVM_EXIT_CYLON_FAULT;
+	run->cylon_fault.gpa = gpa;
+	run->cylon_fault.rip = kvm_rip_read(vcpu);
+	run->cylon_fault.flags = flags;
+	run->cylon_fault.insn_bytes = len;
+	if (len)
+		memcpy(run->cylon_fault.insn, insn, len);
+}
+
+/*
+ * Pages of a Cylon dual-mode slot that userspace has not mapped carry MMIO
+ * SPTEs, so their first access is emulated. Instruction fetches from such a
+ * page are not emulated at all: the emulator lacks many instructions (it
+ * treats endbr64, the first instruction of most library functions, as
+ * undefined), and code should run natively. When the instruction at RIP
+ * lies on the faulting page, hand that page to userspace before emulating
+ * anything; userspace maps it and the guest runs the code natively. This
+ * also covers a data access to the code page itself, which is fine to map.
+ */
+static bool kvm_cylon_fetch_exit(struct kvm_vcpu *vcpu, gpa_t gpa,
+				 int emulation_type)
+{
+	if (!kvm_cylon_exit_allowed(vcpu, gpa, emulation_type) ||
+	    !kvm_cylon_code_page(vcpu, gpa))
+		return false;
+	kvm_cylon_fill_exit(vcpu, gpa, KVM_CYLON_FAULT_FETCH, NULL, 0);
+	return true;
+}
+
+/*
+ * For a data access, hand the GPA to userspace when decoding fails on the
+ * instruction itself (VEX/EVEX, most SSE with memory operands). Nothing has
+ * been emulated yet, so RIP, registers and memory are unchanged. A failure
+ * during emulation may follow side effects (a segment load, say) and keeps
+ * the stock path, as do genuine guest exceptions.
  */
 static bool kvm_cylon_fault_exit(struct kvm_vcpu *vcpu, gpa_t gpa,
 				 int emulation_type)
 {
 	struct x86_emulate_ctxt *ctxt = vcpu->arch.emulate_ctxt;
-	struct kvm_memory_slot *slot;
-	struct kvm_run *run = vcpu->run;
-	unsigned int fetched;
 
-	if (!READ_ONCE(vcpu->kvm->arch.cylon_fault_exit) ||
-	    !(emulation_type & EMULTYPE_PF) ||
-	    !vcpu->arch.mmu->root_role.direct || !ctxt->unsupported_insn ||
-	    ctxt->have_exception || vcpu->mmio_needed || vcpu->arch.pio.count)
+	if (!kvm_cylon_exit_allowed(vcpu, gpa, emulation_type) ||
+	    !ctxt->unsupported_insn || ctxt->have_exception)
 		return false;
-
-	slot = kvm_vcpu_gfn_to_memslot(vcpu, gpa_to_gfn(gpa));
-	if (!slot || !(slot->flags & KVM_MEMSLOT_DUAL_MODE))
-		return false;
-
-	fetched = min_t(unsigned int, ctxt->fetch.end - ctxt->fetch.data,
-			sizeof(run->cylon_fault.insn));
-	memset(&run->cylon_fault, 0, sizeof(run->cylon_fault));
-	run->exit_reason = KVM_EXIT_CYLON_FAULT;
-	run->cylon_fault.gpa = gpa;
-	run->cylon_fault.rip = kvm_rip_read(vcpu);
-	run->cylon_fault.flags = KVM_CYLON_FAULT_DECODE;
-	run->cylon_fault.insn_bytes = fetched;
-	memcpy(run->cylon_fault.insn, ctxt->fetch.data, fetched);
+	kvm_cylon_fill_exit(vcpu, gpa, KVM_CYLON_FAULT_DECODE,
+			    ctxt->fetch.data, ctxt->fetch.end - ctxt->fetch.data);
 	return true;
 }
 
@@ -8923,6 +8982,9 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
 		 */
 		if (kvm_vcpu_check_code_breakpoint(vcpu, emulation_type, &r))
 			return r;
+
+		if (kvm_cylon_fetch_exit(vcpu, cr2_or_gpa, emulation_type))
+			return 0;
 
 		r = x86_decode_emulated_instruction(vcpu, emulation_type,
 						    insn, insn_len);
