@@ -2018,6 +2018,14 @@ int __kvm_set_memory_region(struct kvm *kvm,
 		printk("asid %llx >= %llx || id %llx >= %llx",(u64)as_id, (u64)KVM_ADDRESS_SPACE_NUM, (u64)id ,(u64)KVM_MEM_SLOTS_NUM);
 		return -EINVAL;
 	}
+#ifdef KVM_MEMSLOT_DUAL_MODE
+	/*
+	 * A dual-mode slot shares its leaf tables with userspace, which works
+	 * only for the one root of address space 0: never in SMM.
+	 */
+	if ((mem->flags & KVM_MEMSLOT_DUAL_MODE) && as_id)
+		return -EINVAL;
+#endif
 	if (mem->guest_phys_addr + mem->memory_size < mem->guest_phys_addr) {
 		printk("gpa size check");
 		return -EINVAL;

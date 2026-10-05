@@ -3008,7 +3008,7 @@ static int direct_pte_prefetch_many(struct kvm_vcpu *vcpu,
 
 	gfn = kvm_mmu_page_get_gfn(sp, spte_index(start));
 	slot = gfn_to_memslot_dirty_bitmap(vcpu, gfn, access & ACC_WRITE_MASK);
-	if (!slot)
+	if (!slot || (slot->flags & KVM_MEMSLOT_DUAL_MODE))
 		return -1;
 
 	ret = gfn_to_page_many_atomic(slot, gfn, pages, end - start);
@@ -3465,6 +3465,13 @@ static int fast_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
 	// 	printk("fast_page_fault. addr: %llx", fault->addr);
 
 	if (!page_fault_can_be_fast(fault))
+		return ret;
+
+	/*
+	 * Userspace owns the leaves of a dual-mode slot and clears W and
+	 * MMU-writable to revoke a page: never restore them here.
+	 */
+	if (fault->slot && (fault->slot->flags & KVM_MEMSLOT_DUAL_MODE))
 		return ret;
 
 	walk_shadow_page_lockless_begin(vcpu);
@@ -4403,6 +4410,15 @@ static int __kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
 		if (slot && slot->id == APIC_ACCESS_PAGE_PRIVATE_MEMSLOT &&
 		    !kvm_apicv_activated(vcpu->kvm))
 			return RET_PF_EMULATE;
+	}
+
+	if (slot && (slot->flags & KVM_MEMSLOT_DUAL_MODE)) {
+		/* No async page fault: its completion would prefetch a leaf. */
+		fault->pfn = __gfn_to_pfn_memslot(slot, fault->gfn, false, true,
+						  NULL, fault->write,
+						  &fault->map_writable,
+						  &fault->hva);
+		return RET_PF_CONTINUE;
 	}
 
 	async = false;

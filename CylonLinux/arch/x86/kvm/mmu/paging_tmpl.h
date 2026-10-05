@@ -536,7 +536,8 @@ FNAME(prefetch_gpte)(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
 	FNAME(protect_clean_gpte)(vcpu->arch.mmu, &pte_access, gpte);
 
 	slot = gfn_to_memslot_dirty_bitmap(vcpu, gfn, pte_access & ACC_WRITE_MASK);
-	if (!slot)
+	/* Userspace owns the leaves of a dual-mode slot: never prefetch. */
+	if (!slot || (slot->flags & KVM_MEMSLOT_DUAL_MODE))
 		return false;
 
 	pfn = gfn_to_pfn_memslot_atomic(slot, gfn);

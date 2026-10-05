@@ -1368,6 +1368,12 @@ static bool set_spte_gfn(struct kvm *kvm, struct tdp_iter *iter,
 	    !is_shadow_present_pte(iter->old_spte))
 		return false;
 
+	/* Userspace owns the leaves of a dual-mode slot: only zap. */
+	if (range->slot->flags & KVM_MEMSLOT_DUAL_MODE) {
+		tdp_mmu_iter_set_spte(kvm, iter, 0);
+		return true;
+	}
+
 	/*
 	 * Note, when changing a read-only SPTE, it's not strictly necessary to
 	 * zero the SPTE before setting the new PFN, but doing so preserves the
