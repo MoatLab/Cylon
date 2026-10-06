@@ -18,6 +18,10 @@ The guest VM image must have a CXL-enabled kernel and required tools installed b
 
 See [docs/backend-memory-setup.md](docs/backend-memory-setup.md) for instructions on reserving a contiguous physical memory region on the host using the `memmap` GRUB parameter.
 
+### Host kernel for FEMU der=cylon
+
+FEMU's `femu-cxl-ssd` device with `der=cylon` needs the CylonLinux kernel of this repository on the host. See [docs/femu-host-kernel.md](docs/femu-host-kernel.md) for the commit to build, the host and VM requirements, the two versions of the fault exit, and the FEMU properties.
+
 ### Launching the Cylon VM
 1. SSH into the CloudLab host machine.
 2. Start the Cylon VM: 
