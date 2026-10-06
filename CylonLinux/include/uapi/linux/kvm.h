@@ -521,6 +521,25 @@ struct kvm_run {
 #define KVM_CYLON_FAULT_DECODE		(1 << 0)
 /* RIP lies on the unmapped page @gpa: a code fetch, not emulated. */
 #define KVM_CYLON_FAULT_FETCH		(1 << 1)
+/*
+ * Version 2: the guest touched a page whose leaf is not present. Nothing was
+ * emulated; READ, WRITE and FETCH (the bit above) give the access type from
+ * the EPT violation, FINAL or PAGE_WALK whether the access was to the target
+ * or by the guest page walk, PRESENT that the leaf was present (read-only).
+ */
+#define KVM_CYLON_FAULT_ACCESS		(1 << 2)
+#define KVM_CYLON_FAULT_READ		(1 << 3)
+#define KVM_CYLON_FAULT_WRITE		(1 << 4)
+#define KVM_CYLON_FAULT_FINAL		(1 << 5)
+#define KVM_CYLON_FAULT_PAGE_WALK	(1 << 6)
+#define KVM_CYLON_FAULT_PRESENT		(1 << 7)
+/*
+ * Version 2: the access was made while delivering an event (an interrupt,
+ * exception or NMI), for example a stack push or a page walk for the IDT.
+ * KVM injects the event again when the vCPU runs. Userspace must map the
+ * page: it cannot be emulated.
+ */
+#define KVM_CYLON_FAULT_DELIVERY	(1 << 8)
 			__u64 gpa;
 			__u64 rip;
 			__u32 flags;
@@ -1211,8 +1230,20 @@ struct kvm_ppc_resize_hpt {
 #define KVM_CAP_DIRTY_LOG_RING_WITH_BITMAP 225
 #define KVM_CAP_PMU_EVENT_MASKED_EVENTS 226
 #define KVM_CAP_COUNTER_OFFSET 227
-/* Cylon: exit with KVM_EXIT_CYLON_FAULT instead of failing emulation. */
+/*
+ * Cylon: exit with KVM_EXIT_CYLON_FAULT instead of failing emulation. The
+ * extension returns the highest version. KVM_ENABLE_CAP args[0]: bit 0 turns
+ * the exits on; bit 1 (version 2, needs bit 0) also hands every access to a
+ * page with a non-present leaf to userspace instead of emulating it.
+ */
 #define KVM_CAP_CYLON_FAULT_EXIT 0x4359
+#define KVM_CYLON_FAULT_EXIT_ON		(1 << 0)
+#define KVM_CYLON_FAULT_EXIT_V2		(1 << 1)
+/*
+ * A non-present leaf value that userspace writes for a page it cannot map
+ * directly: KVM then installs an MMIO SPTE and emulates, as in version 1.
+ */
+#define KVM_CYLON_SPTE_EMULATE		0x6a0ULL
 
 #ifdef KVM_CAP_IRQ_ROUTING
 
