@@ -1192,6 +1192,8 @@ static struct kvm_mmu_page *dualslot_attach(struct kvm_vcpu *vcpu,
 					    struct tdp_iter *iter)
 {
 	struct dualslot_info *info = slot->aux;
+	struct kvm_mmu_page *root = to_shadow_page(vcpu->arch.mmu->root.hpa);
+	struct kvm_mmu_page *owner;
 	struct kvm_mmu_page *sp;
 	unsigned long idx;
 	u64 *spt;
@@ -1206,9 +1208,32 @@ static struct kvm_mmu_page *dualslot_attach(struct kvm_vcpu *vcpu,
 	sp = kvm_mmu_memory_cache_alloc(&vcpu->arch.mmu_page_header_cache);
 
 	spin_lock(&info->lock);
-	if (READ_ONCE(info->owner[idx])) {
+	owner = READ_ONCE(info->owner[idx]);
+	if (owner) {
+		/*
+		 * Find the root the owner hangs under. A live root of another
+		 * role (another depth or mode) is a second root, which would
+		 * retry here forever, so version 2 fails the fault. An
+		 * invalidated root is being torn down and releases the table:
+		 * retry. Shadow pages are freed after RCU, and the fault holds
+		 * the RCU read lock.
+		 */
+		struct kvm_mmu_page *top = owner;
+		bool other;
+		int i;
+
+		for (i = 0; i < PT64_ROOT_MAX_LEVEL && top->ptep; i++)
+			top = sptep_to_sp(rcu_dereference(top->ptep));
+		other = !top->ptep && !top->role.invalid &&
+			top->role.word != root->role.word;
+
 		spin_unlock(&info->lock);
 		kmem_cache_free(mmu_page_header_cache, sp);
+		if (other && (READ_ONCE(vcpu->kvm->arch.cylon_fault_exit) &
+			      KVM_CYLON_FAULT_EXIT_V2)) {
+			pr_warn_ratelimited("kvm: dual-mode slot used by a second MMU root role\n");
+			return ERR_PTR(-EFAULT);
+		}
 		return ERR_PTR(-EBUSY);
 	}
 	sp->spt = spt;
@@ -1284,8 +1309,11 @@ int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
 		    iter.level == PG_LEVEL_4K + 1 &&
 		    !is_shadow_present_pte(iter.old_spte)) {
 			sp = dualslot_attach(vcpu, fault->slot, &iter);
-			if (IS_ERR(sp))
+			if (IS_ERR(sp)) {
+				if (PTR_ERR(sp) == -EFAULT)
+					ret = -EFAULT;
 				goto retry;
+			}
 		}
 
 		if (!sp) {

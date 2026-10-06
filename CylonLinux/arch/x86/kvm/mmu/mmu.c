@@ -2933,6 +2933,18 @@ static int mmu_set_spte(struct kvm_vcpu *vcpu, struct kvm_memory_slot *slot,
 	bool prefetch = !fault || fault->prefetch;
 	bool write_fault = fault && fault->write;
 
+	/*
+	 * With version 2 of the Cylon fault exit, nothing maps a dual-mode
+	 * slot through a shadow table; the paths into here refuse it first.
+	 * Fail the fault rather than retry it if one is ever missed.
+	 */
+	if (slot && (slot->flags & KVM_MEMSLOT_DUAL_MODE) &&
+	    (READ_ONCE(vcpu->kvm->arch.cylon_fault_exit) &
+	     KVM_CYLON_FAULT_EXIT_V2)) {
+		pr_warn_ratelimited("kvm: shadow mapping of a dual-mode slot refused\n");
+		return -EFAULT;
+	}
+
 	pgprintk("%s: spte %llx write_fault %d gfn %llx\n", __func__,
 		 *sptep, write_fault, gfn);
 
@@ -4401,6 +4413,16 @@ static int __kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
 	}
 
 	if (slot && (slot->flags & KVM_MEMSLOT_DUAL_MODE)) {
+		/*
+		 * Userspace owns the leaves; a nested guest would map the
+		 * backing through a shadow table that userspace never sees.
+		 */
+		if (is_guest_mode(vcpu) &&
+		    (READ_ONCE(vcpu->kvm->arch.cylon_fault_exit) &
+		     KVM_CYLON_FAULT_EXIT_V2)) {
+			pr_warn_ratelimited("kvm: dual-mode slot used by a nested guest\n");
+			return -EFAULT;
+		}
 		/* No async page fault: its completion would prefetch a leaf. */
 		fault->pfn = __gfn_to_pfn_memslot(slot, fault->gfn, false, true,
 						  NULL, fault->write,
@@ -4491,8 +4513,20 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
 {
 	int r;
 
-	if (page_fault_handle_page_track(vcpu, fault))
+	if (page_fault_handle_page_track(vcpu, fault)) {
+		/*
+		 * The emulator would write the backing behind userspace, which
+		 * owns the leaves of a dual-mode slot in version 2.
+		 */
+		if (fault->slot &&
+		    (fault->slot->flags & KVM_MEMSLOT_DUAL_MODE) &&
+		    (READ_ONCE(vcpu->kvm->arch.cylon_fault_exit) &
+		     KVM_CYLON_FAULT_EXIT_V2)) {
+			pr_warn_ratelimited("kvm: write tracking on a dual-mode slot\n");
+			return -EFAULT;
+		}
 		return RET_PF_EMULATE;
+	}
 
 	r = fast_page_fault(vcpu, fault);
 	if (r != RET_PF_INVALID)
@@ -4577,8 +4611,20 @@ static int kvm_tdp_mmu_page_fault(struct kvm_vcpu *vcpu,
 	// if (is_cxl_memregion(fault->addr))
 	// 	printk("tdp_mmu_page_fault. addr: %llx", fault->addr);
 
-	if (page_fault_handle_page_track(vcpu, fault))
+	if (page_fault_handle_page_track(vcpu, fault)) {
+		/*
+		 * The emulator would write the backing behind userspace, which
+		 * owns the leaves of a dual-mode slot in version 2.
+		 */
+		if (fault->slot &&
+		    (fault->slot->flags & KVM_MEMSLOT_DUAL_MODE) &&
+		    (READ_ONCE(vcpu->kvm->arch.cylon_fault_exit) &
+		     KVM_CYLON_FAULT_EXIT_V2)) {
+			pr_warn_ratelimited("kvm: write tracking on a dual-mode slot\n");
+			return -EFAULT;
+		}
 		return RET_PF_EMULATE;
+	}
 
 	r = fast_page_fault(vcpu, fault);
 	if (r != RET_PF_INVALID)
