@@ -8868,38 +8868,72 @@ static bool kvm_cylon_gpa(struct kvm_vcpu *vcpu, gpa_t gpa)
 }
 
 /*
+ * The linear address of the code byte @off bytes past RIP, with the checks of
+ * the emulator's instruction fetch (__linearize() for a fetch): canonical in
+ * 64-bit mode; otherwise within the CS limit and truncated to 32 bits, so the
+ * address wraps at 4 GiB. False if that fetch would fault.
+ */
+static bool kvm_cylon_code_linear(struct kvm_vcpu *vcpu, unsigned long off,
+				  unsigned long *la)
+{
+	struct kvm_segment cs;
+	u64 ea;
+
+	if (is_64_bit_mode(vcpu)) {
+		*la = kvm_rip_read(vcpu) + off;
+		return !is_noncanonical_address(*la, vcpu);
+	}
+	kvm_get_segment(vcpu, &cs, VCPU_SREG_CS);
+	ea = (u64)(u32)kvm_rip_read(vcpu) + off;
+	if (cs.unusable || ea > cs.limit)
+		return false;
+	*la = (u32)(cs.base + ea);
+	return true;
+}
+
+/*
  * Whether RIP, or the rest of an instruction that starts within 15 bytes of
  * the end of RIP's page, lies on the faulting page @gpa. The walk is the one
- * the emulator's instruction fetch would make.
+ * the emulator's instruction fetch would make; the next page is walked only
+ * when the instruction can reach it.
  */
 static bool kvm_cylon_code_page(struct kvm_vcpu *vcpu, gpa_t gpa)
 {
 	struct kvm_mmu *mmu = vcpu->arch.walk_mmu;
-	unsigned long rip = kvm_get_linear_rip(vcpu);
 	u64 access = PFERR_FETCH_MASK;
 	struct x86_exception e;
+	unsigned long la;
 	gpa_t code;
 
+	if (vcpu->arch.guest_state_protected ||
+	    !kvm_cylon_code_linear(vcpu, 0, &la))
+		return false;
 	if (static_call(kvm_x86_get_cpl)(vcpu) == 3)
 		access |= PFERR_USER_MASK;
-	code = mmu->gva_to_gpa(vcpu, mmu, rip, access, &e);
+	code = mmu->gva_to_gpa(vcpu, mmu, la, access, &e);
 	if (code == INVALID_GPA)
 		return false;
 	if (gpa_to_gfn(code) == gpa_to_gfn(gpa))
 		return true;
 	/* An x86 instruction is at most 15 bytes long. */
-	if (offset_in_page(rip) <= PAGE_SIZE - 15)
+	if (offset_in_page(la) <= PAGE_SIZE - 15 ||
+	    !kvm_cylon_code_linear(vcpu, PAGE_SIZE - offset_in_page(la), &la))
 		return false;
-	code = mmu->gva_to_gpa(vcpu, mmu, PAGE_ALIGN(rip), access, &e);
+	code = mmu->gva_to_gpa(vcpu, mmu, la, access, &e);
 	return code != INVALID_GPA && gpa_to_gfn(code) == gpa_to_gfn(gpa);
 }
 
+/*
+ * Only a fault of L1, outside SMM, on a dual-mode slot of its direct TDP root
+ * exits: a nested guest or SMM would use another root or address space.
+ */
 static bool kvm_cylon_exit_allowed(struct kvm_vcpu *vcpu, gpa_t gpa,
 				   int emulation_type)
 {
 	return READ_ONCE(vcpu->kvm->arch.cylon_fault_exit) &&
 	       (emulation_type & EMULTYPE_PF) &&
 	       !(emulation_type & EMULTYPE_NO_DECODE) &&
+	       !is_guest_mode(vcpu) && !is_smm(vcpu) &&
 	       vcpu->arch.mmu->root_role.direct && !vcpu->mmio_needed &&
 	       !vcpu->arch.pio.count && kvm_cylon_gpa(vcpu, gpa);
 }
