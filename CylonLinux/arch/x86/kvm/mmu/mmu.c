@@ -5865,6 +5865,18 @@ int noinline kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 err
 
 	if (r < 0)
 		return r;
+	if (r == RET_PF_USER) {
+		/* The page fault path sees only the low 32 bits of the code. */
+		if (vcpu->run->exit_reason == KVM_EXIT_CYLON_FAULT) {
+			if (error_code & PFERR_GUEST_FINAL_MASK)
+				vcpu->run->cylon_fault.flags |=
+					KVM_CYLON_FAULT_FINAL;
+			if (error_code & PFERR_GUEST_PAGE_MASK)
+				vcpu->run->cylon_fault.flags |=
+					KVM_CYLON_FAULT_PAGE_WALK;
+		}
+		return 0;
+	}
 	if (r != RET_PF_EMULATE)
 		return 1;
 

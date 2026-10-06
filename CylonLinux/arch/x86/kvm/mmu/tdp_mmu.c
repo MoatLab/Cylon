@@ -1013,6 +1013,48 @@ static bool dualslot_leaf_usable(struct kvm *kvm, struct kvm_page_fault *fault,
 }
 
 /*
+ * Version 2 of the Cylon fault exit: userspace owns every leaf of a dual-mode
+ * slot. Hand it the fault, with the exact access type, instead of installing
+ * an MMIO SPTE and emulating; userspace maps the page and the guest repeats
+ * the access natively. Returns RET_PF_CONTINUE to take the version 1 path:
+ * userspace asked for emulation of this page (KVM_CYLON_SPTE_EMULATE), or an
+ * MMIO SPTE is already there. The caller has already kept a usable leaf, so
+ * a present leaf here is wrong for this access and goes to userspace too.
+ */
+static int tdp_mmu_cylon_fault(struct kvm_vcpu *vcpu,
+			       struct kvm_page_fault *fault, u64 old_spte)
+{
+	struct kvm_run *run = vcpu->run;
+	u32 flags = KVM_CYLON_FAULT_ACCESS;
+	bool v2 = READ_ONCE(vcpu->kvm->arch.cylon_fault_exit) &
+		  KVM_CYLON_FAULT_EXIT_V2;
+
+	/* Only a fault the vCPU takes can exit or emulate; prefetch nothing. */
+	if (v2 && fault->prefetch)
+		return RET_PF_RETRY;
+	if (!v2 || old_spte == KVM_CYLON_SPTE_EMULATE || is_mmio_spte(old_spte))
+		return RET_PF_CONTINUE;
+
+	/* The EPT violation reports read, write and fetch independently. */
+	if (fault->error_code & PFERR_USER_MASK)
+		flags |= KVM_CYLON_FAULT_READ;
+	if (fault->write)
+		flags |= KVM_CYLON_FAULT_WRITE;
+	if (fault->exec)
+		flags |= KVM_CYLON_FAULT_FETCH;
+	/* kvm_mmu_page_fault() adds FINAL and PAGE_WALK from bits 32-33. */
+	if (is_shadow_present_pte(old_spte))
+		flags |= KVM_CYLON_FAULT_PRESENT;
+
+	memset(&run->cylon_fault, 0, sizeof(run->cylon_fault));
+	run->exit_reason = KVM_EXIT_CYLON_FAULT;
+	run->cylon_fault.gpa = fault->addr;
+	run->cylon_fault.rip = kvm_rip_read(vcpu);
+	run->cylon_fault.flags = flags;
+	return RET_PF_USER;
+}
+
+/*
  * Installs a last-level SPTE to handle a TDP page fault.
  * (NPT/EPT violation/misconfiguration)
  */
@@ -1028,10 +1070,20 @@ static int tdp_mmu_map_handle_target_level(struct kvm_vcpu *vcpu,
 	if (WARN_ON_ONCE(sp->role.level != fault->goal_level))
 		return RET_PF_RETRY;
 
-	if (fault->slot && (fault->slot->flags & KVM_MEMSLOT_DUAL_MODE) &&
-	    dualslot_leaf_usable(vcpu->kvm, fault, sp, iter->old_spte,
-				 iter->level))
-		return RET_PF_SPURIOUS;
+	/*
+	 * In both versions, a usable target leaf stays as it is. Version 2
+	 * then exits to userspace and never writes the leaf. Version 1, the
+	 * emulation marker and an MMIO leaf get an MMIO SPTE below.
+	 */
+	if (fault->slot && (fault->slot->flags & KVM_MEMSLOT_DUAL_MODE)) {
+		if (dualslot_leaf_usable(vcpu->kvm, fault, sp, iter->old_spte,
+					 iter->level))
+			return RET_PF_SPURIOUS;
+		ret = tdp_mmu_cylon_fault(vcpu, fault, iter->old_spte);
+		if (ret != RET_PF_CONTINUE)
+			return ret;
+		ret = RET_PF_FIXED;
+	}
 
 	if (unlikely(!fault->slot) || (fault->slot->flags & KVM_MEMSLOT_DUAL_MODE)){
 		new_spte = make_mmio_spte(vcpu, iter->gfn, ACC_ALL);

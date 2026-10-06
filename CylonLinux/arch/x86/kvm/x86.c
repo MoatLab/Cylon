@@ -8930,7 +8930,8 @@ static bool kvm_cylon_code_page(struct kvm_vcpu *vcpu, gpa_t gpa)
 static bool kvm_cylon_exit_allowed(struct kvm_vcpu *vcpu, gpa_t gpa,
 				   int emulation_type)
 {
-	return READ_ONCE(vcpu->kvm->arch.cylon_fault_exit) &&
+	return (READ_ONCE(vcpu->kvm->arch.cylon_fault_exit) &
+		KVM_CYLON_FAULT_EXIT_ON) &&
 	       (emulation_type & EMULTYPE_PF) &&
 	       !(emulation_type & EMULTYPE_NO_DECODE) &&
 	       !is_guest_mode(vcpu) && !is_smm(vcpu) &&
