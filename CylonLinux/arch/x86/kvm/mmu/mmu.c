@@ -6136,6 +6136,17 @@ void kvm_mmu_invpcid_gva(struct kvm_vcpu *vcpu, gva_t gva, unsigned long pcid)
 	 */
 }
 
+/*
+ * Whether version 2 of the Cylon fault exit can work: the TDP MMU builds
+ * Intel EPT entries, the leaf format that userspace writes into a dual-mode
+ * slot, EPT violations report the access type, and MMIO SPTEs exist for the
+ * emulation fallback.
+ */
+bool kvm_mmu_cylon_ept(void)
+{
+	return tdp_mmu_enabled && shadow_x_mask && enable_mmio_caching;
+}
+
 void kvm_configure_mmu(bool enable_tdp, int tdp_forced_root_level,
 		       int tdp_max_root_level, int tdp_huge_page_level)
 {

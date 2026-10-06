@@ -4491,7 +4491,6 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
 	case KVM_CAP_VM_MOVE_ENC_CONTEXT_FROM:
 	case KVM_CAP_SREGS2:
 	case KVM_CAP_EXIT_ON_EMULATION_FAILURE:
-	case KVM_CAP_CYLON_FAULT_EXIT:
 	case KVM_CAP_VCPU_ATTRIBUTES:
 	case KVM_CAP_SYS_ATTRIBUTES:
 	case KVM_CAP_VAPIC:
@@ -4499,6 +4498,10 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
 	case KVM_CAP_VM_DISABLE_NX_HUGE_PAGES:
 	case KVM_CAP_IRQFD_RESAMPLE:
 		r = 1;
+		break;
+	case KVM_CAP_CYLON_FAULT_EXIT:
+		/* The highest version: 2 needs EPT and the TDP MMU. */
+		r = kvm_mmu_cylon_ept() ? 2 : 1;
 		break;
 	case KVM_CAP_EXIT_HYPERCALL:
 		r = KVM_EXIT_HYPERCALL_VALID_MASK;
@@ -6406,8 +6409,19 @@ split_irqchip_unlock:
 		break;
 	case KVM_CAP_CYLON_FAULT_EXIT:
 		r = -EINVAL;
-		if (cap->args[0] & ~1)
+		if (cap->args[0] & ~(KVM_CYLON_FAULT_EXIT_ON |
+				     KVM_CYLON_FAULT_EXIT_V2) ||
+		    cap->args[0] == KVM_CYLON_FAULT_EXIT_V2)
 			break;
+		/*
+		 * Version 2 serves faults in the TDP MMU and reads the access
+		 * type from an EPT violation; NPT (AMD) reports it differently.
+		 */
+		if ((cap->args[0] & KVM_CYLON_FAULT_EXIT_V2) &&
+		    !kvm_mmu_cylon_ept()) {
+			pr_warn_ratelimited("kvm: Cylon fault exit version 2 needs Intel EPT and the TDP MMU\n");
+			break;
+		}
 		WRITE_ONCE(kvm->arch.cylon_fault_exit, cap->args[0]);
 		r = 0;
 		break;
