@@ -6722,6 +6722,112 @@ The valid value for 'flags' is:
 
 ::
 
+		/* KVM_EXIT_CYLON_FAULT */
+		struct {
+  #define KVM_CYLON_FAULT_DECODE	(1 << 0)
+  #define KVM_CYLON_FAULT_FETCH		(1 << 1)
+  #define KVM_CYLON_FAULT_ACCESS	(1 << 2)
+  #define KVM_CYLON_FAULT_READ		(1 << 3)
+  #define KVM_CYLON_FAULT_WRITE		(1 << 4)
+  #define KVM_CYLON_FAULT_FINAL		(1 << 5)
+  #define KVM_CYLON_FAULT_PAGE_WALK	(1 << 6)
+  #define KVM_CYLON_FAULT_PRESENT	(1 << 7)
+  #define KVM_CYLON_FAULT_DELIVERY	(1 << 8)
+			__u64 gpa;
+			__u64 rip;
+			__u32 flags;
+			__u8 insn_len;
+			__u8 insn_bytes;
+			__u8 pad[2];
+			__u8 insn[16];
+		} cylon_fault;
+
+Used on x86 systems with Cylon dual-mode memory slots (KVM_MEMSLOT_DUAL_MODE)
+when the VM capability KVM_CAP_CYLON_FAULT_EXIT is enabled. The exit reason
+is KVM_EXIT_CYLON_FAULT (0x4359). The guest accessed a page of a dual-mode
+slot that has no usable leaf, and KVM did not handle the access. KVM
+emulated nothing on this path and did not change RIP. The vCPU state is the
+state at the fault: an instruction that completed part of its work before
+the fault (for example REP MOVSB) keeps that progress in its registers and
+in memory, and guest page walks can have set accessed and dirty bits in
+guest page tables. Userspace must not rewind or replay anything; it runs
+the vCPU again with its current state.
+
+"gpa" is the guest physical address of the access, as the CPU reported it.
+"rip" is the RIP register of the vCPU, for diagnosis only. "insn_bytes" is
+the number of valid bytes in "insn"; it is 0 except for a DECODE exit.
+"insn_len" and "pad" are 0.
+
+"flags" holds one of these exit types. Version 1 exits do not report
+whether the access was by the guest page walk.
+
+  - KVM_CYLON_FAULT_DECODE -- version 1. KVM tried to emulate an access to
+    an unmapped page, and decoding failed on the instruction itself (an
+    unknown or unsupported opcode, or conflicting prefixes). "insn" holds the
+    bytes that KVM fetched. The exit does not tell how the instruction
+    accesses the page.
+  - KVM_CYLON_FAULT_FETCH without KVM_CYLON_FAULT_ACCESS -- version 1. The
+    page is the page of RIP, or the next page when RIP is within 15 bytes of
+    its page end. KVM computes the linear address of RIP as an instruction
+    fetch does (canonical in 64-bit mode; CS limit and 32-bit wrap in other
+    modes) and walks the guest page tables to find it. The access can be the
+    fetch, or a data access to the code page.
+  - KVM_CYLON_FAULT_ACCESS -- version 2. The leaf of the page was not
+    present, or KVM found a present leaf that is not usable
+    (KVM_CYLON_FAULT_PRESENT; section 7.34 defines a usable leaf). PRESENT
+    describes the leaf when KVM read it, not why the leaf is not usable: it
+    can lack the permission, map another page, or be writable over a
+    read-only host mapping, or the page can have write tracking. KVM_CYLON_FAULT_READ, KVM_CYLON_FAULT_WRITE
+    and KVM_CYLON_FAULT_FETCH give the access type that the EPT violation
+    reported; more than one can be set. Exactly one of
+    KVM_CYLON_FAULT_FINAL (an access to the translated address) and
+    KVM_CYLON_FAULT_PAGE_WALK (an access by the guest page walk) is set.
+  - KVM_CYLON_FAULT_DELIVERY with KVM_CYLON_FAULT_ACCESS -- version 2. The
+    access was made while the CPU delivered an event (an external
+    interrupt, NMI, exception or software interrupt): an IDT, GDT or TSS
+    read, a stack push, or a guest page walk for one of these. KVM queued
+    the event again and injects it on the next KVM_RUN; userspace does not
+    re-inject it. The flag is added to an exit for a zero or unusable leaf.
+    KVM also exits with it, instead of emulating, when the leaf is
+    KVM_CYLON_SPTE_EMULATE or an MMIO SPTE: then, for an EPT
+    misconfiguration exit, no access type and neither FINAL nor PAGE_WALK
+    is set, because the CPU reports none. Without this exit, an EPT
+    misconfiguration during event delivery ends the VM with
+    KVM_INTERNAL_ERROR_DELIVERY_EV. The CPU does not report the
+    instruction length of a software interrupt or exception (INT n, INT3,
+    INTO, INT1) for an EPT misconfiguration. If KVM injected that event at
+    the VM entry, it injects it again with the length of that entry.
+    Otherwise the guest's instruction raised it: KVM does not queue it
+    again, and the guest executes the instruction again at RIP.
+  - KVM_CYLON_FAULT_PAGE_WALK on a KVM_CYLON_SPTE_EMULATE or MMIO leaf --
+    version 2. An EPT violation by the guest page walk on such a leaf exits
+    as for a zero leaf, with the access type, instead of emulating the
+    instruction at RIP. An EPT misconfiguration does not report a page
+    walk, so a page walk on an MMIO SPTE outside event delivery is still
+    emulated.
+
+What userspace must do before the next KVM_RUN:
+
+  - For a DECODE or FETCH exit, install a present leaf for the page in the
+    slot's leaf table. KVM cannot emulate the access. If userspace runs the
+    vCPU again without a usable leaf, the same exit occurs again.
+  - For an ACCESS exit, install a present leaf that permits the access, or
+    change a zero leaf to KVM_CYLON_SPTE_EMULATE with a compare-exchange.
+    With KVM_CYLON_SPTE_EMULATE, KVM emulates accesses to that page as in
+    version 1, and DECODE and FETCH exits can occur for it. For an exit with
+    KVM_CYLON_FAULT_DELIVERY or KVM_CYLON_FAULT_PAGE_WALK, install a present
+    leaf: KVM_CYLON_SPTE_EMULATE gives the same exit again, because KVM
+    cannot emulate an event delivery or a page walk. For a PRESENT
+    exit, make the leaf usable (complete a revocation, or install the
+    correct page with the permission) or stop the VM. Giving back a
+    permission alone is not sufficient when the leaf maps another page.
+
+The guest then does the access again on the CPU. KVM does not flush TLBs for
+a leaf that userspace changes; userspace flushes as for any other change to
+a leaf (KVM_SET_SPTE_FLAG with flag 0 flushes one GFN).
+
+::
+
 		/* Fix the size of the union. */
 		char padding[256];
 	};
@@ -7733,6 +7839,82 @@ KVM would exit to userspace for handling.
 This capability is aimed to mitigate the threat that malicious VMs can
 cause CPU stuck (due to event windows don't open up) and make the CPU
 unavailable to host or other VMs.
+
+7.34 KVM_CAP_CYLON_FAULT_EXIT
+-----------------------------
+
+:Architectures: x86
+:Target: VM
+:Parameters: args[0] - KVM_CYLON_FAULT_EXIT_* bits
+:Returns: 0 on success, -EINVAL if flags is not 0, if args[0] has an
+          unknown bit, has KVM_CYLON_FAULT_EXIT_V2 without
+          KVM_CYLON_FAULT_EXIT_ON, or has KVM_CYLON_FAULT_EXIT_V2 on a host
+          that does not support version 2.
+
+Valid bits in args[0] are::
+
+  #define KVM_CYLON_FAULT_EXIT_ON	(1 << 0)
+  #define KVM_CYLON_FAULT_EXIT_V2	(1 << 1)
+
+This capability is for Cylon dual-mode memory slots. A slot with the flag
+KVM_MEMSLOT_DUAL_MODE (bit 17 of the KVM_SET_USER_MEMORY_REGION flags) shares
+its leaf page tables with userspace (KVM_GET_LINEAR_SPT), and userspace owns
+the leaf values. KVM refuses the flag in address space 1 (SMM) and together
+with KVM_MEM_LOG_DIRTY_PAGES.
+
+KVM_CHECK_EXTENSION returns the highest version that the host supports: 2
+with Intel EPT, the TDP MMU and MMIO SPTE caching (kvm.mmio_caching=Y),
+otherwise 1. The capability is disabled by default, and args[0] = 0
+disables it again. Without it, KVM installs an MMIO SPTE for a target leaf
+that is not usable and emulates the access, as for any MMIO access. Dual-mode
+slots need MMIO SPTE caching in all versions.
+
+With KVM_CYLON_FAULT_EXIT_ON (version 1), KVM still emulates, but exits with
+KVM_EXIT_CYLON_FAULT instead of emulating when the access is to the page of
+RIP (FETCH) or when it cannot decode the instruction (DECODE). These exits
+occur only for an L1 vCPU outside SMM that faults through its direct TDP
+root.
+
+With KVM_CYLON_FAULT_EXIT_ON | KVM_CYLON_FAULT_EXIT_V2 (version 2), KVM does
+not install a present leaf in a dual-mode slot. An access to a page whose
+leaf is zero, or is present but not usable (see below), exits with
+KVM_EXIT_CYLON_FAULT (ACCESS) and the exact access type, and KVM emulates
+nothing. A leaf that userspace sets to KVM_CYLON_SPTE_EMULATE (0x6a0), or
+an MMIO SPTE that is already there, selects the version 1 path for that
+page: KVM installs an MMIO SPTE and emulates, except for an access by event
+delivery or by a guest page walk that an EPT violation reports, which exit
+to userspace (see KVM_CYLON_FAULT_DELIVERY). In version 2, an EPT
+misconfiguration during event delivery on a dual-mode slot is not the fatal
+KVM_INTERNAL_ERROR_DELIVERY_EV: KVM exits with KVM_CYLON_FAULT_DELIVERY.
+Version 1 keeps the stock rule, so a version 1 VM ends when an event
+delivery meets the MMIO SPTE of a cold page. Version 2 also requires:
+
+  - The TDP MMU (kvm.tdp_mmu=Y) on Intel EPT, with MMIO SPTE caching.
+    On AMD NPT, version 2 is not
+    available: an NPT fault sets the user bit for every access, so KVM cannot
+    tell a read from another access, and the leaves have the EPT format.
+  - SMM off. A vCPU in SMM uses address space 1, which has no dual-mode
+    slot, so its accesses do not reach the slot.
+  - No nested guest. An access by L2 to a dual-mode slot, or a shadow
+    mapping of one, makes KVM_RUN fail with -EFAULT.
+  - One MMU root role. When a fault links a slot table that a live root of
+    another role (for example another paging depth) already holds,
+    KVM_RUN fails with -EFAULT. Without version 2, that fault retries.
+  - No write tracking of the slot's pages by an in-kernel user. A write
+    fault on a present leaf of a tracked page, which KVM would otherwise
+    emulate, makes KVM_RUN fail with -EFAULT, because the emulator would
+    write the backing behind userspace. Other accesses to tracked pages are
+    not refused.
+
+A target leaf is usable when it is present, maps the page that backs the
+slot at that GFN, permits the access, is writable only if the host mapping
+is writable, and the page has no dirty logging or write tracking. In both
+versions, KVM keeps a usable leaf and returns to the guest. For any other
+leaf, version 2 exits as above; without version 2, KVM replaces a present
+leaf with an MMIO SPTE and flushes that GFN on all vCPUs.
+
+Userspace should enable the capability once, before the first KVM_RUN. The
+value applies to all vCPUs of the VM.
 
 8. Other capabilities.
 ======================
