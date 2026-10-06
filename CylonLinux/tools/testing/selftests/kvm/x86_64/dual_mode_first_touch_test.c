@@ -58,6 +58,8 @@ struct ft_flush { uint64_t gpa, flag, lpn; };
 } while (0)
 
 extern const unsigned char ft_guest_start[], ft_guest_end[];
+extern const unsigned char ft_guest_bp[], ft_guest_bp_ret[];
+extern const unsigned char ft_guest_int_ret[];
 struct control { uint64_t stop, count, wrong, value, go, bad; };
 struct vcpu {
 	int fd, run_size;
@@ -82,7 +84,7 @@ static const char *const names[] = {
 	"wrong sibling reader", "wrong target reader", "host read-only",
 	"dirty-log flags", "write tracking", "detached target invalidation",
 	"detached sibling invalidation", "root churn", "read-only revocation",
-	"two valid roots"
+	"two valid roots", "event delivery on an MMIO leaf"
 };
 
 static void trace_write(const char *file, const char *value);
@@ -638,6 +640,162 @@ static void two_roots(struct test *t)
 	skip("two-root retry not observed; requires host 5-level EPT");
 }
 
+/*
+ * Version 2: an event delivery that meets an MMIO SPTE of a dual-mode slot
+ * must exit to userspace with KVM_CYLON_FAULT_DELIVERY, not end the VM with
+ * KVM_INTERNAL_ERROR_DELIVERY_EV, and the event must be delivered once
+ * userspace maps the page. The guest stack is on page 3 of the slot, whose
+ * leaf holds the emulation marker; the guest runs int3. The first exit is the
+ * EPT violation on the marker; the second, with the MMIO SPTE that KVM then
+ * installed, is the EPT misconfiguration during delivery. A second phase
+ * makes the misconfiguration the first exit of an int $0x21 on page 5: its
+ * instruction length is unknown, so the guest must execute it again and push
+ * the return RIP after the two-byte instruction. A third phase has KVM
+ * inject the #BP for a debugger while int3 is intercepted.
+ */
+static void deliver_event(struct test *t)
+{
+	struct kvm_enable_cap cap = {
+		.cap = KVM_CAP_CYLON_FAULT_EXIT,
+		.args[0] = KVM_CYLON_FAULT_EXIT_ON | KVM_CYLON_FAULT_EXIT_V2,
+	};
+	uint64_t ret = PAGE + (ft_guest_bp_ret - ft_guest_start);
+	uint64_t ret2 = PAGE + (ft_guest_int_ret - ft_guest_start);
+	uint64_t gate = PAGE + (ft_guest_bp - ft_guest_start);
+	uint64_t *gdt = t->ram + 0x6000;
+	uint64_t *idt = t->ram + 0x7000;
+	struct kvm_guest_debug dbg = {
+		.control = KVM_GUESTDBG_ENABLE | KVM_GUESTDBG_USE_SW_BP,
+	};
+	struct vcpu *v = &t->cpu[0];
+	struct kvm_sregs s;
+	struct kvm_regs regs;
+	struct kvm_run *r;
+
+	if (ioctl(t->vm, KVM_ENABLE_CAP, &cap))
+		skip("version 2 of KVM_CAP_CYLON_FAULT_EXIT unavailable");
+	gdt[1] = 0x00af9b000000ffffULL;
+	gdt[2] = 0x00cf93000000ffffULL;
+	/* Vector 3: a present DPL 0 interrupt gate to selector 8. */
+	idt[6] = (gate & 0xffff) | (8ULL << 16) | (0x8eULL << 40) |
+		 ((gate >> 16 & 0xffff) << 48);
+	idt[7] = gate >> 32;
+	idt[0x42] = idt[6];
+	idt[0x43] = idt[7];
+	create_cpu(t, 0, 0);
+	checked_ioctl(v->fd, KVM_GET_SREGS, &s);
+	s.gdt.base = 0x6000;
+	s.gdt.limit = 23;
+	s.idt.base = 0x7000;
+	s.idt.limit = 4095;
+	checked_ioctl(v->fd, KVM_SET_SREGS, &s);
+	STORE(&t->spt[3], KVM_CYLON_SPTE_EMULATE);
+	prepare(t, 0, 5, t->gpa);
+	v->run->immediate_exit = 1;
+	REQUIRE(ioctl(v->fd, KVM_RUN, 0) == -1 && errno == EINTR,
+		"complete port I/O");
+	v->run->immediate_exit = 0;
+	checked_ioctl(v->fd, KVM_GET_REGS, &regs);
+	regs.rsp = t->gpa + 4 * PAGE;
+	checked_ioctl(v->fd, KVM_SET_REGS, &regs);
+	r = v->run;
+
+	run_cpu(v);
+	printf("# exit=%u flags=%#x gpa=%#llx spte=%#" PRIx64 "\n",
+	       r->exit_reason, r->exit_reason == KVM_EXIT_CYLON_FAULT ?
+	       r->cylon_fault.flags : 0, (unsigned long long)r->cylon_fault.gpa,
+	       LOAD(&t->spt[3]));
+	REQUIRE(r->exit_reason == KVM_EXIT_CYLON_FAULT &&
+		(r->cylon_fault.flags & KVM_CYLON_FAULT_DELIVERY) &&
+		(r->cylon_fault.flags & KVM_CYLON_FAULT_WRITE) &&
+		r->cylon_fault.gpa / PAGE == t->gpa / PAGE + 3,
+		"violation during delivery exits with the delivery flag");
+	REQUIRE(mmio_spte(LOAD(&t->spt[3])), "KVM installed the MMIO SPTE");
+
+	run_cpu(v);
+	printf("# exit=%u flags=%#x gpa=%#llx\n", r->exit_reason,
+	       r->exit_reason == KVM_EXIT_CYLON_FAULT ? r->cylon_fault.flags : 0,
+	       (unsigned long long)r->cylon_fault.gpa);
+	REQUIRE(r->exit_reason == KVM_EXIT_CYLON_FAULT &&
+		r->cylon_fault.flags ==
+		(KVM_CYLON_FAULT_ACCESS | KVM_CYLON_FAULT_DELIVERY) &&
+		r->cylon_fault.gpa / PAGE == t->gpa / PAGE + 3,
+		"misconfiguration during delivery exits, no internal error");
+
+	STORE(&t->spt[3], frame(t, t->backing + 3 * PAGE) | DIRECT);
+	finish(t, 0);
+	REQUIRE(v->ctl->value == GOOD && v->ctl->bad == ret,
+		"the event was delivered once the page was mapped");
+	REQUIRE(*(uint64_t *)(t->backing + 4 * PAGE - 40) == ret,
+		"the delivery pushed its frame through the direct leaf");
+	printf("# delivered: return RIP %#" PRIx64 " on the slot stack\n", ret);
+
+	/* Phase 2: a data read makes page 5 an MMIO SPTE first. */
+	STORE(&t->spt[5], KVM_CYLON_SPTE_EMULATE);
+	prepare(t, 0, 0, t->gpa + 5 * PAGE);
+	finish(t, 0);
+	REQUIRE(mmio_spte(LOAD(&t->spt[5])) && v->mmio == 1,
+		"emulated read left an MMIO SPTE");
+	prepare(t, 0, 6, t->gpa);
+	v->run->immediate_exit = 1;
+	REQUIRE(ioctl(v->fd, KVM_RUN, 0) == -1 && errno == EINTR,
+		"complete port I/O");
+	v->run->immediate_exit = 0;
+	checked_ioctl(v->fd, KVM_GET_REGS, &regs);
+	regs.rsp = t->gpa + 6 * PAGE;
+	checked_ioctl(v->fd, KVM_SET_REGS, &regs);
+	run_cpu(v);
+	REQUIRE(r->exit_reason == KVM_EXIT_CYLON_FAULT &&
+		r->cylon_fault.flags ==
+		(KVM_CYLON_FAULT_ACCESS | KVM_CYLON_FAULT_DELIVERY) &&
+		r->cylon_fault.gpa / PAGE == t->gpa / PAGE + 5,
+		"first exit, a misconfiguration during INT n, reaches userspace");
+	STORE(&t->spt[5], frame(t, t->backing + 5 * PAGE) | DIRECT);
+	finish(t, 0);
+	REQUIRE(v->ctl->value == GOOD && v->ctl->bad == ret2 &&
+		*(uint64_t *)(t->backing + 6 * PAGE - 40) == ret2,
+		"INT n executed again: return RIP after its two bytes");
+	printf("# INT n delivered after the misconfiguration: RIP %#" PRIx64 "\n",
+	       ret2);
+
+	/*
+	 * Phase 3: a #BP that KVM injects for a debugger, with int3 still
+	 * intercepted. Executing int3 again would exit to the debugger again,
+	 * so KVM must inject the event again after the misconfiguration.
+	 */
+	STORE(&t->spt[7], KVM_CYLON_SPTE_EMULATE);
+	prepare(t, 0, 0, t->gpa + 7 * PAGE);
+	finish(t, 0);
+	REQUIRE(mmio_spte(LOAD(&t->spt[7])), "emulated read left an MMIO SPTE");
+	prepare(t, 0, 5, t->gpa);
+	v->run->immediate_exit = 1;
+	REQUIRE(ioctl(v->fd, KVM_RUN, 0) == -1 && errno == EINTR,
+		"complete port I/O");
+	v->run->immediate_exit = 0;
+	checked_ioctl(v->fd, KVM_GET_REGS, &regs);
+	regs.rsp = t->gpa + 8 * PAGE;
+	checked_ioctl(v->fd, KVM_SET_REGS, &regs);
+	checked_ioctl(v->fd, KVM_SET_GUEST_DEBUG, &dbg);
+	run_cpu(v);
+	REQUIRE(r->exit_reason == KVM_EXIT_DEBUG, "int3 intercepted");
+	dbg.control |= KVM_GUESTDBG_INJECT_BP;
+	checked_ioctl(v->fd, KVM_SET_GUEST_DEBUG, &dbg);
+	run_cpu(v);
+	REQUIRE(r->exit_reason == KVM_EXIT_CYLON_FAULT &&
+		r->cylon_fault.flags ==
+		(KVM_CYLON_FAULT_ACCESS | KVM_CYLON_FAULT_DELIVERY) &&
+		r->cylon_fault.gpa / PAGE == t->gpa / PAGE + 7,
+		"the injected #BP met the MMIO SPTE");
+	dbg.control &= ~KVM_GUESTDBG_INJECT_BP;
+	checked_ioctl(v->fd, KVM_SET_GUEST_DEBUG, &dbg);
+	STORE(&t->spt[7], frame(t, t->backing + 7 * PAGE) | DIRECT);
+	finish(t, 0);
+	REQUIRE(v->ctl->value == GOOD && v->ctl->bad == ret &&
+		*(uint64_t *)(t->backing + 8 * PAGE - 40) == ret,
+		"the injected #BP was injected again, not lost");
+	printf("# injected #BP delivered after the misconfiguration\n");
+}
+
 static void trace_write(const char *file, const char *value)
 {
 	char path[512];
@@ -730,6 +888,8 @@ static bool trace_finish(int row, bool passed)
 			valid &= links >= 20 && (control_kernel ? mmio >= 20 : !mmio);
 		if (row == 14)
 			valid &= mmio >= 3;
+		if (row == 16)
+			valid &= mmio > 0;
 	}
 	return valid;
 }
@@ -760,6 +920,8 @@ static void run_row(int row)
 		kernel_flush(&t);
 	} else if (row == 15)
 		two_roots(&t);
+	else if (row == 16)
+		deliver_event(&t);
 	if (trace_output)
 		trace_write("tracing_on", "0");
 	exit(KSFT_PASS);
@@ -803,7 +965,7 @@ int main(int argc, char **argv)
 			trace_output = optarg;
 			break;
 		case 'h':
-			printf("Usage: %s [-c] [-r 1..15] [-t seconds] [-T new-trace-directory]\n"
+			printf("Usage: %s [-c] [-r 1..16] [-t seconds] [-T new-trace-directory]\n"
 			       "Default: patched expectations, all rows, ten seconds per row.\n"
 			       "-c selects original kernel expectations. See the companion document.\n",
 			       argv[0]);
@@ -811,7 +973,7 @@ int main(int argc, char **argv)
 		default: return KSFT_FAIL;
 		}
 	}
-	REQUIRE(chosen >= 0 && chosen <= 15 && timeout_secs > 0 &&
+	REQUIRE(chosen >= 0 && chosen <= 16 && timeout_secs > 0 &&
 		timeout_secs <= 600 && optind == argc, "arguments");
 	setbuf(stdout, NULL);
 	if (trace_output)
@@ -822,8 +984,8 @@ int main(int argc, char **argv)
 		     MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 	REQUIRE(stage != MAP_FAILED, "shared progress");
 	ksft_print_header();
-	ksft_set_plan(chosen ? 1 : 15);
-	for (int row = chosen ? chosen : 1; row <= (chosen ? chosen : 15); row++) {
+	ksft_set_plan(chosen ? 1 : 16);
+	for (int row = chosen ? chosen : 1; row <= (chosen ? chosen : 16); row++) {
 		int status;
 		bool timed_out = false, trace_ok;
 		pid_t child, got;

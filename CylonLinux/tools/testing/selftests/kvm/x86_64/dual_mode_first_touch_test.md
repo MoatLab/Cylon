@@ -27,7 +27,7 @@ Examples (execute only on the test machine):
 ```
 
 `-c` selects the original kernel's expectations for rows 1–3, 9, 12, 13 and 14.
-`-r` selects one proposal row; `-t` sets its timeout in seconds (default 10).
+`-r` selects one row (1 to 16); `-t` sets its timeout in seconds (default 10).
 `-T` requires a new output directory. It uses a private tracefs instance and
 saves GFN-filtered SPTE changes and MMIO marks for each row. It checks parent
 links, the expected leaf-change/MMIO-mark presence for direct and rejected
@@ -55,6 +55,7 @@ add events to the GFN-filtered instance.
 | 13 | Delete an unused slot, rewrite the direct leaf, and access it, for 20 root-invalidation cycles. |
 | 14 | Hold a writer at its MMIO exit after clearing W and MMU-writable and flushing. Check prior stores, D, and the final userspace store. A second phase omits the userspace flush after clearing W: an uncached vCPU faults and the kernel must force the cached writer to MMIO too. On the patched kernel the cached writer may complete at most one direct store after that fault returns; without the flush it keeps storing until the entry is evicted. |
 | 15 | Keep a 48-bit vCPU root alive while a 49-bit vCPU accesses the table. A timeout specifically after the second access starts is a recorded known progress defect, reported as SKIP/review-only, never PASS. Unsupported MAXPHYADDR or completion without the defect is also SKIP. Confirm 5-level EPT on the host when assessing this row. |
+| 16 | Version 2 only (skips without it). The guest stack is on a slot page whose leaf holds KVM_CYLON_SPTE_EMULATE; the guest runs int3. The #BP push must exit with KVM_CYLON_FAULT_DELIVERY (EPT violation, write), then, with KVM's MMIO SPTE in place, again with ACCESS and DELIVERY only (EPT misconfiguration during delivery; before this fix KVM_INTERNAL_ERROR_DELIVERY_EV). After userspace installs a direct leaf, the event is delivered: the handler sees the pushed return RIP, which is also in the slot backing. The trace must show an MMIO mark. |
 
 Rows 11–12 hold a pipe reference obtained with vmsplice to the old huge page
 before punching it. Thus a deliberately old leaf cannot point at memory freed

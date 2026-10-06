@@ -1,7 +1,8 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 /* Identity mapped long-mode code, copied to GPA 0x1000. No host references. */
 .section .rodata
-.global ft_guest_start, ft_guest_end
+.global ft_guest_start, ft_guest_end, ft_guest_bp, ft_guest_bp_ret
+.global ft_guest_int_ret
 ft_guest_start:
 	/* rdi: target, rsi: operation, rbx: control page, r8: wrong marker. */
 	mov $1, %al
@@ -14,6 +15,10 @@ ft_guest_start:
 	je 4f
 	cmp $4, %rsi
 	je 6f
+	cmp $5, %rsi
+	je 10f
+	cmp $6, %rsi
+	je 11f
 	mov (%rdi), %rax
 	jmp 8f
 2:
@@ -56,5 +61,22 @@ ft_guest_start:
 	mov $2, %al
 	out %al, $0x80
 	hlt
+10:
+	/* The host put the stack on a dual-mode page; deliver #BP through it. */
+	int3
+ft_guest_bp_ret:
+	mov %r11, %rax
+	jmp 8b
+11:
+	/* A two-byte software interrupt through the same gate. */
+	int $0x21
+ft_guest_int_ret:
+	mov %r11, %rax
+	jmp 8b
+ft_guest_bp:
+	/* Record the return RIP that the delivery pushed. */
+	mov (%rsp), %rax
+	mov %rax, 40(%rbx)
+	iretq
 ft_guest_end:
 .section .note.GNU-stack,"",@progbits
