@@ -1801,6 +1801,8 @@ static void vmx_inject_exception(struct kvm_vcpu *vcpu)
 		vmcs_write32(VM_ENTRY_INSTRUCTION_LEN,
 			     vmx->vcpu.arch.event_exit_inst_len);
 		intr_info |= INTR_TYPE_SOFT_EXCEPTION;
+		vmx->cylon_soft_pending = true;
+		vmx->cylon_soft_rip = kvm_rip_read(vcpu);
 	} else
 		intr_info |= INTR_TYPE_HARD_EXCEPTION;
 
@@ -4911,6 +4913,8 @@ static void vmx_inject_irq(struct kvm_vcpu *vcpu, bool reinjected)
 		intr |= INTR_TYPE_SOFT_INTR;
 		vmcs_write32(VM_ENTRY_INSTRUCTION_LEN,
 			     vmx->vcpu.arch.event_exit_inst_len);
+		vmx->cylon_soft_pending = true;
+		vmx->cylon_soft_rip = kvm_rip_read(vcpu);
 	} else
 		intr |= INTR_TYPE_EXT_INTR;
 	vmcs_write32(VM_ENTRY_INTR_INFO_FIELD, intr);
@@ -6383,6 +6387,54 @@ void dump_vmcs(struct kvm_vcpu *vcpu)
  * The guest has exited.  See if we can fix it or if we need userspace
  * assistance.
  */
+/*
+ * An event delivery that met an MMIO SPTE of a dual-mode slot in version 2.
+ * Userspace owns that leaf and maps the page, so this is not an MMIO access
+ * that would fault again: exit to userspace with KVM_CYLON_FAULT_DELIVERY,
+ * before the instruction-only paths of handle_ept_misconfig() (fast MMIO,
+ * emulation). The event, queued again by vmx_complete_interrupts(), is
+ * injected on the next entry.
+ *
+ * The SDM does not define VM_EXIT_INSTRUCTION_LEN for an EPT
+ * misconfiguration, so a software interrupt or exception cannot be queued
+ * again with the length of this exit. If KVM injected it at this VM entry
+ * (for example a #BP for a debugger), inject it again with the length that
+ * entry used, which VM_ENTRY_INSTRUCTION_LEN still holds: executing the
+ * instruction again would not raise the same event under interception.
+ * Otherwise the guest's own instruction raised it. It has no effect before
+ * its delivery and RIP still points to it: drop the event, and the guest
+ * executes the instruction again once the page is mapped.
+ */
+static bool vmx_cylon_delivery_misconfig(struct kvm_vcpu *vcpu,
+					 union vmx_exit_reason exit_reason,
+					 u32 vectoring_info)
+{
+	u32 type = vectoring_info & VECTORING_INFO_TYPE_MASK;
+	gpa_t gpa;
+
+	if (exit_reason.basic != EXIT_REASON_EPT_MISCONFIG)
+		return false;
+	gpa = vmcs_read64(GUEST_PHYSICAL_ADDRESS);
+	if (!kvm_mmu_cylon_v2_gpa(vcpu, gpa))
+		return false;
+	if (type == INTR_TYPE_SOFT_INTR || type == INTR_TYPE_SOFT_EXCEPTION ||
+	    type == INTR_TYPE_PRIV_SW_EXCEPTION) {
+		struct vcpu_vmx *vmx = to_vmx(vcpu);
+
+		if (vmx->cylon_soft_entered &&
+		    vmx->cylon_soft_rip == kvm_rip_read(vcpu)) {
+			vcpu->arch.event_exit_inst_len =
+				vmcs_read32(VM_ENTRY_INSTRUCTION_LEN);
+		} else {
+			kvm_clear_exception_queue(vcpu);
+			kvm_clear_interrupt_queue(vcpu);
+		}
+	}
+	kvm_mmu_cylon_exit(vcpu, gpa, KVM_CYLON_FAULT_ACCESS |
+			   KVM_CYLON_FAULT_DELIVERY);
+	return true;
+}
+
 static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
 {
 	struct vcpu_vmx *vmx = to_vmx(vcpu);
@@ -6485,6 +6537,10 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
 	 * The vm-exit can be triggered again after return to guest that
 	 * will cause infinite loop.
 	 */
+	if ((vectoring_info & VECTORING_INFO_VALID_MASK) &&
+	    vmx_cylon_delivery_misconfig(vcpu, exit_reason, vectoring_info))
+		return 0;
+
 	if ((vectoring_info & VECTORING_INFO_VALID_MASK) &&
 	    (exit_reason.basic != EXIT_REASON_EXCEPTION_NMI &&
 	     exit_reason.basic != EXIT_REASON_EPT_VIOLATION &&
@@ -7063,6 +7119,7 @@ static void vmx_complete_interrupts(struct vcpu_vmx *vmx)
 
 static void vmx_cancel_injection(struct kvm_vcpu *vcpu)
 {
+	to_vmx(vcpu)->cylon_soft_pending = false;
 	__vmx_complete_interrupts(vcpu,
 				  vmcs_read32(VM_ENTRY_INTR_INFO_FIELD),
 				  VM_ENTRY_INSTRUCTION_LEN,
@@ -7363,6 +7420,8 @@ static fastpath_t vmx_vcpu_run(struct kvm_vcpu *vcpu)
 	vmx->loaded_vmcs->launched = 1;
 
 	vmx_recover_nmi_blocking(vmx);
+	vmx->cylon_soft_entered = vmx->cylon_soft_pending;
+	vmx->cylon_soft_pending = false;
 	vmx_complete_interrupts(vmx);
 
 	if (is_guest_mode(vcpu))

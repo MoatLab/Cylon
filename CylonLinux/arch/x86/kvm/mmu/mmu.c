@@ -5870,6 +5870,77 @@ static void kvm_mmu_pte_write(struct kvm_vcpu *vcpu, gpa_t gpa,
 	write_unlock(&vcpu->kvm->mmu_lock);
 }
 
+/*
+ * Whether @gpa lies in a dual-mode slot that version 2 of the Cylon fault
+ * exit serves: the leaves belong to userspace, which can map any of them.
+ */
+bool kvm_mmu_cylon_v2_gpa(struct kvm_vcpu *vcpu, gpa_t gpa)
+{
+	struct kvm_memory_slot *slot;
+
+	if (!(READ_ONCE(vcpu->kvm->arch.cylon_fault_exit) &
+	      KVM_CYLON_FAULT_EXIT_V2) ||
+	    is_guest_mode(vcpu) || !vcpu->arch.mmu->root_role.direct)
+		return false;
+	slot = kvm_vcpu_gfn_to_memslot(vcpu, gpa_to_gfn(gpa));
+	return slot && (slot->flags & KVM_MEMSLOT_DUAL_MODE);
+}
+EXPORT_SYMBOL_GPL(kvm_mmu_cylon_v2_gpa);
+
+/*
+ * Exit to userspace with KVM_EXIT_CYLON_FAULT for @gpa, having emulated
+ * nothing. The next access must not take the MMIO cache of this vCPU.
+ */
+void kvm_mmu_cylon_exit(struct kvm_vcpu *vcpu, gpa_t gpa, u32 flags)
+{
+	struct kvm_run *run = vcpu->run;
+
+	vcpu_clear_mmio_info(vcpu, MMIO_GVA_ANY);
+	memset(&run->cylon_fault, 0, sizeof(run->cylon_fault));
+	run->exit_reason = KVM_EXIT_CYLON_FAULT;
+	run->cylon_fault.gpa = gpa;
+	run->cylon_fault.rip = kvm_rip_read(vcpu);
+	run->cylon_fault.flags = flags;
+}
+EXPORT_SYMBOL_GPL(kvm_mmu_cylon_exit);
+
+/*
+ * Version 2 emulates only the page userspace marked with
+ * KVM_CYLON_SPTE_EMULATE, and only for the access of the instruction at RIP.
+ * An access by the guest page walk, or by the delivery of an event (an IDT,
+ * GDT or TSS read, a stack push), is not that instruction's: emulating the
+ * instruction cannot complete it, and with an event pending the exit would
+ * end the VM. Hand such a page to userspace, which maps it; the event stays
+ * queued and is injected again on the next entry.
+ */
+static bool kvm_mmu_cylon_handoff(struct kvm_vcpu *vcpu, gpa_t gpa,
+				  u64 error_code)
+{
+	bool delivery = kvm_event_needs_reinjection(vcpu);
+	u32 flags = KVM_CYLON_FAULT_ACCESS;
+
+	if ((!delivery && !(error_code & PFERR_GUEST_PAGE_MASK)) ||
+	    !kvm_mmu_cylon_v2_gpa(vcpu, gpa))
+		return false;
+	/* A misconfiguration exit (an MMIO SPTE) reports no access type. */
+	if (!(error_code & PFERR_RSVD_MASK)) {
+		if (error_code & PFERR_USER_MASK)
+			flags |= KVM_CYLON_FAULT_READ;
+		if (error_code & PFERR_WRITE_MASK)
+			flags |= KVM_CYLON_FAULT_WRITE;
+		if (error_code & PFERR_FETCH_MASK)
+			flags |= KVM_CYLON_FAULT_FETCH;
+		if (error_code & PFERR_GUEST_FINAL_MASK)
+			flags |= KVM_CYLON_FAULT_FINAL;
+		if (error_code & PFERR_GUEST_PAGE_MASK)
+			flags |= KVM_CYLON_FAULT_PAGE_WALK;
+	}
+	if (delivery)
+		flags |= KVM_CYLON_FAULT_DELIVERY;
+	kvm_mmu_cylon_exit(vcpu, gpa, flags);
+	return true;
+}
+
 static inline bool is_cxl_memregion(u64 addr)
 {
 	return (addr >= 0x2290000000 && addr < 0x2290000000 + 1024*1024*1024UL);
@@ -5920,6 +5991,9 @@ int noinline kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 err
 			if (error_code & PFERR_GUEST_PAGE_MASK)
 				vcpu->run->cylon_fault.flags |=
 					KVM_CYLON_FAULT_PAGE_WALK;
+			if (kvm_event_needs_reinjection(vcpu))
+				vcpu->run->cylon_fault.flags |=
+					KVM_CYLON_FAULT_DELIVERY;
 		}
 		return 0;
 	}
@@ -5953,6 +6027,8 @@ int noinline kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 err
 	if (!mmio_info_in_cache(vcpu, cr2_or_gpa, direct) && !is_guest_mode(vcpu))
 		emulation_type |= EMULTYPE_ALLOW_RETRY_PF;
 emulate:
+	if (kvm_mmu_cylon_handoff(vcpu, cr2_or_gpa, error_code))
+		return 0;
 	return x86_emulate_instruction(vcpu, cr2_or_gpa, emulation_type, insn,
 				       insn_len);
 }

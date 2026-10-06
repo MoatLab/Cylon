@@ -275,6 +275,14 @@ struct vcpu_vmx {
 	unsigned long         exit_qualification;
 	u32                   exit_intr_info;
 	u32                   idt_vectoring_info;
+	/*
+	 * Cylon: KVM injected a software event at the next (pending) or the
+	 * latest (entered) VM entry, at this RIP; see
+	 * vmx_cylon_delivery_misconfig().
+	 */
+	bool                  cylon_soft_pending;
+	bool                  cylon_soft_entered;
+	unsigned long         cylon_soft_rip;
 	ulong                 rflags;
 
 	/*
