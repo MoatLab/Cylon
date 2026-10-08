@@ -12,13 +12,12 @@ Build `CylonLinux/` from the commit that adds this page, or a later one. The
 fixes are a series on top of `0cf82e2d2` ("cxlssd: write logs under a log_dir
 property, not /home/necsst"):
 
-| Part | Commits (subjects) |
+| Part | Commits (subjects, `KVM: dual-mode slots:` unless noted) |
 |---|---|
-| Fault exit, version 1 | exit to userspace when emulation fails; drop the synthetic MMIO read; exit only when the opcode cannot be decoded; map code pages instead of emulating fetches |
-| Fault exit, version 2 | hand cold pages to userspace; keep KVM's own paths off the shared leaves; tighten the version 2 exit and its guards; require the TDP MMU for version 2; let a root under teardown release its tables |
-| First touch | flush when a fault replaces a present leaf; keep a usable leaf on first touch; reject dirty logging; selftest |
-| Final fixes | linearize RIP as the instruction fetch does; offer version 2 only with EPT and the TDP MMU; KVM API documentation |
-| Event delivery (candidate 3) | hand event delivery faults to userspace; selftest row 16 |
+| Fault exit, version 1 | exit to userspace when emulation fails; drop the synthetic MMIO read, exit on decode only; exit only when the opcode cannot be decoded; map code pages instead of emulating fetches |
+| Shared leaves and first touch | keep KVM's own paths off the shared leaves; flush when a fault replaces a present leaf; reject dirty logging; keep a usable leaf on first touch; linearize RIP as the instruction fetch does |
+| Fault exit, version 2 | define the version 2 fault exit ABI; hand cold pages to userspace, not the emulator; fail what version 2 cannot serve; hand event delivery faults to userspace; offer fault exit version 2 with EPT and the TDP MMU |
+| Tests and documentation | `KVM: selftests:` deliver events through a dual-mode MMIO leaf; `KVM: docs:` describe the Cylon fault exit; `docs:` describe the host kernel for FEMU der=cylon |
 
 The KVM interface is in `CylonLinux/Documentation/virt/kvm/api.rst`, sections
 "KVM_EXIT_CYLON_FAULT" and "7.34 KVM_CAP_CYLON_FAULT_EXIT".
@@ -147,9 +146,8 @@ Device (`-device femu-cxl-ssd,...`):
 | `cylon-fault-stop` | `100000` (default) | Watchdog: consecutive exits at one RIP on pages already filled for it that stop the VM; `0` only warns |
 | `cylon-revoke-batch` | `32` (default), 1 to 64 | Version 2: the most pages that one full revocation takes |
 
-FEMU release candidate 1 (`531012db6`) has `cylon-never-emulate` as a
-boolean with default `off`, and has no `cylon-fault-stop`. Its stop bound is
-fixed at 100,000.
+FEMU before the commit "femu/cxlssd: make the repeated-exit stop a property"
+has no `cylon-fault-stop`; its stop bound is fixed at 100,000.
 
 ## Known limits
 
