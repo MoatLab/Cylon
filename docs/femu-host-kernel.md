@@ -144,10 +144,13 @@ Device (`-device femu-cxl-ssd,...`):
 | `cylon-emul-exit` | `on` (default) | Enable the fault exit; `off` keeps stock KVM emulation |
 | `cylon-never-emulate` | `auto` (default), `on`, `off` | `auto` and `on` take version 2 when the kernel reports it; `on` warns when it cannot; `off` stays on version 1 |
 | `cylon-fault-stop` | `100000` (default) | Watchdog: consecutive exits at one RIP on pages already filled for it that stop the VM; `0` only warns |
-| `cylon-revoke-batch` | `32` (default), 1 to 64 | Version 2: the most pages that one full revocation takes |
+| `cylon-revoke-batch` | `64` (default), 1 to 256 | Version 2: the most pages that one full revocation takes |
 
 FEMU before the commit "femu/cxlssd: make the repeated-exit stop a property"
 has no `cylon-fault-stop`; its stop bound is fixed at 100,000.
+
+FEMU before the commit "femu/cxlssd: revoke 64 pages per batch by default"
+takes `cylon-revoke-batch` from 1 to 64, with 32 as the default.
 
 ## Known limits
 
