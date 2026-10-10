@@ -154,13 +154,13 @@ takes `cylon-revoke-batch` from 1 to 64, with 32 as the default.
 
 ## Known limits
 
-- A guest page walk that meets an MMIO SPTE outside event delivery (a page
-  that FEMU marked `0x6a0`, version 2) is still emulated: an EPT
-  misconfiguration does not tell a page walk from the access of the
+- KVM still emulates a guest page walk that meets an MMIO SPTE outside
+  event delivery. Such a page is one that FEMU marked `0x6a0` (version 2).
+  An EPT misconfiguration does not tell a page walk from the access of the
   instruction. The emulator walks the guest page tables in host memory.
-- Stage S2 is deferred. Pages that the caching API keeps uncached (an
-  uncached range, or a set whose ways are all pinned) stay on KVM's
-  emulator for data accesses in version 2 too. A code fetch or an
+- Stage S2 is deferred. The caching API can keep pages uncached: an
+  uncached range, or a set whose ways are all pinned. Data accesses to
+  these pages stay on KVM's emulator in version 2 too. A code fetch or an
   undecodable instruction on such a page stops the VM. A guest page walk
   or an event delivery on such a page maps it for the instruction (FEMU
   counts it).
@@ -168,8 +168,8 @@ takes `cylon-revoke-batch` from 1 to 64, with 32 as the default.
   touches other pages writes them straight to host memory. FEMU does not
   see these writes.
 - Exits are not retired instructions. The version 1 fetch exit and the
-  FEMU stop bound (`cylon-fault-stop`) are heuristics; a healthy loop that
-  refaults one page at one RIP many times can reach the bound.
+  FEMU stop bound (`cylon-fault-stop`) are heuristics. A healthy loop
+  that refaults one page at one RIP many times can reach the bound.
 - The version 1 fetch exit finds the page of RIP with a guest page walk.
   When RIP is within 15 bytes of its page end, it also walks the next page.
   These walks can set accessed bits in guest page tables, as a code
@@ -190,3 +190,6 @@ takes `cylon-revoke-batch` from 1 to 64, with 32 as the default.
   - If FEMU maps the page while KVM does the host exchange, the EPT dirty
     bit stays clear. The data is correct, but FEMU does not charge a
     write-back for that store.
+  - FEMU does not see the store of a host exchange. On a page that FEMU
+    keeps uncached, FEMU charges the read of the instruction, but no
+    program for its write.
