@@ -177,3 +177,16 @@ takes `cylon-revoke-batch` from 1 to 64, with 32 as the default.
 - KVM software reads of guest memory (paravirtual structures, the
   emulator for other devices) use the host backing directly. FEMU does
   not see them.
+- An emulated locked read-modify-write on a page that FEMU has mapped
+  fails, and the guest runs the instruction again on the mapped page. On
+  a page that FEMU has not mapped, KVM does the exchange atomically on the
+  slot's host address. So the host address of the dual-mode slot must be
+  the memory that the direct SPTEs map, as in current FEMU.
+- Limits of that rule:
+  - On a page that FEMU has not mapped, KVM writes a 16-byte exchange or
+    a split-lock exchange through FEMU, which is not atomic. Upstream KVM
+    does the same for these exchanges.
+  - An access that crosses into a second page does not retry.
+  - If FEMU maps the page while KVM does the host exchange, the EPT dirty
+    bit stays clear. The data is correct, but FEMU does not charge a
+    write-back for that store.

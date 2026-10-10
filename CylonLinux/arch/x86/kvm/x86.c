@@ -7780,10 +7780,6 @@ static int emulator_cmpxchg_emulated(struct x86_emulate_ctxt *ctxt,
 	gpa_t gpa;
 	int r;
 
-	/* guests cmpxchg8b have to be emulated atomically */
-	if (bytes > 8 || (bytes & (bytes - 1)))
-		goto emul_write;
-
 	gpa = kvm_mmu_gva_to_gpa_write(vcpu, addr, NULL);
 
 	if (gpa == INVALID_GPA ||
@@ -7791,18 +7787,23 @@ static int emulator_cmpxchg_emulated(struct x86_emulate_ctxt *ctxt,
 		goto emul_write;
 
 	/*
-	 * A dual-mode slot's host mapping is its faulting backing, not the memory
-	 * its direct SPTEs point to: an exchange through it would update memory the
-	 * guest never reads. Once userspace has mapped the page, typically while
-	 * serving this instruction's read, let the guest retry the instruction on
-	 * it, atomically; until then write through userspace, as for MMIO.
+	 * Once userspace has mapped a dual-mode page, typically while serving
+	 * this instruction's read, let the guest retry the instruction on it.
+	 * Otherwise exchange on the host mapping, which must be the memory the
+	 * direct SPTEs point to: a write through userspace is not atomic, and
+	 * another vCPU can update the page between its read and its write.
+	 * An access that crosses a page does not retry, because userspace may
+	 * never map its second page.
 	 */
 	slot = kvm_vcpu_gfn_to_memslot(vcpu, gpa_to_gfn(gpa));
-	if (slot && (slot->flags & KVM_MEMSLOT_DUAL_MODE)) {
-		if (dualslot_gfn_mapped(slot, gpa_to_gfn(gpa)))
-			return X86EMUL_CMPXCHG_FAILED;
+	if (slot && (slot->flags & KVM_MEMSLOT_DUAL_MODE) &&
+	    offset_in_page(gpa) + bytes <= PAGE_SIZE &&
+	    dualslot_gfn_mapped(slot, gpa_to_gfn(gpa)))
+		return X86EMUL_CMPXCHG_FAILED;
+
+	/* guests cmpxchg8b have to be emulated atomically */
+	if (bytes > 8 || (bytes & (bytes - 1)))
 		goto emul_write;
-	}
 
 	/*
 	 * Emulate the atomic as a straight write to avoid #AC if SLD is
