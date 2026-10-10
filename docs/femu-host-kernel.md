@@ -152,6 +152,10 @@ has no `cylon-fault-stop`; its stop bound is fixed at 100,000.
 FEMU before the commit "femu/cxlssd: revoke 64 pages per batch by default"
 takes `cylon-revoke-batch` from 1 to 64, with 32 as the default.
 
+FEMU before the commit "femu/cxlssd: accept Cylon tables mapped as refcounted
+pages" refuses the slot tables of this kernel and uses MMIO. This kernel maps
+the tables as refcounted pages, so it frees them after a slot is deleted.
+
 ## Known limits
 
 - KVM still emulates a guest page walk that meets an MMIO SPTE outside

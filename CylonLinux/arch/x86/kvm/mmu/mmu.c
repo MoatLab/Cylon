@@ -7550,6 +7550,31 @@ int kvm_arch_vcpu_ioctl_set_spte_flag(struct kvm_vcpu *vcpu, struct kvm_set_spte
 
 #define MAX_CONT_ALLOC_SZ (1<< (MAX_ORDER + PAGE_SHIFT))
 
+/*
+ * Map @npages table pages at @uaddr. vm_insert_pages() takes a reference on
+ * each page, which the unmap drops. Called with the mmap lock held for write.
+ */
+static int dualslot_map_tables(struct vm_area_struct *vma, unsigned long uaddr,
+			       u64 *spt, unsigned long npages)
+{
+	struct page *first = virt_to_page(spt);
+	unsigned long left = npages;
+	struct page **pages;
+	unsigned long j;
+	int r;
+
+	pages = kvmalloc_array(npages, sizeof(*pages), GFP_KERNEL);
+	if (!pages)
+		return -ENOMEM;
+	for (j = 0; j < npages; j++)
+		pages[j] = first + j;
+	r = vm_insert_pages(vma, uaddr, pages, &left);
+	kvfree(pages);
+	if (!r && left)
+		r = -EFAULT;
+	return r;
+}
+
 int kvm_arch_vm_ioctl_get_linear_spt(struct kvm *kvm, struct kvm_memslot_get_linear_spt *data)
 {
 	struct mm_struct *mm = current->mm;
@@ -7570,10 +7595,10 @@ int kvm_arch_vm_ioctl_get_linear_spt(struct kvm *kvm, struct kvm_memslot_get_lin
 
 	/*
 	 * Map each chunk of the slot's leaf tables at the caller's address, once
-	 * per slot: remap_pfn_range() BUGs on a populated range, so a second
-	 * call, or a mapping that was already remapped, is refused. The caller
-	 * supplies one untouched shared mapping of exactly the chunk size per
-	 * chunk.
+	 * per slot; a second call is refused. The caller supplies one untouched
+	 * shared mapping of exactly the chunk size per chunk. Each mapped page
+	 * holds a reference, so the tables outlive the slot while userspace
+	 * still maps them.
 	 */
 	if (dinfo->mapped) {
 		r = -EBUSY;
@@ -7591,29 +7616,33 @@ int kvm_arch_vm_ioctl_get_linear_spt(struct kvm *kvm, struct kvm_memslot_get_lin
 			continue;
 
 		/*
-		 * remap_pfn_range() BUGs on a populated range. An anonymous
-		 * shared mapping whose shmem object has no pages cannot have
-		 * any PTEs, so require exactly that.
+		 * An anonymous shared mapping whose shmem object has no pages
+		 * cannot have any PTEs, so every table page lands in an empty
+		 * entry and no shmem page can shadow one.
 		 */
 		vma = vma_lookup(mm, uaddr);
 		if (!vma || vma->vm_start != uaddr || vma->vm_end - uaddr != sz ||
 		    !vma_is_anon_shmem(vma) || userfaultfd_armed(vma) ||
-		    (vma->vm_flags & (VM_PFNMAP | VM_IO)) ||
+		    (vma->vm_flags & (VM_PFNMAP | VM_IO | VM_MIXEDMAP)) ||
 		    vma->vm_file->f_mapping->nrpages) {
 			r = -EINVAL;
 			break;
 		}
-		/* From here on the tables may be reachable from userspace. */
-		dinfo->mapped = true;
-		r = remap_pfn_range(vma, uaddr,
-				    virt_to_phys(info->spt_list[idx].spt) >> PAGE_SHIFT,
-				    sz, vma->vm_page_prot);
+		/*
+		 * A failure can leave part of a chunk mapped. Each mapped page
+		 * holds its own reference, so that is safe; the caller unmaps it
+		 * and may retry with fresh mappings.
+		 */
+		r = dualslot_map_tables(vma, uaddr, info->spt_list[idx].spt,
+					info->spt_list[idx].npages);
 		if (r)
 			break;
 	}
 	mmap_write_unlock(mm);
-	if (!r)
+	if (!r) {
+		dinfo->mapped = true;
 		data->n = idx;
+	}
 out:
 	mutex_unlock(&kvm->slots_lock);
 	if (r)

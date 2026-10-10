@@ -2114,13 +2114,21 @@ int kvm_arch_vm_ioctl_set_spte_flag(struct kvm *kvm, struct kvm_set_spte_flag *d
 
 #define MAX_CONT_ALLOC_SZ (1<< (MAX_ORDER + PAGE_SHIFT))
 
+/*
+ * Each chunk is split into order-0 pages. A page that userspace still maps
+ * keeps the reference vm_insert_pages() took, and its last unmap frees it.
+ */
 static void dualslot_free_info(struct dualslot_info *info)
 {
+	unsigned long j;
 	int i;
 
-	for (i = 0; i < info->tables.n; i++)
-		free_pages((unsigned long)info->tables.spt_list[i].spt,
-			   get_order(info->tables.spt_list[i].npages << PAGE_SHIFT));
+	for (i = 0; i < info->tables.n; i++) {
+		struct page *page = virt_to_page(info->tables.spt_list[i].spt);
+
+		for (j = 0; j < info->tables.spt_list[i].npages; j++)
+			__free_page(page + j);
+	}
 	kvfree(info->owner);
 	kfree(info);
 }
@@ -2155,18 +2163,30 @@ int dualslot_create_leaf_spt_cont(struct kvm_memory_slot *slot)
 	while (size > 0) {
 		u64 sz = min_t(u64, size, MAX_CONT_ALLOC_SZ);
 		int idx = info->tables.n;
+		unsigned long npages = sz >> PAGE_SHIFT;
+		unsigned long j;
+		int order = get_order(sz);
+		struct page *page;
 
 		if (idx >= ARRAY_SIZE(info->tables.spt_list)) {
 			dualslot_free_info(info);
 			return -E2BIG;
 		}
-		info->tables.spt_list[idx].spt = (u64 *)__get_free_pages(
-			GFP_KERNEL_ACCOUNT | __GFP_ZERO, get_order(sz));
-		if (!info->tables.spt_list[idx].spt) {
+		page = alloc_pages(GFP_KERNEL_ACCOUNT | __GFP_ZERO, order);
+		if (!page) {
 			dualslot_free_info(info);
 			return -ENOMEM;
 		}
-		info->tables.spt_list[idx].npages = sz >> PAGE_SHIFT;
+		/*
+		 * Userspace maps the tables page by page, and each mapping holds
+		 * its own reference, so the chunk must be order-0 pages. Return
+		 * the pages past the end of a short last chunk.
+		 */
+		split_page(page, order);
+		for (j = npages; j < (1UL << order); j++)
+			__free_page(page + j);
+		info->tables.spt_list[idx].spt = page_address(page);
+		info->tables.spt_list[idx].npages = npages;
 		info->tables.spt_list[idx].offset = npg_offset;
 		info->tables.n = idx + 1;
 
@@ -2180,9 +2200,10 @@ int dualslot_create_leaf_spt_cont(struct kvm_memory_slot *slot)
 
 /*
  * Called once no root can link the tables any more (after the slot's zap, or
- * after the MMU is torn down). Tables userspace ever mapped are left
- * allocated: the process may still map them, and remap_pfn_range() takes no
- * reference on them.
+ * after the MMU is torn down). A walker that descended before the zap can
+ * still reach a table until an RCU grace period ends, as for zapped shadow
+ * pages, so wait for one. Then drop KVM's reference on each table page; a
+ * page that userspace still maps lives until its last unmap.
  */
 int dualslot_destroy_leaf_spt_cont(struct kvm_memory_slot *slot)
 {
@@ -2191,11 +2212,7 @@ int dualslot_destroy_leaf_spt_cont(struct kvm_memory_slot *slot)
 	if (!info)
 		return 0;
 	slot->aux = NULL;
-	if (info->mapped) {
-		pr_warn_once("kvm: leaving %d dual-mode table chunks allocated\n",
-			     info->tables.n);
-		return 0;
-	}
+	synchronize_rcu();
 	dualslot_free_info(info);
 	return 0;
 }
